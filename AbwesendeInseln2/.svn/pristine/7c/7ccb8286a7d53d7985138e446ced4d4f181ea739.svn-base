@@ -1,0 +1,148 @@
+package game;
+
+import controller.LogMaster;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
+
+/**
+ * Application. Run to start a new game of "The Settlers of Catan".
+ * @author Daniel Panangian
+ */
+public class App extends Application {
+		
+	private Stage stage;
+	private Stage popUpStage;
+	
+	/**
+	 * Starts the whole APP
+	 */
+	@Override
+	public void start(Stage stage) throws Exception {
+		LogMaster.initialize();
+		this.stage = stage;
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>(){
+			@Override
+			public void handle(WindowEvent event) {
+				Platform.exit();
+				System.exit(0);
+			}
+		});
+		GameManager gameManager = new GameManager(this);
+		Scene scene = gameManager.getClientLoginScene();
+		stage.setTitle("Settlers of Catan");
+		stage.setScene(scene);
+		stage.setResizable(true);
+		stage.show();
+	}
+	
+	/**
+	 * Main method
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Application.launch(args);
+	}
+	
+	/**
+	 * Changes the scene of the main stage
+	 */
+	public void changeScene(Scene scene){
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				stage.setScene(scene);
+				stage.centerOnScreen();
+				stage.setResizable(true);
+			}
+		});
+		try {
+			System.out.println("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			System.out.println("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	
+	/**
+	 * Creates PopUp-Stage to show a message
+	 * @param message message to show in PopUp-Stage
+	 */
+	public void popUpMessage(String message){
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				Stage popUpStage = new Stage();
+				popUpStage.initOwner(stage);
+				StackPane pane = new StackPane();
+				pane.setStyle("-fx-background-color: darkred; -fx-padding: 10;");
+				Text popUpMessage = new Text("\n"+message+"\n");
+				popUpMessage.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+				popUpMessage.setFill(Color.ANTIQUEWHITE);
+				pane.getChildren().add(popUpMessage);
+				Scene popUpScene = new Scene(pane);
+				popUpStage.setScene(popUpScene);
+				popUpStage.centerOnScreen();
+				popUpStage.show();
+			}
+		});
+		try {
+			System.out.println("[Thr]Thread sleeps for 20ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(20);
+		} catch (InterruptedException e) {
+			System.out.println("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	
+	/**
+	 * Creates PopUp-Stage to show a pane
+	 * @param pane pane to show in PopUp-Stage
+	 */
+	public void popUpPane(Pane pane){
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				popUpStage = new Stage();
+				popUpStage.initStyle(StageStyle.UNDECORATED);
+				popUpStage.initOwner(stage);
+				pane.setStyle("-fx-background-color: darkred; -fx-padding: 10;");
+				Scene popUpScene = new Scene(pane);
+				popUpStage.setScene(popUpScene);
+				popUpStage.centerOnScreen();
+				popUpStage.show();
+			}
+		});
+		try {
+			System.out.println("[Thr]Thread sleeps for 20ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(20);
+		} catch (InterruptedException e) {
+			System.out.println("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	
+	/**
+	 * @return the stage
+	 */
+	public Stage getStage(){
+		return this.stage;
+	}
+	
+	/**
+	 * Getter for popUpStage
+	 * @return	popUpStage
+	 */
+	public Stage getPopUpStage(){
+		return popUpStage;
+	}
+}

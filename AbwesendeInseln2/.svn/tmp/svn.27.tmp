@@ -1,0 +1,46 @@
+package game;
+
+import javafx.scene.Scene;
+import model.Catan;
+import model.PlayerColor;
+import view.GameSkin;
+
+/**
+ * The game manager initializes a new game.
+ *
+ */
+public class GameManager {
+
+
+	private Scene gameScene;
+	private Catan catan;
+
+
+	public GameManager() {
+		newGame();
+	}
+	
+	/**
+	 *  Establishes new Game by creating instances of Catan and GameSkin  
+	 */
+	public void newGame() {
+		this.catan = new Catan();
+		this.gameScene = new Scene(new GameSkin(catan.getIsland()));
+		
+//		catan.addPlayer(PlayerColor.RED);
+//		catan.getPlayer(0).buildRoad(catan.getIsland().getEdges().get(71), (GameSkin)gameScene.getRoot());
+//		catan.getPlayer(0).buildSettlement(catan.getIsland().getVertex(5,6), (GameSkin)gameScene.getRoot());
+		
+	}
+
+	public void quit() {
+		gameScene.getWindow().hide();
+	}
+	
+
+	public Scene getGameScene() {
+		return gameScene;
+	}
+
+
+}

@@ -1,0 +1,30 @@
+package jsonstructures;
+
+import java.util.ArrayList;
+
+import model.ResourceType;
+/**
+ * This class is the JSON model for the Erfindung Card
+ * @author Felixi, Georg
+ *
+ */
+public class ErfindungDaten {
+
+	private RohstoffDaten Rohstoffe;
+
+	/**
+	 * Constructor
+	 * @param erfindung
+	 */
+	public ErfindungDaten(ArrayList<ResourceType> erfindung) {
+		Rohstoffe = new RohstoffDaten(erfindung);
+	}
+	
+	/**
+	 * Getter for Rohstoffe
+	 * @return
+	 */
+	public RohstoffDaten getRohstoffe() {
+		return Rohstoffe;
+	}
+}

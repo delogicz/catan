@@ -1,0 +1,136 @@
+package model;
+
+
+import java.util.ArrayList;
+
+import view.EdgeSkin;
+
+/**
+ * Contains an edge defined by two vertices.
+ * @author Daniel Panangian
+ */
+public class Edge{
+	private Vertex from;
+	private Vertex to;
+	private ArrayList<Vertex> vertices;
+	private Catan catan;
+	private EdgeSkin skin;
+	private Building occupyingBuilding;
+	private boolean isOccupied;
+	
+	/**
+	 * Constructor of edge with two ending points "from" and "to"
+	 * @param from Vertex "from"
+	 * @param to Vertex "to"
+	 * @param catan Catan of island in which edge lies
+	 */
+	@SuppressWarnings("serial")
+	public Edge(Vertex from, Vertex to,Catan catan) {
+		this.from = from;
+		this.to = to;
+		this.catan = catan;
+		vertices = new ArrayList<Vertex>(){{
+			   add(from);
+			   add(to);
+			   }};
+		skin = new EdgeSkin(this);
+	}
+	
+	
+	/**
+	 * Getter of Vertex from
+	 * @return
+	 */
+	public Vertex getVertexFrom() {
+		return this.from;
+	}
+	
+	/**
+	 * Getter for Vertex to
+	 * @return
+	 */
+	public Vertex getVertexTo() {
+		return this.to;
+	}
+
+	/**
+	 * Getter for EdgeSkin
+	 * @return
+	 */
+	public EdgeSkin getSkin() {
+		return this.skin;
+	}
+	
+	
+	/**
+	 * Sets rotation of the skin (view) of the edge
+	 * @param degrees 
+	 */
+	public void setRotation(double degrees) {
+		skin.getShape().setRotate(degrees);
+	}
+	
+	/**
+	 * Getter for occupyingBuilding
+	 * @return
+	 */
+	public Building getOccupyingBuilding() {
+		return occupyingBuilding;
+	}
+	
+	/**
+	 * Setter for OccupyingBuilding
+	 * @param building
+	 */
+	public void setOccupyingBuilding(Building building){
+		this.occupyingBuilding = building;
+	}
+
+	/**
+	 * Bool for Edge occupation
+	 * @return
+	 */
+	public boolean isOccupied() {
+		return isOccupied;
+	}
+
+	/**
+	 * setter for isOccupied
+	 * @param isOccupied
+	 */
+	public void setOccupied(boolean isOccupied) {
+		this.isOccupied = isOccupied;
+		
+	}
+
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+	
+	/**
+	 * get Vertex connected two edges
+	 * @param edge
+	 */
+	public Vertex getVertex(Edge edge) {
+		Vertex from2 = edge.getVertexFrom();
+		Vertex to2 = edge.getVertexTo();
+		
+		if (from.equals(from2) || from.equals(to2) ) return from;
+		if (to.equals(from2) || to.equals(to2) ) return from;
+		else return null;
+	}
+
+	/**
+	 * @return vertices
+	 */
+	public ArrayList<Vertex> getVertices() {
+		return vertices;
+	}
+	
+	
+
+
+}

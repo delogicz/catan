@@ -1,0 +1,58 @@
+package view;
+
+import controller.LogMaster;
+import game.Settings;
+import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import model.Harbour;
+import model.Vertex;
+
+/**
+ * This class is the Skin of the harbours
+ * @author Felixi
+ *
+ */
+public class HarbourSkin extends ImageView{
+
+		private Harbour harbour;
+		private Color color;
+		private Vertex vertex;
+
+		/**
+		 * Constructor
+		 * @param har
+		 * @param ver
+		 * @param islandSkin
+		 */
+		public HarbourSkin(Harbour har, Vertex ver,IslandSkin islandSkin) {
+			super(new Image(HarbourSkin.class.getResourceAsStream("/img/resourcetypes/"+har.getFileName()),42,42,true,true));
+			
+			this.vertex = ver;
+			this.harbour = har;
+			
+			setTranslateX(vertex.getSkin().getShape().getTranslateX()-21);
+			setTranslateY(vertex.getSkin().getShape().getTranslateY()-21);	
+			
+			this.setMouseTransparent(true);
+			
+			HarbourSkin skin = this;
+			
+			Platform.runLater(new Runnable() { 
+				@Override
+				public void run() {
+					islandSkin.getChildren().add(skin);
+				}
+			});
+			try {
+				LogMaster.log("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+				Thread.sleep(Settings.SLEEP_SHORT);
+			} catch (InterruptedException e) {
+				LogMaster.log("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+			}
+			
+		}
+
+}
+

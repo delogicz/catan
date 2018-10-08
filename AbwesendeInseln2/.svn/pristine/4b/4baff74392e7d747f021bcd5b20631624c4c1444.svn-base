@@ -1,0 +1,228 @@
+package bot;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import javafx.application.Platform;
+import model.Edge;
+import model.Player;
+import model.PlayerClient;
+import model.PlayerColor;
+import model.ResourceType;
+import model.Settlement;
+import model.Tile;
+import model.Vertex;
+
+/**
+ * AI for playing catan
+ * @author Daniel Panangian
+ */
+public class Bot extends PlayerClient {
+	
+	
+	private boolean canBuildCity;
+	
+	private int rounds;
+	private ArrayList<Vertex> availableVertices;
+	private ArrayList<Edge> availableEdges;
+	/**
+	 * Constructor
+	 * 
+	 */
+	public Bot(PlayerColor playerColor, int playerId, String name) {
+		super(playerColor, playerId, name);
+		System.out.println("Bot " + name + " added.");
+		availableVertices = new ArrayList<Vertex>();
+		availableEdges = new ArrayList<Edge>();
+		canBuildSettlement = false;
+	}
+	
+	/**
+	 * Updates the information of the player
+	 * @param victoryPoints
+	 * @param name
+	 * @param status
+	 * @param color
+	 * @param resources
+	 */
+	@Override
+	public void update(int victoryPoints, String name, String status, PlayerColor color,
+			ArrayList<ResourceType> resources) {
+		this.victoryPoints = victoryPoints;
+		this.name = name;
+		this.status = status;
+		this.playerColor = color;
+		this.hand.updateHand(resources);;
+		this.resCardsCount = resources.size();
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				playerControl.updateHandView();
+				playerControl.disableAllButtons();
+				switch(status){
+					case "Dorf bauen": buildSettlement(); break;
+					case "Strasse bauen": buildRoad(); break;
+					case "Wuerfeln": rollDice(); break;
+					case "Karten wegen Raeuber abgeben": //TODO break;
+					case "Raeuber versetzen": setRobber();
+						endTurn(); 
+						break;
+					case "Handeln oder Bauen": endTurn(); break;
+				}
+			}
+		});
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+//	/**
+//	 * activates bot if its the currentTurnTaker
+//	 * 
+//	 */
+//	public void activateBot() {
+//		rounds = catan.getRound();
+//		active = false;
+//		if (currentTurnTaker == this){
+//			active = true;
+//		}
+//		while (active){
+//			System.out.println("Bot "+ name +" taking turn" );
+//			doStuff();
+//		}
+//		
+//	}
+
+//	/**
+//	 * Playing scheme for the bot
+//	 * 
+//	 */
+//	private void doStuff() {
+//		if (rounds == 1 || rounds == 2 ){
+//			buildSettlement();
+//			buildRoad();
+//			endTurn();
+//		}
+//		else {
+//			rollDice();
+//			if (relocateRobber == true){
+//				System.out.println("Bot "+ name +" set Robber" );
+//				setRobber();
+//				endTurn();
+//			}
+//			else{
+//			endTurn();
+//			}
+//		}
+//	}
+
+
+	private void rollDice() {
+		catan.getGameManager().getClient().sendRollDice();
+		
+	}
+
+
+	private void setRobber() {
+		int index = new Random().nextInt(catan.getIsland().getHexes().size());
+		Tile newRobberPos = catan.getIsland().getHexes().get(index);
+		
+		ArrayList<Player> players = new ArrayList<Player>();
+		
+		for(Vertex vertex :catan.getIsland().getVertices()){
+			if(vertex.isOccupied()){
+				Player owner = vertex.getOccupyingBuilding().getOwner();
+				if(!players.contains(owner) && owner != catan.getPlayerClient()){
+					players.add(owner);
+				}
+			}
+		}
+		
+		index = new Random().nextInt(players.size());
+		catan.getGameManager().getClient().sendSetRobber(newRobberPos,index); 
+	}
+
+
+	private void endTurn() {
+		active = false;
+		catan.getGameManager().getClient().sendEndTurn();
+	}
+
+
+	private void buildRoad() {
+		System.out.println("Bot "+ name + " try to build a Road" );
+		checkAvailableEdges();
+		Collections.shuffle(availableEdges);
+		Edge space = availableEdges.get(0);
+			
+			space.getCatan().getGameManager().getClient().sendConstructRoad(space);
+			availableEdges.clear();	
+		}
+		
+
+
+	private void buildSettlement() {
+		System.out.println("Bot "+ name + " try to build Settlement" );
+		checkAvailableVertex();
+	
+			Collections.shuffle(availableVertices);
+			Vertex space = availableVertices.get(0);
+			space.getCatan().getGameManager().getClient().sendConstructSettlement(space);
+			
+		}
+		
+
+	/**
+	 * check empty vertices
+	 * 
+	 */
+	private void checkAvailableVertex() {
+		for (Vertex vertex:catan.getIsland().getVertices()){
+			if (!vertex.isOccupied()){
+				availableVertices.add(vertex);
+			}
+		}
+		
+	}
+	/**
+	 * check empty edges
+	 * 
+	 */
+	private void checkAvailableEdges() {
+			int index = catan.getPlayerClient().getSettlements().size() - 1;
+			Settlement lastSettlement = catan.getPlayerClient().getSettlements().get(index);
+			for (Edge edge: lastSettlement.getVertex().getEdges() ){
+				if (!edge.isOccupied()){
+					availableEdges.add(edge);
+				}
+			}
+	}
+	
+	/**
+	 * returns true if a player is a bot
+	 * 
+	 */
+	public boolean isBot(){
+		return true;
+	}
+	/**
+	 * pause robot brain recreating human way of thinking
+	 * 
+	 */
+	private void pause(int seconds){
+		try {
+		    Thread.sleep(1000 * seconds);                
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
+		}
+		
+	}
+
+}

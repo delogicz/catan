@@ -1,0 +1,36 @@
+package model;
+
+import game.Settings;
+
+	
+	public enum DevelopmentCardType {
+		
+		/** Knight Cards */
+		KNIGHT,
+		
+		/** Victory Point Cards */
+		CHAPEL,
+		GREATHALL,
+		LIBRARY,
+		MARKET,
+		UNIVERSITY,
+		
+		/** Progress Cards */
+		MONOPOLY,
+		ROADBUILDING,
+		YEAROFPLENTY;
+		
+		private static int knightCards = Settings.KNIGHT_CARDS;
+		private static int chapelCard = Settings.CHAPEL_CHARD;
+		private static int greathallCard = Settings.GREATHALL_CARD;
+		private static int libraryCard = Settings.LIBRARY_CARD;
+		private static int marketCard = Settings.MARKET_CARD;
+		private static int universityCard = Settings.UNIVERSITY_CARD;
+		private static int monopolyCards = Settings.MONOPOLY_CARDS;
+		private static int roadbuildingCards = Settings.ROADBUILDING_CARDS;
+		private static int yearofplentyCards = Settings.YEAROFPLENTY_CARDS;
+
+		
+
+
+}

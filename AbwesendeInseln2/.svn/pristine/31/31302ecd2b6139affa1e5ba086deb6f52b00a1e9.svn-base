@@ -1,0 +1,35 @@
+package controller;
+
+public class LogMaster {
+	
+	
+	
+	
+	public static void initialize(){
+		
+	}
+	
+	public static void logAI(String msg){
+		
+	}
+	
+	public static void logMod(String msg){
+		
+	}
+	
+	public static void logNet(String msg){
+		
+	}
+	
+	public static void logUI(String msg){
+		
+	}
+	
+	public static void logThr(String msg){
+	
+	}
+	
+	public static void logExc(String msg){
+		
+	}
+}

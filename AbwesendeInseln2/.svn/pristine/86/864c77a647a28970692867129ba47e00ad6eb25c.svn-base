@@ -1,0 +1,87 @@
+package controller;
+
+import game.GameManager;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import model.*;
+import view.GameControlSkin;
+
+public class GameControl {
+	private Catan catan;
+	private GameControlSkin skin;
+	public GameControl(Catan catan){
+		this.catan =catan;
+		skin = new GameControlSkin(this);
+		enableBuildSetButton();
+		enableBuildRoadButton();
+		enableEndTurnButton();
+		
+	}
+	
+	public void updateHand() {
+		skin.getRoad().setTextFill(catan.getCurrentTurnTaker().getPlayerColor().getColor());
+		skin.getCity().setTextFill(catan.getCurrentTurnTaker().getPlayerColor().getColor());
+		skin.getSettlement().setTextFill(catan.getCurrentTurnTaker().getPlayerColor().getColor());
+		skin.getLumber().setTextFill(catan.getCurrentTurnTaker().getPlayerColor().getColor());
+		skin.getBrick().setTextFill(catan.getCurrentTurnTaker().getPlayerColor().getColor());
+		skin.getWool().setTextFill(catan.getCurrentTurnTaker().getPlayerColor().getColor());
+		skin.getGrain().setTextFill(catan.getCurrentTurnTaker().getPlayerColor().getColor());
+		skin.getOre().setTextFill(catan.getCurrentTurnTaker().getPlayerColor().getColor());
+		skin.getRoad().setText("Roads: " + catan.getCurrentTurnTaker().countRoads());
+		skin.getCity().setText("Cities: " + catan.getCurrentTurnTaker().countCity());
+		skin.getSettlement().setText("Settlements: " + catan.getCurrentTurnTaker().countSettlements());
+		skin.getLumber().setText("Lumber: " + catan.getCurrentTurnTaker().getPlayerCards().getLumberCount());
+		skin.getBrick().setText("Brick: " + catan.getCurrentTurnTaker().getPlayerCards().getBrickCount());
+		skin.getWool().setText("Wool: " + catan.getCurrentTurnTaker().getPlayerCards().getWoolCount());
+		skin.getGrain().setText("Grain: " + catan.getCurrentTurnTaker().getPlayerCards().getGrainCount());
+		skin.getOre().setText("Ore: " + catan.getCurrentTurnTaker().getPlayerCards().getOreCount());
+	}
+	public final EventHandler<MouseEvent> buildSettlementHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			
+			catan.getCurrentTurnTaker().setCanBuildSettlement(true);
+			
+		}
+	};
+	public final EventHandler<MouseEvent> buildRoadHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			
+			catan.getCurrentTurnTaker().setCanBuildRoad(true);
+			
+		}
+	};
+	public final EventHandler<MouseEvent> endTurnHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			
+			catan.getCurrentTurnTaker().endingTurn();
+			catan.setCurrentTurnTaker(catan.getPlayers().get(1));
+			updateHand();
+			
+		}
+	};
+	private void enableEndTurnButton() {
+		Button EndTurnButton = skin.getEndTurnButton();
+		EndTurnButton.addEventHandler(MouseEvent.MOUSE_CLICKED, endTurnHandler);
+		
+	}
+	public void enableBuildSetButton() {
+		Button buildSetButton = skin.getBuildSetButton();
+		buildSetButton.addEventHandler(MouseEvent.MOUSE_CLICKED, buildSettlementHandler);
+		
+	}
+	public void enableBuildRoadButton() {
+		Button buildSetButton = skin.getBuildRoadButton();
+		buildSetButton.addEventHandler(MouseEvent.MOUSE_CLICKED, buildRoadHandler);
+		
+	}
+	public GameControlSkin getSkin() {
+		return skin;
+	}
+
+	
+	
+}

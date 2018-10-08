@@ -1,0 +1,30 @@
+package view;
+
+import game.Settings;
+
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import model.Settlement;
+
+/**
+ * View of a road.
+ *
+ */
+public class SettlementSkin extends Circle {
+	
+	public SettlementSkin(Settlement building, IslandSkin islandSkin){
+
+		super(0.1);
+			
+		Color color = building.getOwner().getPlayerColor().getColor();
+		setFill(color);
+		setScaleX(Settings.SCALE);
+		setScaleY(Settings.SCALE);
+		setTranslateX(building.getVertex().getSkin().getShape().getTranslateX());
+		setTranslateY(building.getVertex().getSkin().getShape().getTranslateY());
+		
+		//TODO: if(building instanceof City)
+		
+		islandSkin.getChildren().add(this);
+	}
+}

@@ -1,0 +1,26 @@
+package jsonstructures;
+
+/**
+ * This class is the wrapper of the SpielerZustandsDaten class
+ * @author Felixi
+ *
+ */
+public class SpielerZustandsDatenDaten {
+	private SpielerZustandsDaten Spieler;
+
+	/**
+	 * Creates a SpielerZustandsDaten object
+	 * @param spieler		SpielerZustandsDaten
+	 */
+	public SpielerZustandsDatenDaten(SpielerZustandsDaten spieler) {
+		Spieler = spieler;
+	}
+
+	public SpielerZustandsDaten getSpieler() {
+		return Spieler;
+	}
+
+	public void setSpieler(SpielerZustandsDaten spieler) {
+		Spieler = spieler;
+	}
+}

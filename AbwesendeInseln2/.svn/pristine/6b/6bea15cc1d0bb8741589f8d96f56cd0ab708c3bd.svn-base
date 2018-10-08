@@ -1,0 +1,1320 @@
+Jan 12, 2018 7:25:01 AM controller.LogMaster logNet
+NETWORK: [Net]Created Client on port 5506 [Thread : 12]
+Jan 12, 2018 7:25:01 AM controller.LogMaster logThr
+THREAD: [Thr]Started new Thread ClientQueueHandler with ID 19 [Thread : 12]
+Jan 12, 2018 7:25:01 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:01 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Hallo":{"Version":"AbwesendeInselServer 0.1","Protokoll":"0.1"}} [Thread : 18]
+Jan 12, 2018 7:25:01 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:01 AM controller.LogMaster logNet
+NETWORK: [Net]Client 0 received: {"Hallo":{"Version":"AbwesendeInselServer 0.1","Protokoll":"0.1"}} [Thread : 19]
+Jan 12, 2018 7:25:01 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Hallo":{"Version":"JavaFXClient 0.3 (AbwesendeInseln)"}} [Thread : 19]
+Jan 12, 2018 7:25:01 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:01 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Willkommen":{"id":45}} [Thread : 18]
+Jan 12, 2018 7:25:02 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:02 AM controller.LogMaster logNet
+NETWORK: [Net]Client 0 received: {"Willkommen":{"id":45}} [Thread : 19]
+Jan 12, 2018 7:25:02 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:02 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 12]
+Jan 12, 2018 7:25:06 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Spieler":{"Name":"Hans","Farbe":"Orange"}} [Thread : 12]
+Jan 12, 2018 7:25:06 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:06 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:06 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:07 AM controller.LogMaster logMod
+MODEL: [Mod]Add new player [Thread : 19]
+Jan 12, 2018 7:25:07 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:07 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:07 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:07 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:07 AM controller.LogMaster logMod
+MODEL: [Mod]Add new player [Thread : 19]
+Jan 12, 2018 7:25:07 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logMod
+MODEL: [Mod]Add new player [Thread : 19]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logMod
+MODEL: [Mod]Player already exists [Thread : 19]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Spiel starten","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logMod
+MODEL: [Mod]Player already exists [Thread : 19]
+Jan 12, 2018 7:25:17 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:23 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Wartet auf Spielbeginn","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:23 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:23 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Wartet auf Spielbeginn","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:23 AM controller.LogMaster logMod
+MODEL: [Mod]Player already exists [Thread : 19]
+Jan 12, 2018 7:25:23 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:26 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 hat Spiel starten gedrückt [Thread : 12]
+Jan 12, 2018 7:25:26 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Spiel starten":{}} [Thread : 12]
+Jan 12, 2018 7:25:26 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Wartet auf Spielbeginn","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:26 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:26 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Wartet auf Spielbeginn","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:26 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:26 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:37 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Wartet auf Spielbeginn","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:37 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:37 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Wartet auf Spielbeginn","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:37 AM controller.LogMaster logMod
+MODEL: [Mod]Player already exists [Thread : 19]
+Jan 12, 2018 7:25:37 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Spiel gestartet":{"Karte":{"Felder":[{"Ort":"A","Typ":"Wueste","Zahl":7},{"Ort":"B","Typ":"Ackerland","Zahl":5},{"Ort":"C","Typ":"Ackerland","Zahl":10},{"Ort":"L","Typ":"Gebirge","Zahl":6},{"Ort":"M","Typ":"Ackerland","Zahl":10},{"Ort":"N","Typ":"Wald","Zahl":4},{"Ort":"D","Typ":"Weideland","Zahl":8},{"Ort":"K","Typ":"Gebirge","Zahl":9},{"Ort":"R","Typ":"Wald","Zahl":9},{"Ort":"S","Typ":"Wald","Zahl":11},{"Ort":"O","Typ":"Wald","Zahl":4},{"Ort":"E","Typ":"Huegelland","Zahl":3},{"Ort":"J","Typ":"Weideland","Zahl":8},{"Ort":"Q","Typ":"Huegelland","Zahl":12},{"Ort":"P","Typ":"Huegelland","Zahl":6},{"Ort":"F","Typ":"Weideland","Zahl":3},{"Ort":"I","Typ":"Gebirge","Zahl":5},{"Ort":"H","Typ":"Weideland","Zahl":11},{"Ort":"G","Typ":"Ackerland","Zahl":2},{"Ort":"a","Typ":"Meer","Zahl":0},{"Ort":"b","Typ":"Meer","Zahl":0},{"Ort":"c","Typ":"Meer","Zahl":0},{"Ort":"d","Typ":"Meer","Zahl":0},{"Ort":"e","Typ":"Meer","Zahl":0},{"Ort":"f","Typ":"Meer","Zahl":0},{"Ort":"g","Typ":"Meer","Zahl":0},{"Ort":"h","Typ":"Meer","Zahl":0},{"Ort":"i","Typ":"Meer","Zahl":0},{"Ort":"j","Typ":"Meer","Zahl":0},{"Ort":"k","Typ":"Meer","Zahl":0},{"Ort":"l","Typ":"Meer","Zahl":0},{"Ort":"m","Typ":"Meer","Zahl":0},{"Ort":"n","Typ":"Meer","Zahl":0},{"Ort":"o","Typ":"Meer","Zahl":0},{"Ort":"p","Typ":"Meer","Zahl":0},{"Ort":"q","Typ":"Meer","Zahl":0},{"Ort":"r","Typ":"Meer","Zahl":0}],"Gebaeude":[],"Haefen":[{"Ort":"bA","Typ":"Hafen"},{"Ort":"rG","Typ":"Erz Hafen"},{"Ort":"lF","Typ":"Holz Hafen"},{"Ort":"kK","Typ":"Getreide Hafen"},{"Ort":"pH","Typ":"Hafen"},{"Ort":"gl","Typ":"Wolle Hafen"},{"Ort":"mI","Typ":"Lehm Hafen"},{"Ort":"dC","Typ":"Hafen"},{"Ort":"hE","Typ":"Hafen"}],"Raeuber":"A"}}} [Thread : 18]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Spiel gestartet":{"Karte":{"Felder":[{"Ort":"A","Typ":"Wueste","Zahl":7},{"Ort":"B","Typ":"Ackerland","Zahl":5},{"Ort":"C","Typ":"Ackerland","Zahl":10},{"Ort":"L","Typ":"Gebirge","Zahl":6},{"Ort":"M","Typ":"Ackerland","Zahl":10},{"Ort":"N","Typ":"Wald","Zahl":4},{"Ort":"D","Typ":"Weideland","Zahl":8},{"Ort":"K","Typ":"Gebirge","Zahl":9},{"Ort":"R","Typ":"Wald","Zahl":9},{"Ort":"S","Typ":"Wald","Zahl":11},{"Ort":"O","Typ":"Wald","Zahl":4},{"Ort":"E","Typ":"Huegelland","Zahl":3},{"Ort":"J","Typ":"Weideland","Zahl":8},{"Ort":"Q","Typ":"Huegelland","Zahl":12},{"Ort":"P","Typ":"Huegelland","Zahl":6},{"Ort":"F","Typ":"Weideland","Zahl":3},{"Ort":"I","Typ":"Gebirge","Zahl":5},{"Ort":"H","Typ":"Weideland","Zahl":11},{"Ort":"G","Typ":"Ackerland","Zahl":2},{"Ort":"a","Typ":"Meer","Zahl":0},{"Ort":"b","Typ":"Meer","Zahl":0},{"Ort":"c","Typ":"Meer","Zahl":0},{"Ort":"d","Typ":"Meer","Zahl":0},{"Ort":"e","Typ":"Meer","Zahl":0},{"Ort":"f","Typ":"Meer","Zahl":0},{"Ort":"g","Typ":"Meer","Zahl":0},{"Ort":"h","Typ":"Meer","Zahl":0},{"Ort":"i","Typ":"Meer","Zahl":0},{"Ort":"j","Typ":"Meer","Zahl":0},{"Ort":"k","Typ":"Meer","Zahl":0},{"Ort":"l","Typ":"Meer","Zahl":0},{"Ort":"m","Typ":"Meer","Zahl":0},{"Ort":"n","Typ":"Meer","Zahl":0},{"Ort":"o","Typ":"Meer","Zahl":0},{"Ort":"p","Typ":"Meer","Zahl":0},{"Ort":"q","Typ":"Meer","Zahl":0},{"Ort":"r","Typ":"Meer","Zahl":0}],"Gebaeude":[],"Haefen":[{"Ort":"bA","Typ":"Hafen"},{"Ort":"rG","Typ":"Erz Hafen"},{"Ort":"lF","Typ":"Holz Hafen"},{"Ort":"kK","Typ":"Getreide Hafen"},{"Ort":"pH","Typ":"Hafen"},{"Ort":"gl","Typ":"Wolle Hafen"},{"Ort":"mI","Typ":"Lehm Hafen"},{"Ort":"dC","Typ":"Hafen"},{"Ort":"hE","Typ":"Hafen"}],"Raeuber":"A"}}} [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:38 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 12]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Wuerfeln","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Wuerfeln","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 12]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 12]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Wuerfelwurf":{"Spieler":88,"Wurf":[2,2]}} [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Wuerfelwurf":{"Spieler":88,"Wurf":[2,2]}} [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Wuerfeln","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Wuerfeln","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Fehler":{"Meldung":"Dice to determine in which order you\u0027re going to play."}} [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Fehler":{"Meldung":"Dice to determine in which order you\u0027re going to play."}} [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:25:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Wuerfeln":{}} [Thread : 12]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Roll Dice] [Thread : 12]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Serverantwort":"OK"} [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Wuerfelwurf":{"Spieler":45,"Wurf":[3,5]}} [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Serverantwort":"OK"} [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Wuerfelwurf":{"Spieler":45,"Wurf":[3,5]}} [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Wuerfeln","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Wuerfeln","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:51 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Wuerfelwurf":{"Spieler":18,"Wurf":[3,3]}} [Thread : 18]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Wuerfelwurf":{"Spieler":18,"Wurf":[3,3]}} [Thread : 19]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Dorf bauen","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Dorf bauen","Siegpunkte":0,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:25:56 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:03 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Build Settlement] [Thread : 12]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Bauen":{"Typ":"Dorf","Ort":"RJQ"}} [Thread : 12]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Serverantwort":"OK"} [Thread : 18]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Serverantwort":"OK"} [Thread : 19]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":45,"Typ":"Dorf","Ort":"RJQ"}}} [Thread : 18]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":45,"Typ":"Dorf","Ort":"RJQ"}}} [Thread : 19]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logUI
+USER_INPUT: [UI]Siedlung auf IslandSkin [Thread : 12]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Strasse bauen","Siegpunkte":1,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Strasse bauen","Siegpunkte":1,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:06 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:07 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Build Road] [Thread : 12]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Bauen":{"Typ":"Strasse","Ort":"JQ"}} [Thread : 12]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Serverantwort":"OK"} [Thread : 18]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Serverantwort":"OK"} [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":45,"Typ":"Strasse","Ort":"JQ"}}} [Thread : 18]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":45,"Typ":"Strasse","Ort":"JQ"}}} [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:09 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:09 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:09 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:09 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: CONNECTED ROADS : 001
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":1,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":1,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Dorf bauen","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Dorf bauen","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":18,"Typ":"Dorf","Ort":"SOP"}}} [Thread : 18]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":18,"Typ":"Dorf","Ort":"SOP"}}} [Thread : 19]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logUI
+USER_INPUT: [UI]Siedlung auf IslandSkin [Thread : 12]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Strasse bauen","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Strasse bauen","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:16 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":18,"Typ":"Strasse","Ort":"OP"}}} [Thread : 18]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":18,"Typ":"Strasse","Ort":"OP"}}} [Thread : 19]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:19 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:19 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:19 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:19 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: CONNECTED ROADS : 001
+Jan 12, 2018 7:26:19 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Dorf bauen","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Dorf bauen","Siegpunkte":0,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:19 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":88,"Typ":"Dorf","Ort":"MNS"}}} [Thread : 18]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":88,"Typ":"Dorf","Ort":"MNS"}}} [Thread : 19]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logUI
+USER_INPUT: [UI]Siedlung auf IslandSkin [Thread : 12]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Strasse bauen","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Strasse bauen","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:24 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":88,"Typ":"Strasse","Ort":"NS"}}} [Thread : 18]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":88,"Typ":"Strasse","Ort":"NS"}}} [Thread : 19]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:27 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:27 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:27 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:27 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: CONNECTED ROADS : 001
+Jan 12, 2018 7:26:27 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Dorf bauen","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Dorf bauen","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:27 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":88,"Typ":"Dorf","Ort":"NDO"}}} [Thread : 18]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":88,"Typ":"Dorf","Ort":"NDO"}}} [Thread : 19]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logUI
+USER_INPUT: [UI]Siedlung auf IslandSkin [Thread : 12]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Strasse bauen","Siegpunkte":2,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Strasse bauen","Siegpunkte":2,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:30 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":88,"Typ":"Strasse","Ort":"NO"}}} [Thread : 18]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":88,"Typ":"Strasse","Ort":"NO"}}} [Thread : 19]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: ein null andere deins 2
+Jan 12, 2018 7:26:33 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:33 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:33 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: ein null andere deins 2
+Jan 12, 2018 7:26:33 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:33 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:33 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: CONNECTED ROADS : 101
+Jan 12, 2018 7:26:33 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Dorf bauen","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Dorf bauen","Siegpunkte":1,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:33 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":18,"Typ":"Dorf","Ort":"PFG"}}} [Thread : 18]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":18,"Typ":"Dorf","Ort":"PFG"}}} [Thread : 19]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logUI
+USER_INPUT: [UI]Siedlung auf IslandSkin [Thread : 12]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Strasse bauen","Siegpunkte":2,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Strasse bauen","Siegpunkte":2,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:39 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":18,"Typ":"Strasse","Ort":"PF"}}} [Thread : 18]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":18,"Typ":"Strasse","Ort":"PF"}}} [Thread : 19]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: ein null andere deins 1
+Jan 12, 2018 7:26:41 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:41 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:41 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: ein null andere deins 1
+Jan 12, 2018 7:26:41 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:41 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:41 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: CONNECTED ROADS : 101
+Jan 12, 2018 7:26:41 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Unbekannt":0},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Dorf bauen","Siegpunkte":1,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Dorf bauen","Siegpunkte":1,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:41 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:44 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Build Settlement] [Thread : 12]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Bauen":{"Typ":"Dorf","Ort":"QIH"}} [Thread : 12]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Serverantwort":"OK"} [Thread : 18]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Serverantwort":"OK"} [Thread : 19]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":45,"Typ":"Dorf","Ort":"QIH"}}} [Thread : 18]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":45,"Typ":"Dorf","Ort":"QIH"}}} [Thread : 19]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logUI
+USER_INPUT: [UI]Siedlung auf IslandSkin [Thread : 12]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Strasse bauen","Siegpunkte":2,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Strasse bauen","Siegpunkte":2,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:47 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Build Road] [Thread : 12]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Bauen":{"Typ":"Strasse","Ort":"QI"}} [Thread : 12]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Serverantwort":"OK"} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Serverantwort":"OK"} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":45,"Typ":"Strasse","Ort":"QI"}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Bauvorgang":{"Gebaeude":{"Eigentuemer":45,"Typ":"Strasse","Ort":"QI"}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: ein null andere deins 1
+Jan 12, 2018 7:26:48 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:48 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:48 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: ein null andere deins 1
+Jan 12, 2018 7:26:48 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:48 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: end road
+Jan 12, 2018 7:26:48 AM controller.LogMaster logExc
+EXCEPTION: [Exc]Unknown Log: CONNECTED ROADS : 101
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":1,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":1,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":1}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":1,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":1,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":1,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":1,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":1}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":1,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":1,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":1,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":1,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Holz":0,"Lehm":1,"Wolle":1,"Getreide":0,"Erz":1},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Holz":0,"Lehm":1,"Wolle":1,"Getreide":0,"Erz":1},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:48 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Wuerfeln":{}} [Thread : 12]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Roll Dice] [Thread : 12]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Serverantwort":"OK"} [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Serverantwort":"OK"} [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Wuerfelwurf":{"Spieler":45,"Wurf":[3,5]}} [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Wuerfelwurf":{"Spieler":45,"Wurf":[3,5]}} [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":0,"Lehm":1,"Wolle":2,"Getreide":0,"Erz":1},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":0,"Lehm":1,"Wolle":2,"Getreide":0,"Erz":1},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:26:52 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:26:56 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Entwicklungskarte kaufen":{}} [Thread : 12]
+Jan 12, 2018 7:26:56 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Buy Development Card] [Thread : 12]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Chatnachricht senden":{"Nachricht":"greedisgood"}} [Thread : 12]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Chatnachricht":{"Absender":45,"Nachricht":"greedisgood"}} [Thread : 18]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Chatnachricht":{"Absender":45,"Nachricht":"greedisgood"}} [Thread : 19]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":5,"Lehm":5,"Wolle":5,"Getreide":5,"Erz":5}}} [Thread : 18]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":5,"Lehm":5,"Wolle":5,"Getreide":5,"Erz":5}}} [Thread : 19]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:27:09 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Entwicklungskarte kaufen":{}} [Thread : 12]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Buy Development Card] [Thread : 12]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Siegpunkt"}} [Thread : 18]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Siegpunkt"}} [Thread : 19]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 18]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 19]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":5,"Lehm":6,"Wolle":6,"Getreide":4,"Erz":5},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":5,"Lehm":6,"Wolle":6,"Getreide":4,"Erz":5},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:27:12 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:18 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Show Development Cards] [Thread : 12]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Entwicklungskarte kaufen":{}} [Thread : 12]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Buy Development Card] [Thread : 12]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Ritter"}} [Thread : 18]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Ritter"}} [Thread : 19]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 18]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 19]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":5,"Lehm":6,"Wolle":5,"Getreide":3,"Erz":4},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":5,"Lehm":6,"Wolle":5,"Getreide":3,"Erz":4},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:27:42 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Entwicklungskarte kaufen":{}} [Thread : 12]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Buy Development Card] [Thread : 12]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Erfindung"}} [Thread : 18]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Erfindung"}} [Thread : 19]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 18]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 19]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":5,"Lehm":6,"Wolle":4,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":5,"Lehm":6,"Wolle":4,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:27:46 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:49 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Show Development Cards] [Thread : 12]
+Jan 12, 2018 7:27:51 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Show Development Cards] [Thread : 12]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Zug beenden":{}} [Thread : 12]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [End Turn] [Thread : 12]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Serverantwort":"OK"} [Thread : 18]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Serverantwort":"OK"} [Thread : 19]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Holz":5,"Lehm":6,"Wolle":4,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 18]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Holz":5,"Lehm":6,"Wolle":4,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":0,"Strassenbau":0,"Monopol":0,"Erfindung":0,"Siegpunkt":0}}}} [Thread : 19]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Unbekannt":3},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Unbekannt":3},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:27:55 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Wuerfelwurf":{"Spieler":18,"Wurf":[4,5]}} [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Wuerfelwurf":{"Spieler":18,"Wurf":[4,5]}} [Thread : 19]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":1,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":1,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Unbekannt":3},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Unbekannt":3},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:28:00 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:02 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Unbekannt":3},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:28:02 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:02 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Unbekannt":3},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:28:02 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:02 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Unbekannt":4},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:28:02 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:02 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Unbekannt":4},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:28:02 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Wuerfelwurf":{"Spieler":88,"Wurf":[5,2]}} [Thread : 18]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Wuerfelwurf":{"Spieler":88,"Wurf":[5,2]}} [Thread : 19]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Karten wegen Raeuber abgeben","Siegpunkte":2,"Rohstoffe":{"Holz":6,"Lehm":6,"Wolle":4,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 18]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Karten wegen Raeuber abgeben","Siegpunkte":2,"Rohstoffe":{"Holz":6,"Lehm":6,"Wolle":4,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 19]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 12]
+Jan 12, 2018 7:28:05 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Wuerfelwurf":{"Spieler":88,"Wurf":[4,5]}} [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Wuerfelwurf":{"Spieler":88,"Wurf":[4,5]}} [Thread : 19]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":1,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":1,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Unbekannt":4},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Unbekannt":4},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:28:08 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:10 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Unbekannt":4},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:28:10 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:10 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":88,"Farbe":"Rot","Name":"Lena","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Unbekannt":4},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:28:10 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:10 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Holz":7,"Lehm":6,"Wolle":4,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 18]
+Jan 12, 2018 7:28:10 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:28:10 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Holz":7,"Lehm":6,"Wolle":4,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 19]
+Jan 12, 2018 7:28:10 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:28:10 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:28:31 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Karten abgeben":{"Holz":4,"Lehm":6,"Wolle":0,"Getreide":0,"Erz":0}} [Thread : 12]
+Jan 12, 2018 7:28:31 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Ok] to send his cards he has to give up [Thread : 12]
+Jan 12, 2018 7:28:32 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Karten abgeben":{"Holz":4,"Lehm":6,"Wolle":0,"Getreide":0,"Erz":0}} [Thread : 12]
+Jan 12, 2018 7:28:32 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Ok] to send his cards he has to give up [Thread : 12]
+Jan 12, 2018 7:28:57 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Karten abgeben":{"Holz":3,"Lehm":3,"Wolle":4,"Getreide":0,"Erz":0}} [Thread : 12]
+Jan 12, 2018 7:28:57 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Ok] to send his cards he has to give up [Thread : 12]
+Jan 12, 2018 7:29:07 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Karten abgeben":{"Holz":3,"Lehm":3,"Wolle":2,"Getreide":1,"Erz":1}} [Thread : 12]
+Jan 12, 2018 7:29:07 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Ok] to send his cards he has to give up [Thread : 12]
+Jan 12, 2018 7:29:08 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Karten abgeben":{"Holz":3,"Lehm":3,"Wolle":2,"Getreide":1,"Erz":1}} [Thread : 12]
+Jan 12, 2018 7:29:08 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Ok] to send his cards he has to give up [Thread : 12]
+Jan 12, 2018 7:29:27 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Show Development Cards] [Thread : 12]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Wuerfeln":{}} [Thread : 12]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Roll Dice] [Thread : 12]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Serverantwort":"OK"} [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Serverantwort":"OK"} [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Wuerfelwurf":{"Spieler":45,"Wurf":[6,2]}} [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Wuerfelwurf":{"Spieler":45,"Wurf":[6,2]}} [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":18,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":0,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":88,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":0,"Erz":0}}} [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":7,"Lehm":6,"Wolle":5,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":7,"Lehm":6,"Wolle":5,"Getreide":2,"Erz":3},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:29:29 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:31 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Show Development Cards] [Thread : 12]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Entwicklungskarte kaufen":{}} [Thread : 12]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Buy Development Card] [Thread : 12]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Ritter"}} [Thread : 18]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Ritter"}} [Thread : 19]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 18]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 19]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":7,"Lehm":6,"Wolle":4,"Getreide":1,"Erz":2},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 18]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":7,"Lehm":6,"Wolle":4,"Getreide":1,"Erz":2},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 19]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:29:35 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Chatnachricht senden":{"Nachricht":"greedisgood"}} [Thread : 12]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Chatnachricht":{"Absender":45,"Nachricht":"greedisgood"}} [Thread : 18]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Chatnachricht":{"Absender":45,"Nachricht":"greedisgood"}} [Thread : 19]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":5,"Lehm":5,"Wolle":5,"Getreide":5,"Erz":5}}} [Thread : 18]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Ertrag":{"Spieler":45,"Rohstoffe":{"Holz":5,"Lehm":5,"Wolle":5,"Getreide":5,"Erz":5}}} [Thread : 19]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:29:43 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Entwicklungskarte kaufen":{}} [Thread : 12]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Buy Development Card] [Thread : 12]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Strassenbaukarte"}} [Thread : 18]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Entwicklungskarte gekauft":{"Spieler":45,"Entwicklungskarte":"Strassenbaukarte"}} [Thread : 19]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 18]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Kosten":{"Spieler":45,"Rohstoffe":{"Holz":0,"Lehm":0,"Wolle":1,"Getreide":1,"Erz":1}}} [Thread : 19]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 20ms [Thread : 19]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":12,"Lehm":11,"Wolle":8,"Getreide":5,"Erz":6},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 18]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Handeln oder Bauen","Siegpunkte":2,"Rohstoffe":{"Holz":12,"Lehm":11,"Wolle":8,"Getreide":5,"Erz":6},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 19]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:29:45 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:50 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Show Development Cards] [Thread : 12]
+Jan 12, 2018 7:29:52 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Show Development Cards] [Thread : 12]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logNet
+NETWORK: [Net]Client sends: {"Zug beenden":{}} [Thread : 12]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [End Turn] [Thread : 12]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Serverantwort":"OK"} [Thread : 18]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Serverantwort":"OK"} [Thread : 19]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Holz":12,"Lehm":11,"Wolle":8,"Getreide":5,"Erz":6},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 18]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":45,"Farbe":"Orange","Name":"Hans","Status":"Warten","Siegpunkte":2,"Rohstoffe":{"Holz":12,"Lehm":11,"Wolle":8,"Getreide":5,"Erz":6},"Rittermacht":0,"Entwicklungskarten":{"Ritter":1,"Strassenbau":0,"Monopol":0,"Erfindung":1,"Siegpunkt":1}}}} [Thread : 19]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logThr
+THREAD: [Thr]Thread sleeps for 10ms [Thread : 19]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logNet
+NETWORK: [Net]Added to Client Queue: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Unbekannt":3},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 18]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logThr
+THREAD: [Thr]Waking up Thread: 19 [Thread : 18]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logNet
+NETWORK: [Net]Client 45 received: {"Statusupdate":{"Spieler":{"id":18,"Farbe":"Weiss","Name":"Beate","Status":"Wuerfeln","Siegpunkte":2,"Rohstoffe":{"Unbekannt":3},"Rittermacht":0,"Entwicklungskarten":{"Unbekannt":0}}}} [Thread : 19]
+Jan 12, 2018 7:29:54 AM controller.LogMaster logThr
+THREAD: [Thr]Thread waits [Thread : 19]
+Jan 12, 2018 7:29:56 AM controller.LogMaster logUI
+USER_INPUT: [UI]Player: 45 pressed [Show Development Cards] [Thread : 12]

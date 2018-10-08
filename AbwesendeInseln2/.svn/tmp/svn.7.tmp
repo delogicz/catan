@@ -1,0 +1,35 @@
+package model;
+
+
+import view.EdgeSkin;
+
+public class Edge {
+	private Vertex a;
+	private Vertex b;
+	private Road road;
+	
+	private EdgeSkin skin;
+
+	
+	public Edge(Vertex from, Vertex to) {
+		this.a = from;
+		this.b = to;
+		skin = new EdgeSkin(this);
+	}
+	
+	public Vertex getVertexFrom() {
+		return a;
+	}
+
+	public Vertex getVertexTo() {
+		return b;
+	}
+
+	public EdgeSkin getSkin() {
+		return skin;
+	}
+	
+	public void setRotation(double degrees) {
+		getSkin().getShape().setRotate(degrees);
+	}
+}

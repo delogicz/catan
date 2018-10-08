@@ -1,0 +1,68 @@
+package model;
+
+import controller.LogMaster;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+/**
+ * Determines all different types of DevelopmentCards
+ * @author Lena Sonnleitner, Samantha Meindl, Stefanie Kloss
+ */
+public enum DevelopmentCardType {
+	
+	/** Knight Cards */
+	KNIGHT("knight", false),
+	
+	/** Victory Point Cards */
+	VICTORYPOINT("victorypoint", true),
+	
+	/** Progress Cards */
+	MONOPOLY("monopoly", false),
+	ROADBUILDING("roadbuilding", false),
+	YEAROFPLENTY("yearofplenty", false);
+	
+	private ImageView coloredSkin;
+	private ImageView bwSkin;
+	private final boolean VICTORY_POINT;
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param skinFileName name of the Development Card
+	 * @param victoryPoint Victory Point
+	 */
+	private DevelopmentCardType(String skinFileName, boolean victoryPoint){
+		final String PATH = "/img/devcards/";
+		VICTORY_POINT = victoryPoint;
+		try{
+			coloredSkin = new ImageView(new Image(DevelopmentCardType.class.getResourceAsStream(PATH + skinFileName+".jpg"),250,250,true,true));
+			bwSkin = new ImageView(new Image(DevelopmentCardType.class.getResourceAsStream(PATH +skinFileName+"1.jpg"),250,250,true,true));
+		}catch(Exception e){
+			LogMaster.logExc("[Exc]Problem loading skin of DevelopmentCardType " + e.getStackTrace());
+		}
+	}
+	
+	/**
+	 * Gets the colored Skin of the DevelopmentCardType
+	 * @return the skin
+	 */
+	public ImageView getColoredSkin() {
+		return coloredSkin;
+	}
+	
+	/**
+	 * Gets the black and white Skin of the DevelopmentCardType
+	 * @return the skin
+	 */
+	public ImageView getBWSkin() {
+		return bwSkin;
+	}
+	
+	/**
+	 * @return true if DevelopmentCardType is a VictoryPoint-Card
+	 */
+	public boolean isVictoryPoint() {
+		return VICTORY_POINT;
+	}
+
+}

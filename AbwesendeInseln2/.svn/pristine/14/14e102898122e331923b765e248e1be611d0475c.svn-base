@@ -1,0 +1,244 @@
+package view;
+
+
+import java.net.URISyntaxException;
+
+import game.GameManager;
+import game.Settings;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
+/**
+ * 
+ * @author Lena Sonnleitner, Stefanie Kloss
+ *
+ */
+public class TradeSkin extends StackPane {
+	
+	private GridPane gridPane;
+	private GameManager gamemanager;
+	private Stage tradeStage;
+	
+	private TextField lumberOffer, brickOffer, woolOffer, grainOffer, oreOffer;
+	private TextField lumberRequest, brickRequest, woolRequest, grainRequest, oreRequest;
+	private Button buttonOK, buttonCancel;
+	
+	/**
+	 * Constructor
+	 * @param gm
+	 */
+	public TradeSkin(GameManager gm) {
+		super();
+		
+		this.gridPane = new GridPane();
+		this.gamemanager = gm;
+		
+		String path = "";
+		try {
+			path = SetUpSkin.class.getResource("/img/trade_background.jpg" ).toURI().toString();
+		} catch (URISyntaxException e) {
+			System.out.println(e.getMessage() + " Couldn't find image of TradeSkin.");
+		}
+		Image image = new Image(path, 650, 301, false, false);
+		ImageView backgroundTrade = new ImageView(image);
+		getChildren().add(backgroundTrade);
+
+		addElements();
+		addStage();
+	}
+	
+	/**
+	 * Creates the trade stage
+	 */
+	private void addStage() {
+		Scene scene = new Scene(this, 650, 301);
+		
+
+		Stage stage = new Stage();
+		stage.setTitle("Internal Trade");
+		stage.setResizable(false);
+		stage.initOwner(gamemanager.getApp().getStage());
+		stage.setScene(scene);
+		this.tradeStage = stage;
+		stage.show();
+	}
+	
+	/**
+	 * Adds Buttons and TextFields
+	 */
+	private void addElements() {
+		this.buttonOK = new Button();
+		buttonOK.setText("OK");
+		buttonOK.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		this.buttonCancel = new Button();
+		buttonCancel.setText("Cancel");
+		buttonCancel.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		
+		this.lumberOffer = new TextField();
+		adjustTextfield(lumberOffer, "Offer");
+		
+		this.brickOffer = new TextField();
+		adjustTextfield(brickOffer, "Offer");
+		
+		this.woolOffer = new TextField();
+		adjustTextfield(woolOffer, "Offer");
+		
+		this.grainOffer = new TextField();
+		adjustTextfield(grainOffer, "Offer");
+		
+		this.oreOffer = new TextField();
+		adjustTextfield(oreOffer, "Offer");
+		
+		this.lumberRequest = new TextField();
+		adjustTextfield(lumberRequest, "Request");
+		
+		this.brickRequest = new TextField();
+		adjustTextfield(brickRequest, "Request");
+		
+		this.woolRequest = new TextField();
+		adjustTextfield(woolRequest, "Request");
+		
+		this.grainRequest = new TextField();
+		adjustTextfield(grainRequest, "Request");
+		
+		this.oreRequest = new TextField();
+		adjustTextfield(oreRequest, "Request");
+		
+		gridPane.add(lumberOffer, 0,0);
+		gridPane.add(brickOffer, 1,0);
+		gridPane.add(woolOffer, 2,0);
+		gridPane.add(grainOffer, 3,0);
+		gridPane.add(oreOffer, 4,0);
+		gridPane.add(lumberRequest, 0,1);
+		gridPane.add(brickRequest, 1,1);
+		gridPane.add(woolRequest, 2,1);
+		gridPane.add(grainRequest, 3,1);
+		gridPane.add(oreRequest, 4,1);
+	
+		gridPane.add(buttonCancel, 3,2);
+		gridPane.add(buttonOK, 4,2);
+		
+		gridPane.setHgap(50);
+		gridPane.setVgap(10);
+		
+		this.getChildren().add(gridPane);
+		
+		StackPane.setMargin(gridPane, new Insets(160,30,10,45));
+
+		GridPane.setHalignment(buttonCancel, HPos.CENTER);
+		GridPane.setHalignment(buttonOK, HPos.CENTER);
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	private void adjustTextfield(TextField textfield, String text){
+		textfield.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		textfield.setPrefWidth(80);
+		textfield.setPromptText(text);
+		GridPane.setHalignment(textfield, HPos.CENTER);
+	}
+
+
+	/**
+	 * @return the tradeStage
+	 */
+	public Stage getTradeStage() {
+		return tradeStage;
+	}
+
+	/**
+	 * @return the lumberCount
+	 */
+	public TextField getLumberOffer() {
+		return lumberOffer;
+	}
+
+	/**
+	 * @return the woolCount
+	 */
+	public TextField getWoolOffer() {
+		return woolOffer;
+	}
+
+	/**
+	 * @return the grainOffer
+	 */
+	public TextField getGrainOffer() {
+		return grainOffer;
+	}
+	
+	/**
+	 * @return the oreCount
+	 */
+	public TextField getOreOffer() {
+		return oreOffer;
+	}
+
+	/**
+	 * @return the brickOffer
+	 */
+	public TextField getBrickOffer() {
+		return brickOffer;
+	}
+
+	/**
+	 * @return the brickRequest
+	 */
+	public TextField getBrickRequest() {
+		return brickRequest;
+	}
+
+	/**
+	 * @return the lumberRequest
+	 */
+	public TextField getLumberRequest() {
+		return lumberRequest;
+	}
+
+	/**
+	 * @return the woolRequest
+	 */
+	public TextField getWoolRequest() {
+		return woolRequest;
+	}
+
+	/**
+	 * @return the grainRequest
+	 */
+	public TextField getGrainRequest() {
+		return grainRequest;
+	}
+
+	/**
+	 * @return the oreRequest
+	 */
+	public TextField getOreRequest() {
+		return oreRequest;
+	}
+
+	/**
+	 * @return the buttonOK
+	 */
+	public Button getButtonOK() {
+		return buttonOK;
+	}
+
+	/**
+	 * @return the buttonCancel
+	 */
+	public Button getButtonCancel() {
+		return buttonCancel;
+	}
+}

@@ -1,0 +1,18 @@
+package jsonstructures;
+
+/**
+ * This class is send by the server to all clients when someone build a new building
+ * @author Felixi
+ */
+
+public class BauvorgangNachricht {
+	private GebaeudeDatenDaten Bauvorgang;
+
+	/**
+	 * Initializes GebaeudeDatenDaten object
+	 * @param bauvorgang
+	 */
+	public BauvorgangNachricht(GebaeudeDatenDaten bauvorgang) {
+		Bauvorgang = bauvorgang;
+	}
+}

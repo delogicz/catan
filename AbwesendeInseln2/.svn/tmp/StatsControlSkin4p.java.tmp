@@ -1,0 +1,71 @@
+package view;
+
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+
+import game.Settings;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import model.Player;
+import model.PlayerClient;
+
+/**
+ * Creates 4 playerBoxes if you play as 4 people
+ * @author Felixi
+ *
+ */
+public class StatsControlSkin4p extends StatsControlSkin {
+	
+
+	private PlayerClient player;
+	private ArrayList<Player> players;
+	private Player player1,player2,player3,player4;
+	private PlayerBox player1box,player2box,player3box,player4box;
+	private HBox list;
+	private String path;
+	
+	public StatsControlSkin4p(PlayerClient player,ArrayList<Player> players){
+		setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+		setPickOnBounds(false);
+		
+		this.players = players;
+		this.player = player;
+		
+		
+		player1 = players.get(0);
+		player2 = players.get(1);
+		player3 = players.get(2);
+		player4 = players.get(3);
+		
+		
+		player1box = new PlayerBox(player1);
+		player2box = new PlayerBox(player2);
+		player3box = new PlayerBox(player4);
+		player4box = new PlayerBox(player4);
+		
+		list = new HBox();
+		
+		list.getChildren().addAll(player1box,player2box,player3box,player4box);
+		this.setTop(list);
+		list.setAlignment(Pos.CENTER);
+		BorderPane.setAlignment(list, Pos.TOP_CENTER);
+		
+		
+		}
+	public void update(){
+		player1box.update();
+		player2box.update();
+		player3box.update();
+		player4box.update();
+	}
+}

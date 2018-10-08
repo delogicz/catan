@@ -1,0 +1,28 @@
+package jsonstructures;
+
+/**
+ * This class is a wrapper for the class GebaeudeDaten
+ * This is beeing send by the server to the clients when someone build a building
+ * @author Felixi
+ *
+ */
+
+public class GebaeudeDatenDaten {
+	private GebaeudeDaten Gebaeude;
+
+	/**
+	 * Creates a GebaeudeDaten object
+	 * @param gebaeude		object of GebaeudeDaten
+	 */
+	public GebaeudeDatenDaten(GebaeudeDaten gebaeude) {
+		Gebaeude = gebaeude;
+	}
+
+	public GebaeudeDaten getGebaeude() {
+		return Gebaeude;
+	}
+
+	public void setGebaeude(GebaeudeDaten gebaeude) {
+		Gebaeude = gebaeude;
+	}
+}

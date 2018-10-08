@@ -1,0 +1,12 @@
+package jsonstructures;
+
+public class ErtragsDaten {
+	private int Spieler;
+	private RohstoffDaten Rohstoffe;
+	
+	public ErtragsDaten(int spieler, RohstoffDaten rohstoffe) {
+		Spieler = spieler;
+		Rohstoffe = rohstoffe;
+	}
+	
+}

@@ -1,0 +1,155 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.ArrayList;
+
+import view.HarbourSkin;
+import view.VertexSkin;
+
+/**
+ * Contains a vertex defined by it's position in the island.
+ *@author Daniel Panangian
+ */
+public class Vertex{
+
+	private Harbour harbour = null;
+	private ArrayList<Vertex> connectedVertices;
+	
+	private ArrayList<Edge> edges; 
+	
+	private ArrayList<Tile> hexes;
+	
+	private int row;
+	/**
+	 * Position in row.
+	 */
+	private int pos;
+	
+	private VertexSkin skin;
+	private Catan catan;
+	
+	private boolean isOccupied;
+	
+
+	private Building occupyingBuilding;
+	
+	/**
+	 * Constructor
+	 * @param row
+	 * @param pos
+	 * @param catan
+	 */
+	public Vertex(int row, int pos,Catan catan) {
+		this.row = row;
+		this.pos = pos;
+		this.catan = catan;
+		skin = new VertexSkin(this);
+		connectedVertices = new ArrayList<Vertex>();
+		edges = new ArrayList<Edge>();
+		hexes = new ArrayList<Tile>();
+	}
+	
+	/**
+	 * Adjusts attribute "harbour".
+	 */
+	public void setHarbour(Harbour harbour) {
+		this.harbour = harbour;
+	}
+	
+	/**
+	 * @return the position in the row
+	 */
+	public int getPos() {
+		return pos;
+	}
+	
+	/**
+	 * @return the row
+	 */
+	public int getRow() {
+		return row;
+	}
+
+	/**
+	 * @return the skin
+	 */
+	public VertexSkin getSkin() {
+		return skin;
+	}
+
+	/**
+	 * @return the connectedVertices
+	 */
+	public ArrayList<Vertex> getConnectedVertices() {
+		return connectedVertices;
+	}
+	
+	/**
+	 * add a connected Vertex
+	 * @param vertex
+	 */
+	public void addConnectedVertex(Vertex vertex) {
+		connectedVertices.add(vertex);
+	}
+	
+	/**
+	 * @return the edges
+	 */
+	public ArrayList<Edge> getEdges() {
+		return edges;
+	}
+	
+	/**
+	 * add instances of Edge to edges
+	 * @param edges
+	 */
+	public void addEdge(Edge... edges) {
+		this.edges.addAll(Arrays.asList(edges));
+	}
+	
+	/**
+	 * Get Occupying building on this vertex
+	 * @return occupyingBuilding
+	 */
+	public Building getOccupyingBuilding() {
+		return occupyingBuilding;
+	}
+	
+	public void setOccupyingBuilding(Building building){
+		this.occupyingBuilding = building;
+	}
+
+	public void addHex(Tile hex) {
+		this.hexes.add(hex);
+		
+	}
+	
+	/**
+	 * getter method for hexes
+	 * @return hexes
+	 */
+	public ArrayList<Tile> getHexes() {
+		return hexes;
+	}
+
+	public boolean isOccupied() {
+		return isOccupied;
+	}
+	
+	public void setOccupied(boolean isOccupied) {
+		this.isOccupied = isOccupied;
+	}
+
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+	
+	public Harbour getHarbour(){
+		return harbour;
+	}
+
+}

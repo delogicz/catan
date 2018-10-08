@@ -1,0 +1,26 @@
+package network;
+
+import controller.ServerControl;
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+/**
+ * Application for the Server
+ * @author Felixi
+ *
+ */
+public class ServerApp extends Application{
+		
+		/**
+		 * Starts the server
+		 */
+		@Override
+		public void start(Stage stage) throws Exception {
+			ServerControl control = new ServerControl(5506);
+		}
+
+		public static void main(String[] args) {
+			Application.launch(args);
+		}
+
+}

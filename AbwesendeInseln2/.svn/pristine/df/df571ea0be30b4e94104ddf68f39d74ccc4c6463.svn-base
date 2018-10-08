@@ -1,0 +1,222 @@
+package view;
+
+import java.net.URISyntaxException;
+import game.Settings;
+import javafx.geometry.Pos;
+import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import model.Player;
+import model.PlayerClient;
+
+/**
+ * This class is the skin for the Stats control
+ * @author Daniel Panangian, Felixi
+ *
+ */
+public class PlayerBox extends VBox {
+	private String path;
+	private Text set,rd,vp,kn,cards,lr,dc;
+	private Player player;
+	
+	/**
+	 * Constructor
+	 * @param player
+	 * @param num
+	 */
+	public PlayerBox(PlayerClient player,int num){
+		this.player = player;
+		Rectangle pic = new Rectangle(Settings.GAME_SKIN_WIDTH / 4,0.7 * Settings.SCALE);
+		try {
+			path = TokenNumberSkin.class.getResource("/img/character"+num+".jpg" ).toURI().toString();
+			
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		Image image = new Image(path);
+		ImagePattern imagePattern = new ImagePattern(image);
+		pic.setFill(imagePattern);
+		pic.setStroke(Color.BLACK);
+		
+		StackPane stack = new StackPane();
+		
+		Rectangle bkg = new Rectangle(Settings.GAME_SKIN_WIDTH / 4,0.25 * Settings.SCALE);
+		bkg.setFill(Color.BLACK);
+		bkg.setStroke(Color.BLACK);
+		bkg.setOpacity(0.3);
+		
+		HBox stats = new HBox ();
+		set = new Text("SET : "+ player.getSettlements().size());
+		set.setFill(player.getPlayerColor().getColor());
+		rd = new Text("RD : "+ player.getRoads().size());
+		rd.setFill(player.getPlayerColor().getColor());
+		vp = new Text("VP : "+ player.getVictoryPoints());
+		vp.setFill(player.getPlayerColor().getColor());
+		kn = new Text("KN : "+ 0);
+		kn.setFill(player.getPlayerColor().getColor());
+		lr = new Text("LR :" + player.getConnectedRoads());
+		lr.setFill(player.getPlayerColor().getColor());
+		
+		cards = new Text ("CARDS: " + 0);
+		cards.setFill(player.getPlayerColor().getColor());
+		
+		stats.getChildren().addAll(set,rd,vp,kn,cards,lr);
+		stats.setSpacing(5);
+		
+		stack.getChildren().addAll(bkg,stats);
+		
+		getChildren().addAll(pic,stack);
+	}
+	
+	/**
+	 * Constructor
+	 * @param player
+	 * @param num
+	 */
+	public PlayerBox(Player player){
+		this.player = player;
+		StackPane stack2 = new StackPane();
+		Rectangle pic = new Rectangle(Settings.GAME_SKIN_WIDTH / 4,0.7 * Settings.SCALE);
+		try {
+			path = TokenNumberSkin.class.getResource(player.getImgURL()).toURI().toString();
+			
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		Image image = new Image(path);
+		ImagePattern imagePattern = new ImagePattern(image);
+		pic.setFill(imagePattern);
+		pic.setStroke(Color.BLACK);
+		
+		Text name = new Text(player.getName());
+		name.setFill(player.getPlayerColor().getColor());
+		name.setFont(Font.loadFont("file:resources/Rumble Brave.otf", 30));
+		stack2.getChildren().addAll(pic,name);
+		
+		StackPane stack = new StackPane();
+		
+		Rectangle bkg = new Rectangle(Settings.GAME_SKIN_WIDTH / 4,0.25 * Settings.SCALE);
+		bkg.setFill(Color.BLACK);
+		bkg.setStroke(Color.BLACK);
+		bkg.setOpacity(0.3);
+		
+		HBox stats = new HBox ();
+//		set = new Text("SET : "+ 0);
+//		set.setFill(player.getPlayerColor().getColor());
+//		rd = new Text("RD : "+ 0);
+//		rd.setFill(player.getPlayerColor().getColor());
+		vp = new Text("VP : "+ player.getVictoryPoints());
+		vp.setFill(player.getPlayerColor().getColor());
+//		kn = new Text("KN : "+ 0);
+//		kn.setFill(player.getPlayerColor().getColor());
+		cards = new Text ("CARDS: " + player.getResCardsCount());
+		cards.setFill(player.getPlayerColor().getColor());
+		lr = new Text("LR :" + player.getConnectedRoads());	//Longest Road
+		lr.setFill(player.getPlayerColor().getColor());
+		dc = new Text("DC :" + 0 );	//Development card count
+		dc.setFill(player.getPlayerColor().getColor());
+		
+		stats.getChildren().addAll(vp,cards, lr, dc);
+		stats.setSpacing(10);
+		stats.setAlignment(Pos.CENTER);
+		
+		stack.getChildren().addAll(bkg,stats);
+		
+		getChildren().addAll(stack2,stack);
+	}
+	
+	/**
+	 * Updates the victoryPooint and card count
+	 */
+	public void update(){
+		vp.setText("VP : "+ player.getVictoryPoints());
+		cards.setText("CARDS: " + player.getResCardsCount());
+		lr.setText("LR :" + player.getConnectedRoads());
+	}
+	
+	/**
+	 * Getter for set
+	 * @return
+	 */
+	public Text getSet() {
+		return set;
+	}
+	
+	/**
+	 * Setter for set
+	 * @param set
+	 */
+	public void setSet(Text set) {
+		this.set = set;
+	}
+	
+	/**
+	 * Getter for rd
+	 * @return
+	 */
+	public Text getRd() {
+		return rd;
+	}
+	
+	/**
+	 * Setter for rd
+	 * @param rd
+	 */
+	public void setRd(Text rd) {
+		this.rd = rd;
+	}
+	
+	/**
+	 * Getter for vp
+	 * @return
+	 */
+	public Text getVp() {
+		return vp;
+	}
+	
+	/**
+	 * Setter for vp
+	 * @param vp
+	 */
+	public void setVp(Text vp) {
+		this.vp = vp;
+	}
+	
+	/**
+	 * Getter for kn
+	 * @return
+	 */
+	public Text getKn() {
+		return kn;
+	}
+	
+	/**
+	 * Setter for kn
+	 * @param kn
+	 */
+	public void setKn(Text kn) {
+		this.kn = kn;
+	}
+	
+	/**
+	 * Getter for cards
+	 * @return
+	 */
+	public Text getCards() {
+		return cards;
+	}
+	
+	/**
+	 * Setter for cards
+	 * @param cards
+	 */
+	public void setCards(Text cards) {
+		this.cards = cards;
+	}
+}

@@ -1,0 +1,111 @@
+package view;
+
+
+
+
+import javafx.event.EventHandler;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
+
+import model.TerrainType;
+import model.Tile;
+
+import java.net.URISyntaxException;
+
+import game.Settings;
+
+public class TileSkin  {
+
+
+	private static double HALF_SQRT_THREE = Math.sqrt(3) / 2;
+
+	private Shape shape;
+	
+	
+	public TileSkin(final Tile hex) {
+
+		Polygon hexagon = new Polygon();
+		
+		hexagon.setFill(getColorForResourceHex(hex.getTerrain()));
+		try {
+			String path = TileSkin.class.getResource("/" +  getImgUrl(hex.getTerrain()) ).toURI().toString();
+			Image image = new Image(path);
+			ImagePattern imagePattern = new ImagePattern(image,1,1,2,2,false);
+			hexagon.setFill(imagePattern);
+			
+			hexagon.getPoints().addAll(new Double[] { 0d, 1d, HALF_SQRT_THREE, 0.5, HALF_SQRT_THREE, -0.5, 0d, -1d,
+					-HALF_SQRT_THREE, -0.5, -HALF_SQRT_THREE, 0.5 });
+			hexagon.setScaleX(Settings.SCALE);
+			hexagon.setScaleY(Settings.SCALE);
+
+			hexagon.setTranslateX(2 * Settings.HALF_SQRT_THREE * Settings.SCALE * hex.getPos()
+					+ HALF_SQRT_THREE * Settings.SCALE * Math.abs(hex.getRow() - 2) + Settings.OFFSET_X);
+			hexagon.setTranslateY(1.5d * Settings.SCALE * hex.getRow() + Settings.OFFSET_Y);
+			hexagon.setStroke(Color.NAVAJOWHITE);
+			hexagon.setStrokeWidth(0.0012*Settings.SCALE);
+			shape = hexagon;
+			
+			hexagon.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent mouseEvent) {
+					
+					hex.pressed();
+				}
+			});
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	private Color getColorForResourceHex(TerrainType terrain) {
+		switch (terrain) {
+		case HILLS:
+			return Color.FIREBRICK;
+		case DESERT:
+			return Color.BURLYWOOD;
+		case MOUNTAINS:
+			return Color.GREY;
+		case PASTURE:
+			return Color.GREENYELLOW;
+		case FIELDS:
+			return Color.YELLOW;
+		case FOREST:
+			return Color.DARKGREEN;
+		default:
+			return Color.BLUE;
+		}
+	}
+	
+	public String getImgUrl(TerrainType terrain) {
+		switch (terrain) {
+		case HILLS:
+			return "img/hexes_hills.png";
+		case DESERT:
+			return "img/hexes_desert.png";
+		case MOUNTAINS:
+			return "img/hexes_mountains.png";
+		case PASTURE:
+			return "img/hexes_pasture.png";
+		case FIELDS:
+			return "img/hexes_fields.png";
+		case FOREST:
+			return "img/hexes_forest.png";
+		default:
+			return "img/hexes_sea.png";
+		}
+
+	}
+
+	public Shape getShape() {
+		return shape;
+	}
+
+}

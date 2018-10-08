@@ -1,0 +1,54 @@
+package model;
+
+import javafx.scene.paint.Color;
+
+/**
+ * Determines available colors for players 
+ * @author Stefanie Kloss
+ */
+public enum PlayerColor {
+	
+	RED (Color.CRIMSON, "img/building/settlement_RED.png", "img/building/city_RED.png"), 
+	ORANGE (Color.ORANGE, "img/building/settlement_YELLOW.png", "img/building/city_YELLOW.png"), 
+	WHITE (Color.WHITE, "img/building/settlement_WHITE.png", "img/building/city_WHITE.png"), 
+	BLUE (Color.MEDIUMBLUE, "img/building/settlement_BLUE.png", "img/building/city_BLUE.png");
+	
+	private Color color;
+	private String settlementImageURL;
+	private String cityImageURL;
+	
+	/**
+	 * Constructor
+	 * @param color
+	 * @param settlementImageURL
+	 * @param cityImageURL
+	 */
+	private PlayerColor(Color color, String settlementImageURL, String cityImageURL){
+		this.color = color;
+		this.settlementImageURL = settlementImageURL;
+		this.cityImageURL = cityImageURL;
+	}
+	
+	/**
+	 * @return the color
+	 */
+	public Color getColor(){
+		return this.color;
+	}
+
+	/**
+	 * @return the settlementImageURL
+	 */
+	public String getSettlementImageURL() {
+		return settlementImageURL;
+	}
+
+	/**
+	 * @return the cityImageURL
+	 */
+	public String getCityImageURL() {
+		return cityImageURL;
+	}
+	
+	
+}

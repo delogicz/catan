@@ -1,0 +1,41 @@
+package network;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.LogManager;
+
+import controller.LogMaster;
+import controller.ServerControl;
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+/**
+ * Application for the Server
+ * @author Felixi
+ *
+ */
+public class ServerApp extends Application{
+		
+		/**
+		 * Starts the server
+		 */
+		@Override
+		public void start(Stage stage) throws Exception {
+			System.out.println("[Thr]Initializing Server [Thread : "+ Thread.currentThread().getId() + "]");
+			ServerControl control = new ServerControl(5506);
+			LogMaster.initialize();
+		}
+
+		
+		/**
+		 * Main method for Server
+		 * @param args
+		 */
+		public static void main(String[] args) {
+			System.out.println("[Thr]Launched ServerApp [Thread : "+ Thread.currentThread().getId() + "]");
+			
+			Application.launch(args);
+		}
+
+}

@@ -1,0 +1,13 @@
+package controller;
+
+import java.util.logging.Level;
+
+public class CustomLevel extends Level{
+
+	private static final long serialVersionUID = 1L;
+
+	protected CustomLevel(String name, int value) {
+		super(name, value);
+	}
+	
+}

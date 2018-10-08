@@ -1,0 +1,39 @@
+package jsonstructures;
+
+import java.util.List;
+
+import model.Harbour;
+import model.Island;
+import model.Tile;
+
+/**
+ * Wrapper for KartenDaten
+ * @author Felixi
+ *
+ */
+public class KartenNachricht {
+	
+	private KartenDaten Karte;
+	/**
+	 * Constructor for client
+	 * @param kart
+	 */
+	public KartenNachricht(KartenDaten kart){
+		Karte = kart;
+	}
+	/**
+	 * Constructor for server
+	 * @param i
+	 */
+	public KartenNachricht(Island i) {
+		Karte = new KartenDaten(i);
+	}
+
+	/**
+	 * Getter for KartenDaten
+	 * @return
+	 */
+	public KartenDaten getKartenDaten(){
+		return Karte;
+	}
+}

@@ -1,0 +1,10 @@
+package model;
+
+/**
+ * A settlement. Defined by associated vertex and player.
+ *
+ */
+public class Settlement {
+	private Vertex vertex;
+	private Player player;
+}

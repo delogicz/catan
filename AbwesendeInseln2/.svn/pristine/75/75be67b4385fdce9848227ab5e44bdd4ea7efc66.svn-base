@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class SpielerInitNachricht {
+	private SpielerDaten Spieler;
+
+	public SpielerInitNachricht(String name, String farbe) {
+		Spieler = new SpielerDaten(name, farbe);
+	}
+}

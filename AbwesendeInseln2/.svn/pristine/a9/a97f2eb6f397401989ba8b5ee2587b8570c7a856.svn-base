@@ -1,0 +1,35 @@
+package jsonstructures;
+
+/**
+ * This class contains the data for the tiles on the island
+ * @author Felixi
+ *
+ */
+public class FeldDaten {
+	private String Ort;
+	private String Typ;
+	private int Zahl;
+	
+	/**
+	 * Creates a FeldDaten object 
+	 * @param ort		location of the tile
+	 * @param typ		type of tile
+	 * @param zahl		number on the tile
+	 */
+
+	public FeldDaten(String ort, String typ, int zahl) {
+		Ort = ort;
+		Typ = typ;
+		Zahl = zahl;
+		convertTileLocation(Ort);
+		convertTileType(Typ);
+	}
+	
+	public void convertTileLocation(String location){
+		//TODO
+	}
+	
+	public void convertTileType(String type){
+		//TODO
+	}
+}

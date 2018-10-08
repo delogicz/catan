@@ -1,0 +1,225 @@
+package view;
+
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import model.Player;
+import controller.PlayerControl;
+
+import game.Settings;
+/**
+ * View of a game control
+ * @author Daniel Panangian, Stefanie Kloss
+ */
+public class PlayerControlSkin extends BorderPane {
+	
+	private VBox commandVBox,chatVBox;
+	private HBox command;
+	private HBox hand;
+	private PlayerControl playerControl;
+	private Button buildSetButton,buildRoadButton,buildCityButton,buyDevCardButton,rollDiceButton,endTurnButton;
+	private Label lumber,brick,wool,grain,ore,settlement,city,road;
+	private Player player;
+	
+	private HandSkin handSkin;
+	
+	private TextArea messages;
+	private TextField input;
+	
+	
+	/**
+	 * Constructor
+	 */
+	public PlayerControlSkin(PlayerControl playerControl){
+		
+		this.player = playerControl.getPlayer();
+		
+		
+		setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+		setPickOnBounds(false);
+		this.commandVBox = new VBox();
+		this.command = new HBox();
+		buildSetButton = new Button("Build Settlement");
+	    buildRoadButton = new Button("Build Road");
+	    buildCityButton = new Button("Build City");
+	    buyDevCardButton = new Button("Buy Development Card");
+	    rollDiceButton = new Button("Roll Dice");
+	    endTurnButton = new Button("End Turn");
+	   
+	    command.getChildren().addAll(buildSetButton,buildRoadButton,buildCityButton,rollDiceButton,endTurnButton,buyDevCardButton);
+	    command.setSpacing(5);
+	   
+	    commandVBox.setSpacing(10);
+	    
+	    hand = new HBox();
+	    hand.setSpacing(20);
+	    lumber = new Label("Lumber : 0" );
+	    brick = new Label("Brick : 0");
+	    wool = new Label("Wool : 0");
+	    grain = new Label("Grain : 0");
+	    ore = new Label("Ore : 0");
+	    settlement = new Label("Settlement : 0" );
+	    city = new Label("City : 0");
+	    road = new Label("Road : 0");
+	    
+		road.setTextFill(player.getPlayerColor().getColor());
+		city.setTextFill(player.getPlayerColor().getColor());
+		settlement.setTextFill(player.getPlayerColor().getColor());
+		lumber.setTextFill(player.getPlayerColor().getColor());
+		brick.setTextFill(player.getPlayerColor().getColor());
+		wool.setTextFill(player.getPlayerColor().getColor());
+		grain.setTextFill(player.getPlayerColor().getColor());
+		ore.setTextFill(player.getPlayerColor().getColor());
+	    
+	      
+	    hand.getChildren().addAll(lumber,brick,wool,grain,ore,settlement,city,road);
+	    commandVBox.getChildren().addAll(hand,command);
+	    commandVBox.setPrefWidth(100);
+	    changeAllFonts();
+	    
+	    
+	    chatVBox = new ChatSkin(playerControl);
+	    
+	    setBottom(commandVBox);
+	    setAlignment(commandVBox, Pos.CENTER);
+	    setLeft(chatVBox);
+	    setAlignment(chatVBox,Pos.CENTER);
+	}
+
+	/**
+	 * changes font of a labeled object
+	 * @param labeled
+	 */
+	private void changeFont(Labeled labeled){
+		labeled.setFont(Font.loadFont(Settings.OSWALD_PATH, 12));
+	}
+	
+	/**
+	 * changes font of all labeled objects in class
+	 */
+	private void changeAllFonts(){
+	    changeFont(buildSetButton);
+	    changeFont(buildRoadButton);
+	    changeFont(buildCityButton);
+	    changeFont(buyDevCardButton);
+	    changeFont(rollDiceButton);
+	    changeFont(endTurnButton);
+	    changeFont(lumber);
+	    changeFont(brick);
+	    changeFont(wool);
+	    changeFont(grain);
+	    changeFont(ore);
+	    changeFont(settlement);
+	    changeFont(city);
+	    changeFont(road);
+	}
+	
+	
+	
+	public Label getOre() {
+		return ore;
+	}
+	public void setOre(Label ore) {
+		this.ore = ore;
+	}
+	public Label getGrain() {
+		return grain;
+	}
+	public void setGrain(Label grain) {
+		this.grain = grain;
+	}
+	public Label getWool() {
+		return wool;
+	}
+	public void setWool(Label wool) {
+		this.wool = wool;
+	}
+	public Label getBrick() {
+		return brick;
+	}
+	public void setBrick(Label brick) {
+		this.brick = brick;
+	}
+	public Label getLumber() {
+		return lumber;
+	}
+	public void setLumber(Label lumber) {
+		this.lumber = lumber;
+	}
+	public Button getEndTurnButton() {
+		return endTurnButton;
+	}
+	public void setEndTurnButton(Button endTurnButton) {
+		this.endTurnButton = endTurnButton;
+	}
+	public Button getRollDiceButton() {
+		return rollDiceButton;
+	}
+	public void setRollDiceButton(Button rollDiceButton) {
+		this.rollDiceButton = rollDiceButton;
+	}
+	public Button getBuildRoadButton() {
+		return buildRoadButton;
+	}
+	public void setBuildRoadButton(Button buildRoadButton) {
+		this.buildRoadButton = buildRoadButton;
+	}
+	public Button getBuildSetButton() {
+		return buildSetButton;
+	}
+	public void setBuildSetButton(Button buildSetButton) {
+		this.buildSetButton = buildSetButton;
+	}
+	public Button getBuildCityButton() {
+		return buildCityButton;
+	}
+	public Label getSettlement() {
+		return settlement;
+	}
+	public void setSettlement(Label settlement) {
+		this.settlement = settlement;
+	}
+	public Label getCity() {
+		return city;
+	}
+	public void setCity(Label city) {
+		this.city = city;
+	}
+	public Label getRoad() {
+		return road;
+	}
+	public void setRoad(Label road) {
+		this.road = road;
+	}
+	
+	
+	/**
+	 * @return the buyDevelopmentCard
+	 */
+	public Button getBuyDevCardButton() {
+		return buyDevCardButton;
+	}
+
+	/**
+	 * @param buyDevelopmentCard the buyDevelopmentCard to set
+	 */
+	public void setBuyDevelopmentCard(Button buyDevCardButton) {
+		this.buyDevCardButton = buyDevCardButton;
+	}
+
+	public ChatSkin getChatVBox(){
+		return (ChatSkin) chatVBox;
+	}
+}

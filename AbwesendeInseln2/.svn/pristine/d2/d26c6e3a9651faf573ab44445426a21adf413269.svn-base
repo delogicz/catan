@@ -1,0 +1,283 @@
+package view;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import controller.LogMaster;
+import controller.ServerControl;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
+import game.GameManager;
+import game.Settings;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+/**
+ * The Login View to create a Client
+ * @author Stefanie Kloss
+ *
+ */
+public class ClientLogin extends AnchorPane{
+	
+	private GameManager gameManager;
+	private String myIP;
+	private double xOffset = 0;
+    private double yOffset = 0;
+	/**
+	 * Constructor
+	 * @param gameManager
+	 */
+	public ClientLogin(GameManager gameManager){
+		
+		
+		this.setId("pane");
+		this.gameManager = gameManager;
+		this.setPrefHeight(471);
+		this.setPrefWidth(800);
+		getIpAdress();
+		addElements();
+		
+	}
+	
+	/**
+	 * Adds text, textfields, buttons, etc
+	 */
+	private void addElements() {
+
+		VBox row = new VBox();
+		
+		Pane dragArea = new Pane();
+		dragArea.setPrefHeight(35);
+		dragArea.setPrefWidth(800);
+		dragArea.setLayoutX(0);
+		dragArea.setLayoutY(-1);
+		dragArea.setPickOnBounds(true);
+		
+		dragArea.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            }
+        });
+        dragArea.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                gameManager.getApp().getStage().setX(event.getScreenX() - xOffset);
+                gameManager.getApp().getStage().setY(event.getScreenY() - yOffset);
+            }
+        });
+		
+		Text title = new Text("Settlers of Catan");
+		title.setFill(Color.WHITE);
+		title.setFont(new Font(12));
+		title.setLayoutX(38);
+		title.setLayoutY(22);
+		
+		Text closeIcon=FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CLOSE,"12");
+		closeIcon.setFill(Color.WHITE);
+		closeIcon.setLayoutX(772);
+		closeIcon.setLayoutY(22);
+		closeIcon.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent t) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+		
+		
+		Text welcome = new Text("Welcome to Settlers of Catan");
+		welcome.setFill(Color.ANTIQUEWHITE);
+		welcome.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.GIANT_FONT_SIZE));
+		Text asClient = new Text("Log in as Client");
+		asClient.setFill(Color.ANTIQUEWHITE);
+		asClient.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.HUGE_FONT_SIZE));
+		Text host = new Text("HOST");
+		host.setFill(Color.ANTIQUEWHITE);
+		host.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		TextField enterHost = new TextField();
+		enterHost.setText("localhost");
+		enterHost.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		HBox hBoxHost = new HBox();
+		hBoxHost.getChildren().addAll(host, enterHost);
+		hBoxHost.setAlignment(Pos.BASELINE_LEFT);
+		
+		Text port = new Text("PORT");
+		port.setFill(Color.ANTIQUEWHITE);
+		port.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		TextField enterPort = new TextField();
+		enterPort.setText("5506");
+		enterPort.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		HBox hBoxPort = new HBox();
+		hBoxPort.getChildren().addAll(port, enterPort);
+		hBoxPort.setAlignment(Pos.BASELINE_LEFT);
+		
+		Button loginButton = new Button("LOGIN");
+		loginButton.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		
+		Button loginButtonBot = new Button("LOGIN AS BOT");
+		loginButtonBot.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		
+		HBox hBoxButton = new HBox();
+		hBoxButton.getChildren().addAll(loginButton, loginButtonBot);
+		hBoxButton.getStyleClass().add("hbox");
+		
+		
+		
+		loginButton.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				try{
+					int portInt = Integer.parseInt(enterPort.getText());
+					try {
+						gameManager.setLoginInformation(enterHost.getText(), portInt);
+						gameManager.initializeClient(enterHost.getText(), portInt);
+					}catch(Exception e){
+						LogMaster.logExc("[Exc]Connection to " + enterHost.getText()+":"+portInt+" was refused.");
+						gameManager.getApp().popUpMessage("The connection was refused.\nPlease try again.");
+					}
+					
+				}catch(Exception e){
+					gameManager.getApp().popUpMessage("The port must consist out of numbers.");
+				}
+			}
+		});
+
+		loginButtonBot.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				try{
+					int portInt = Integer.parseInt(enterPort.getText());
+					try {
+						
+						gameManager.setLoginInformation(enterHost.getText(), portInt);
+						gameManager.initializeBotClient(enterHost.getText(), portInt);
+						
+						
+					}catch(Exception e){
+						gameManager.getApp().popUpMessage("The connection was refused.\nPlease try again.");
+					}
+				}catch(Exception e){
+					gameManager.getApp().popUpMessage("The port must consist out of numbers.");
+				}
+			}
+		});
+		Button logLevel = new Button("LOG LEVEL");
+		logLevel.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		
+		logLevel.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				new LogLevelView();
+			}
+		});
+		
+		Line left = new Line();
+		left.setId("left");
+		left.setEndX(65);
+		Line right = new Line();
+		right.setId("right");
+		
+		HBox hboxLine = new HBox();
+		hboxLine.getChildren().addAll(left,right);
+		
+		StackPane stackOr = new StackPane();
+		
+		
+		
+		
+		
+		Text myHostIP = new Text("Your IP: " + myIP);
+		myHostIP.setFill(Color.ANTIQUEWHITE);
+		myHostIP.setFont(new Font(14));
+		HBox hBoxIP = new HBox();
+		hBoxIP.getChildren().addAll(myHostIP);
+		hBoxIP.setAlignment(Pos.BASELINE_LEFT);
+		
+		Text orServer = new Text("Or host your own Server");
+		orServer.setFill(Color.ANTIQUEWHITE);
+		orServer.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.HUGE_FONT_SIZE));
+		Text textPort = new Text("PORT");
+		textPort.setFill(Color.ANTIQUEWHITE);
+		textPort.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		TextField serverPort = new TextField();
+		serverPort.setText("5506");
+		serverPort.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		
+		HBox serverBox = new HBox();
+		serverBox.getChildren().addAll(textPort, serverPort);
+		serverBox.setAlignment(Pos.BASELINE_LEFT);
+		Button startServer = new Button("START SERVER");
+		startServer.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		
+		HBox hboxIp= new HBox();
+		hboxIp.getChildren().addAll(textPort,myHostIP);
+		hboxIp.setSpacing(140);
+		
+		stackOr.getChildren().addAll(orServer);
+		
+		
+		
+		startServer.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				try{
+					LogMaster.log("[Thr]Launched ServerApp [Thread : "+ Thread.currentThread().getId() + "]");
+					LogMaster.log("[Thr]Initializing Server [Thread : "+ Thread.currentThread().getId() + "]");
+					int port = Integer.parseInt(serverPort.getText());
+					new ServerControl(port);
+					startServer.setDisable(true);
+				}catch(Exception e){
+					gameManager.getApp().popUpMessage("Failed to start the server");
+				}
+			}
+		});
+		
+		row.getChildren().addAll(host,enterHost,port,enterPort,hBoxButton,stackOr,hboxIp,serverPort,startServer);
+		row.setSpacing(3);
+		row.setPrefHeight(200);
+		row.setPrefWidth(327);
+		
+		row.setLayoutX(438);
+		row.setLayoutY(80);
+		this.getChildren().addAll(dragArea,closeIcon,title,row);
+		
+	}
+	
+	/**
+	 * Getter for ipAdress
+	 */
+	private void getIpAdress(){
+        try {
+            myIP = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException ex) {
+        	myIP = "unknown";
+            ex.printStackTrace();
+        }
+    }
+
+}

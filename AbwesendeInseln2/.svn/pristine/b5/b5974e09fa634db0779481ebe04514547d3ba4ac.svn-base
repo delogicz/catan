@@ -1,0 +1,31 @@
+package view;
+
+import game.Settings;
+
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import model.Road;
+
+/**
+ * View of a road.
+ *
+ */
+public class RoadSkin extends Rectangle {
+	
+	public RoadSkin(Road road, IslandSkin islandSkin){
+		
+		super(Settings.EDGE_LENGTH, Settings.EDGE_WIDTH*1.5);
+		setStroke(Color.ANTIQUEWHITE);
+		setStrokeWidth(0.03);
+		Color color = road.getOwner().getPlayerColor().getColor();
+		setFill(color);
+		setScaleX(Settings.SCALE);
+		setScaleY(Settings.SCALE);
+		setTranslateX(road.getEdge().getSkin().getShape().getTranslateX());
+		setTranslateY(road.getEdge().getSkin().getShape().getTranslateY());
+		setRotate(road.getEdge().getSkin().getShape().getRotate());
+		
+		islandSkin.getChildren().add(this);
+
+	}
+}

@@ -1,0 +1,100 @@
+package view;
+
+import java.net.URISyntaxException;
+
+import controller.LogMaster;
+import game.Settings;
+import javafx.event.EventHandler;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
+import model.TerrainType;
+import model.Tile;
+
+/**
+ * View of a tile.
+ * @author Daniel Panangian
+ */
+public class TileSkin  {
+
+
+	
+
+	private Shape shape;
+	
+	/**
+	 * Constructor
+	 */
+	public TileSkin(final Tile hex) {
+
+		Polygon hexagon = new Polygon();
+		try {
+			String path = TileSkin.class.getResource("/" +  getImgUrl(hex.getTerrainType()) ).toURI().toString();
+			Image image = new Image(path);
+			ImagePattern imagePattern = new ImagePattern(image,1,1,2,2,false);
+			hexagon.setFill(imagePattern);
+			
+			hexagon.getPoints().addAll(new Double[] { 0d, 1d, Settings.HALF_SQRT_THREE, 0.5, Settings.HALF_SQRT_THREE, -0.5, 0d, -1d,
+					-Settings.HALF_SQRT_THREE, -0.5, -Settings.HALF_SQRT_THREE, 0.5 });
+			hexagon.setScaleX(Settings.SCALE);
+			hexagon.setScaleY(Settings.SCALE);
+			
+			hexagon.setTranslateX(2 * Settings.HALF_SQRT_THREE * Settings.SCALE * hex.getPos()
+					+ Settings.HALF_SQRT_THREE * Settings.SCALE * Math.abs(hex.getRow() - 2) + Settings.OFFSET_X);
+			hexagon.setTranslateY(1.5d * Settings.SCALE * hex.getRow() + Settings.OFFSET_Y);
+			hexagon.setStroke(Color.NAVAJOWHITE);
+			hexagon.setStrokeWidth(0.0012*Settings.SCALE);
+			shape = hexagon;
+			
+			hexagon.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent mouseEvent) {
+					if(hex.getCatan().getPlayerClient().getRelocateRobber() && hex != hex.getCatan().getIsland().getRobber().getTile()){
+						hex.relocateRobber();
+					}
+				}
+			});
+		} catch (URISyntaxException e) {
+			LogMaster.log("[UI]" + e.getMessage() + " error loading TileSkin image!"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+		
+	}
+	
+	/**
+	 * Get terrain image url
+	 * @param terrain
+	 * @return url of the image
+	 */
+	public String getImgUrl(TerrainType terrain) {
+		switch (terrain) {
+		case HILLS:
+			return "img/hexes_hills.png";
+		case DESERT:
+			return "img/hexes_desert.png";
+		case MOUNTAINS:
+			return "img/hexes_mountains.png";
+		case PASTURE:
+			return "img/hexes_pasture.png";
+		case FIELDS:
+			return "img/hexes_fields.png";
+		case FOREST:
+			return "img/hexes_forest.png";
+		default:
+			return "img/hexes_sea.png";
+		}
+
+	}
+	
+	/**
+	 * Getter for the Shape
+	 * @return the shape
+	 */
+	public Shape getShape() {
+		return shape;
+	}
+
+
+}

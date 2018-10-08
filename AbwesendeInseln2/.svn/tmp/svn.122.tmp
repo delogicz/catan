@@ -1,0 +1,56 @@
+package view;
+
+import game.Settings;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import model.Road;
+
+/**
+ * View of a road.
+ * @author Stefanie Kloss
+ */
+public class RoadSkin extends Rectangle {
+	
+	public RoadSkin(Road road, IslandSkin islandSkin){
+		
+		super(Settings.EDGE_LENGTH, Settings.EDGE_WIDTH*1.5);
+		Color color = road.getOwner().getPlayerColor().getColor();
+		setFill(color);
+		if(color != Color.WHITE){
+			setStroke(Color.ANTIQUEWHITE);
+		}
+		else setStroke(Color.BLACK);
+		setStrokeWidth(0.03);
+		setScaleX(Settings.SCALE);
+		setScaleY(Settings.SCALE);
+		setTranslateX(road.getEdge().getSkin().getShape().getTranslateX());
+		setTranslateY(road.getEdge().getSkin().getShape().getTranslateY());
+		setRotate(road.getEdge().getSkin().getShape().getRotate());
+		
+		addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent mouseEvent) {
+				
+			}
+		});
+
+		RoadSkin roadSkin = this;
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				islandSkin.getChildren().add(roadSkin);
+			}
+		});
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+	
+	}
+	
+}

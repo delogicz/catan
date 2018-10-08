@@ -1,0 +1,8 @@
+handlers = java.util.logging.FileHandler
+
+server.level = FINE
+
+java.util.logging.FileHandler.pattern = log/server.log
+java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
+
+network.Server.level = FINE

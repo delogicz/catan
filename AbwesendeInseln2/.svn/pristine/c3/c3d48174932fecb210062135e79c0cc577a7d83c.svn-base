@@ -1,0 +1,81 @@
+package jsonstructures;
+
+/**
+ * This class containes the state of the player
+ * @author Felixi
+ *
+ */
+public class SpielerZustandsDaten {
+	private int id;					
+	private String Farbe;
+	private String Name;
+	private String Status;
+	private int Siegpunkte;
+	private RohstoffDaten Rohstoffe;
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getFarbe() {
+		return Farbe;
+	}
+
+	public void setFarbe(String farbe) {
+		Farbe = farbe;
+	}
+
+	public String getName() {
+		return Name;
+	}
+
+	public void setName(String name) {
+		Name = name;
+	}
+
+	public String getStatus() {
+		return Status;
+	}
+
+	public void setStatus(String status) {
+		Status = status;
+	}
+
+	public int getSiegpunkte() {
+		return Siegpunkte;
+	}
+
+	public void setSiegpunkte(int siegpunkte) {
+		Siegpunkte = siegpunkte;
+	}
+
+	public RohstoffDaten getRohstoffe() {
+		return Rohstoffe;
+	}
+
+	public void setRohstoffe(RohstoffDaten rohstoffe) {
+		Rohstoffe = rohstoffe;
+	}
+
+	/**
+	 * Creates a SpielerZustandsDaten object	
+	 * @param id			id of the player
+	 * @param farbe			color of the player
+	 * @param name			name
+	 * @param status		status 
+	 * @param siegpunkte	victory points
+	 * @param rohstoffe		resources
+	 */
+	public SpielerZustandsDaten(int id, String farbe, String name, String status, int siegpunkte, RohstoffDaten rohstoffe) {
+		this.id = id;
+		Farbe = farbe;
+		Name = name;
+		Status = status;
+		Siegpunkte = siegpunkte;
+		Rohstoffe = rohstoffe;
+	}
+}

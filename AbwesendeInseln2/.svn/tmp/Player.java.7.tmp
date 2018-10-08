@@ -1,0 +1,291 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+import controller.PlayerControl;
+import game.GameManager;
+import javafx.scene.Cursor;
+
+/**
+ * Describes a participant in the game. Stores his current state (victoryPoints, resCards, etc.).
+ * @author Daniel Panangian, Stefanie Kloss, Lena Sonnleitner
+ */
+public class Player {
+	
+	protected int victoryPoints;
+	protected PlayerColor playerColor;
+	protected int playerID;
+	protected String name;
+	protected String status;
+	
+	protected Catan catan;
+	
+	private boolean hasLargestArmy; 
+	private boolean hasLongestRoad;
+	
+	private ArrayList<Harbour> harbours;
+	protected ArrayList<Road> roads;
+	protected ArrayList<Settlement> settlements;
+	protected ArrayList<City> cities;
+	
+	protected ArrayList<DevelopmentCard> devCards;
+	
+	protected int resCardsCount;
+	
+	protected boolean active;
+	
+	private Hand hand;
+	
+	protected boolean canBuildRoad;
+	protected boolean canBuildSettlement;
+
+	
+	/**
+	 * Constructor
+	 */
+	public Player(PlayerColor playerColor, int playerId, String name){
+		
+		this.catan = null;
+		this.playerID = playerId;
+		this.name = name;
+		this.status = "";
+		this.victoryPoints = 0;
+		this.playerColor = playerColor;
+		this.resCardsCount = 0;
+
+		harbours = new ArrayList<Harbour>();
+		roads = new ArrayList<Road>();
+		settlements = new ArrayList<Settlement>();
+		cities = new ArrayList<City>();
+
+		hasLongestRoad = false;
+		hasLargestArmy = false;
+//		
+//		this.hand = new Hand();
+
+	}
+	
+
+	/**
+	 * get player's color
+	 *@return playerColor
+	 */
+	public PlayerColor getPlayerColor(){
+		return this.playerColor;
+	}
+	/**
+	 * get victory point
+	 *@return victoryPoints
+	 */
+	public int getVictoryPoints() {
+		return victoryPoints;
+	}
+	
+	/**
+	 * set victory point
+	 *@param newVictoryPoints
+	 */
+	public void setVictoryPoints(int newVictoryPoints) {
+		victoryPoints = newVictoryPoints;		
+	}
+
+	public void setHasLargestArmy(Boolean b) {
+		if (hasLargestArmy == true && b == false)
+			victoryPoints--;
+		else if (hasLargestArmy == false && b == true)
+			victoryPoints++;
+		hasLargestArmy = b;
+	}
+	
+	private boolean hasLargestArmy(){
+		return hasLargestArmy;
+	}
+	
+	public Hand getHand(){
+		return this.hand;
+	}
+
+//	
+//	/**
+//	 * Try to buy a development card
+//	 */
+//	public void buyDevCard() {
+//		if(playerCards.canBuyDevCard()){
+//			DevelopmentCard newDevCard = DevelopmentCard.random();
+//			devCards.add(newDevCard);
+//			if(newDevCard == DevelopmentCard.VICTORYPOINT){
+//				victoryPoints++;
+//				checkVictoryPoints();
+//			}
+//			else if(newDevCard == DevelopmentCard.KNIGHT){
+//				knightCount++;
+//				//TODO: catan.chackLargestArmy();
+//			}
+//		}
+//		else { catan.getGameManager().getApp().popUpMessage("You haven't got enought "
+//				     + "resourcecs to buy a Development Card.");
+//		}
+//	}
+	
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Gets the playerID
+	 * @return the playerID
+	 */
+	public int getPlayerID() {
+		return this.playerID;
+	}
+	
+	/**
+	 * @param playerColor the playerColor to set
+	 */
+	public void setPlayerColor(PlayerColor playerColor) {
+		this.playerColor = playerColor;
+	}
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+	/**
+	 * @param catan the catan to set
+	 */
+	public void setCatan(Catan catan) {
+		this.catan = catan;
+	}
+	
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+
+	/**
+	 * 
+	 * @return the settlements
+	 */
+	public ArrayList<Settlement> getSettlements() {
+		return settlements;
+	}
+
+	public int countSettlements(){
+		return settlements.size();
+	}
+	public int countRoads(){
+		return roads.size();
+	}
+	public int countCity(){
+		return cities.size();
+	}
+	
+	/**
+	 * @return the roads
+	 */
+	public ArrayList<Road> getRoads() {
+		return roads;
+	}
+	
+	/**
+	 * @return the cities
+	 */
+	public ArrayList<City> getCities() {
+		return cities;
+	}
+
+
+	/**
+	 * @return the resCardsCount
+	 */
+	public int getResCardsCount() {
+		return resCardsCount;
+	}
+	
+	/**
+	 * Builds a new settlement or city (handleConstruction)
+	 * @param typ type of the new building
+	 * @param vertex vertex on which the building is located
+	 */
+	public Building build(String typ, Vertex vertex, boolean server) {
+		if(typ.equals("Dorf")){
+			Settlement newSettlement = new Settlement(vertex, this, catan.getIsland().getSkin());
+			settlements.add(newSettlement);
+			canBuildSettlement = true;
+			vertex.setOccupyingBuilding(newSettlement);
+			vertex.setOccupied(true);
+			return newSettlement;
+		}
+		else if(typ.equals("Stadt")){
+			City newCity = new City(vertex, this, catan.getIsland().getSkin());
+			settlements.remove(vertex.getOccupyingBuilding());
+			vertex.setOccupyingBuilding(newCity);
+			this.cities.add(newCity);
+			vertex.setOccupied(true);
+			return newCity;
+		}
+		return null;
+	}
+	
+	/**
+	 * Builds a new road (handleConstruction)
+	 * @param edge edge on which the road is located
+	 */
+	public Road build(Edge edge, boolean server) {
+		Road newRoad = new Road(edge, this, catan.getIsland().getSkin());
+		canBuildRoad = true;
+		edge.setOccupyingBuilding(newRoad);
+		edge.setOccupied(true);
+		this.roads.add(newRoad);
+		return newRoad;
+	}
+	
+	/**
+	 * Updates the information of the player
+	 * @param victoryPoints
+	 * @param name
+	 * @param status
+	 * @param color
+	 * @param unknownResources
+	 */
+	public void update(int victoryPoints, String name, String status, PlayerColor color,
+			int unknownResources) {
+		this.victoryPoints = victoryPoints;
+		this.name = name;
+		this.status = status;
+		this.playerColor = color;
+		this.resCardsCount = unknownResources;
+		
+	}
+	
+	public boolean isBot(){
+		return false;
+	}
+	public void activateBot() {
+		
+	}
+	
+	/**
+	 * Use when player has costs in form of resource cards
+	 */
+	public void resCardsCosts(int costs){
+		this.resCardsCount -= costs;
+	}
+	
+	/**
+	 * Use when player receives resource cards
+	 * @param resources
+	 */
+	public void resCardsCountProduce(int resources) {
+		this.resCardsCount += resources;
+	}
+
+}

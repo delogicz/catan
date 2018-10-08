@@ -1,0 +1,980 @@
+package view;
+
+import java.util.ArrayList;
+
+import controller.LogMaster;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import model.Catan;
+import model.DevelopmentCardType;
+import model.PlayerClient;
+import model.ResourceType;
+
+/**
+ * 
+ * @author Lena Sonnleitner, Samantha Meindl
+ *
+ */
+
+public class DevelopmentCardSkin {
+
+	private Stage devCardStage;
+
+	private Scene overviewScene, resMonOverviewScene, resYOPOverviewScene;
+
+	private GridPane overviewGridPane, resYOPOverviewGridPane, resMonOverviewGridPane;
+	
+	private ResourceType resType;
+
+	private Button cancelButton, playButton, resCancelButton, resPlayButton;
+	private RadioButton chapelButton, greathallButton, knightButton, 
+				libraryButton, marketButton, monopolyButton, roadbuildingButton, 
+				universityButton, yearofplentyButton, brick1Button, grain1Button, 
+				lumber1Button, ore1Button, wool1Button, brick2Button, grain2Button, 
+				lumber2Button, ore2Button, wool2Button;
+	private ToggleGroup devCard, resCard, resButtons1, resButtons2;
+	
+	private ImageView chapelBW, greathallBW, knightBW, libraryBW, marketBW, monopolyBW, 
+	              roadbuildingBW, universityBW, yearofplentyBW;
+	private ImageView chapel, greathall, knight, library, market, monopoly, 
+				  roadbuilding, university, yearofplenty;
+	
+	private PlayerClient player;
+
+
+
+	/**
+	 * Constructor
+	 * @param devcard
+	 * @param catan
+	 */
+	public DevelopmentCardSkin(Catan catan){
+
+		this.player = catan.getPlayerClient();
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				devCardStage = new Stage();
+				devCardStage.setTitle("Your Development Cards: ");
+				devCardStage.setResizable(false);
+				devCardStage.initOwner(catan.getGameManager().getApp().getStage());
+
+				overviewGridPane = new GridPane();
+				createOverviewScene();
+
+				setDevelopmentCardStageScene(overviewScene);
+
+			}
+		});
+		try {
+			LogMaster.log("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			LogMaster.log("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	/**
+	 * sets the scene of the DevelopmentCard scene
+	 * @param scene Scene
+	 */
+	private void setDevelopmentCardStageScene(Scene scene) {
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				devCardStage.setScene(scene);
+			}
+		});
+	}
+
+	/**
+	 * Creates the scene opened for devCardsOverview
+	 */
+	private void createOverviewScene() {
+		
+		overviewGridPane.setStyle("-fx-background-color: #dddd; -fx-padding: 10;");
+		overviewGridPane.setPadding(new Insets(5, 0, 5, 0));
+		overviewGridPane.setVgap(10);
+		overviewGridPane.setHgap(5);
+		
+		addElements(overviewGridPane);
+	
+		addButtonEventHandler();
+		
+//		addRadioButtonEventHandler(); -> Player kann sich nicht mehr umentscheiden
+		
+		this.overviewScene = new Scene(overviewGridPane);			
+	}
+
+
+
+	/**
+	 * Adds the EventHandler to the buttons "playcard" and "cancel" of the Pane
+	 */
+	private void addButtonEventHandler() {
+		cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				devCardStage.close();
+			}
+		});
+
+		playButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				if(chapelButton.isSelected() || greathallButton.isSelected() || libraryButton.isSelected() ||
+						marketButton.isSelected() || universityButton.isSelected() ){
+					// TODO: Können erst ausgepielt werden, wenn der Spieler dadurch gewinnt
+					// In aktuellem Protokoll Ausspielen nicht möglich
+				}
+				else if(knightButton.isSelected()) {
+					player.setRelocateRobber(true);
+				} 
+				else if(roadbuildingButton.isSelected()) {
+					//TODO player muss zwei kanten auswählen können,an welche er die Straßen bauen will
+					// Schickt diese zwei Kanten an den Server, die akzeptiert werden oder nicht 
+					player.getCatan().getGameManager().getClient().sendRoadBuilding(null, null);
+					
+				}
+				else if(yearofplentyButton.isSelected()) {					
+					createYOPOverviewScene();
+					setYOPStageScene(resMonOverviewScene);
+				}
+				else if(monopolyButton.isSelected()) {
+					createMonOverviewScene();
+					setMonStageScene(resMonOverviewScene);
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Adds the EventHandler to the RadioButtons in Pane
+	 */
+	private void addRadioButtonEventHandler() {
+
+		chapelButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(0);
+			}
+		});
+
+		greathallButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(1);
+			}
+		});
+
+		knightButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(2);
+			}
+		});
+
+		libraryButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(3);
+			}
+		});
+
+		marketButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(4);
+			}
+		});
+		monopolyButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(5);
+			}
+		});
+
+		roadbuildingButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(6);
+			}
+		});
+
+		universityButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(7);
+			}
+		});
+		yearofplentyButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(8);
+			}
+		});
+	}
+	
+	/**
+	 * sets RadioButtons disable except the one which has been chosen
+	 * @param except Except the button of the one DevCard which has been chosen
+	 */
+	private void disableOtherRadioButtons(int except){
+		RadioButton[] rbutts = {chapelButton,greathallButton,knightButton,
+				libraryButton,marketButton, monopolyButton, roadbuildingButton, universityButton, yearofplentyButton};
+		for(int i=0; i<9;i++){
+			if(i != except){
+				rbutts[i].setSelected(false);
+			}
+		}
+	}
+	
+	/**
+	 * Adds Buttons and DevCards Images in black and White to the Pane
+	 */
+	private void addElements(GridPane gridPane) {
+		
+		devCard = new ToggleGroup();
+		
+		this.chapelButton = new RadioButton();
+		chapelButton.setSelected(false);
+		chapelButton.setDisable(true);
+		if(chapelButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.greathallButton = new RadioButton();
+		greathallButton.setSelected(false);
+		greathallButton.setDisable(true);
+		if(greathallButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+
+		this.knightButton = new RadioButton();
+		knightButton.setSelected(false);
+		knightButton.setDisable(true);
+		if(knightButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+
+		this.libraryButton = new RadioButton();
+		libraryButton.setSelected(false);
+		libraryButton.setDisable(true);
+		if(libraryButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.marketButton = new RadioButton();
+		marketButton.setSelected(false);
+		marketButton.setDisable(true);
+		if(marketButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.monopolyButton = new RadioButton();
+		monopolyButton.setSelected(false);
+		monopolyButton.setDisable(true);
+		if(monopolyButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.roadbuildingButton = new RadioButton();
+		roadbuildingButton.setSelected(false);
+		roadbuildingButton.setDisable(true);
+		if(roadbuildingButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.universityButton = new RadioButton();
+		universityButton.setSelected(false);
+		universityButton.setDisable(true);
+		if(universityButton.isSelected()){
+			playButton.setDisable(false);
+		}
+		
+
+		this.yearofplentyButton = new RadioButton();
+		yearofplentyButton.setSelected(false);
+		yearofplentyButton.setDisable(true);
+		if(yearofplentyButton.isSelected()){
+			playButton.setDisable(false);
+		}
+		
+		chapelButton.setToggleGroup(devCard);
+		greathallButton.setToggleGroup(devCard);
+		knightButton.setToggleGroup(devCard);
+		libraryButton.setToggleGroup(devCard);
+		marketButton.setToggleGroup(devCard);
+		monopolyButton.setToggleGroup(devCard);
+		roadbuildingButton.setToggleGroup(devCard);
+		universityButton.setToggleGroup(devCard);
+		yearofplentyButton.setToggleGroup(devCard);
+		
+		chapelBW = DevelopmentCardType.CHAPEL.getBWSkin();
+		greathallBW = DevelopmentCardType.GREATHALL.getBWSkin();
+		knightBW = DevelopmentCardType.KNIGHT.getBWSkin();
+		libraryBW = DevelopmentCardType.LIBRARY.getBWSkin();
+		marketBW = DevelopmentCardType.MARKET.getBWSkin();
+		monopolyBW = DevelopmentCardType.MONOPOLY.getBWSkin();
+		roadbuildingBW = DevelopmentCardType.ROADBUILDING.getBWSkin();
+		universityBW = DevelopmentCardType.UNIVERSITY.getBWSkin();
+		yearofplentyBW = DevelopmentCardType.YEAROFPLENTY.getBWSkin();
+		
+		chapel = DevelopmentCardType.CHAPEL.getColoredSkin();
+		greathall = DevelopmentCardType.GREATHALL.getColoredSkin();
+		knight = DevelopmentCardType.KNIGHT.getColoredSkin();
+		library = DevelopmentCardType.LIBRARY.getColoredSkin();
+		market = DevelopmentCardType.MARKET.getColoredSkin();
+		monopoly = DevelopmentCardType.MONOPOLY.getColoredSkin();
+		roadbuilding = DevelopmentCardType.ROADBUILDING.getColoredSkin();
+		university = DevelopmentCardType.UNIVERSITY.getColoredSkin();
+		yearofplenty = DevelopmentCardType.YEAROFPLENTY.getColoredSkin();
+
+		this.cancelButton = new Button("Cancel");
+		this.playButton = new Button("Play Card");
+
+		gridPane.add(chapelBW, 1, 0);
+		gridPane.add(chapelButton, 1, 1);
+		gridPane.add(greathallBW, 2, 0);
+		gridPane.add(greathallButton, 2, 1);
+		gridPane.add(knightBW, 3, 0);
+		gridPane.add(knightButton, 3, 1);
+		gridPane.add(libraryBW, 4, 0);
+		gridPane.add(libraryButton, 4, 1);
+		gridPane.add(marketBW, 1, 2);
+		gridPane.add(marketButton, 1, 3);
+		gridPane.add(monopolyBW, 2, 2);
+		gridPane.add(monopolyButton, 2, 3);
+		gridPane.add(roadbuildingBW, 3, 2);
+		gridPane.add(roadbuildingButton, 3, 3);
+		gridPane.add(universityBW, 4, 2);
+		gridPane.add(universityButton, 4, 3);
+		gridPane.add(yearofplentyBW, 5, 2);
+		gridPane.add(yearofplentyButton, 5, 3);
+
+		gridPane.add(cancelButton, 1, 6);
+		gridPane.add(playButton, 5, 6);
+
+		StackPane.setMargin(gridPane, new Insets(10,10,10,20));
+
+		GridPane.setHalignment(chapelButton, HPos.CENTER);
+		GridPane.setHalignment(greathallButton, HPos.CENTER);
+		GridPane.setHalignment(knightButton, HPos.CENTER);
+		GridPane.setHalignment(libraryButton, HPos.CENTER);
+		GridPane.setHalignment(monopolyButton, HPos.CENTER);
+		GridPane.setHalignment(roadbuildingButton, HPos.CENTER);
+		GridPane.setHalignment(universityButton, HPos.CENTER);
+		GridPane.setHalignment(yearofplentyButton, HPos.CENTER);
+		GridPane.setHalignment(marketButton, HPos.CENTER);
+
+		GridPane.setHalignment(cancelButton, HPos.CENTER);
+		GridPane.setHalignment(playButton, HPos.CENTER);
+
+		GridPane.setHalignment(chapelBW, HPos.CENTER);
+		GridPane.setHalignment(greathallBW, HPos.CENTER);
+		GridPane.setHalignment(knightBW, HPos.CENTER);
+		GridPane.setHalignment(libraryBW, HPos.CENTER);
+		GridPane.setHalignment(marketBW, HPos.CENTER);
+		GridPane.setHalignment(monopolyBW, HPos.CENTER);
+		GridPane.setHalignment(roadbuildingBW, HPos.CENTER);
+		GridPane.setHalignment(universityBW, HPos.CENTER);
+		GridPane.setHalignment(yearofplentyBW, HPos.CENTER);					
+	}
+
+	
+	/**
+	 * Shows the Overview over all DevelopmentCards
+	 */
+	public void showDevelopmentCardOverview(){
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				updateDevCardOverview();
+				setDevelopmentCardStageScene(overviewScene);
+				devCardStage.show();
+			}});
+	}
+	
+	/**
+	 * Shows a CloseUp of the chosen DevelopmentCard
+	 * @param devCard the card to be shown
+	 */
+	public void showCloseUp(DevelopmentCardType devCard){
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				setDevelopmentCardStageScene(new Scene(new StackPane(devCard.getColoredSkin())));
+				devCardStage.centerOnScreen();
+				devCardStage.show();
+			}});
+	}
+
+
+	/**
+	 * DevCards are colored if a player has one
+	 */
+	public void updateDevCardOverview(){
+		if(overviewGridPane.getChildren().remove(chapel)){
+			overviewGridPane.add(chapelBW, 1, 0);
+		}
+		if(overviewGridPane.getChildren().remove(greathall)){
+			overviewGridPane.add(greathallBW, 2, 0);
+		}
+		if(overviewGridPane.getChildren().remove(knight)){
+			overviewGridPane.add(knightBW, 3, 0);
+		}
+		if(overviewGridPane.getChildren().remove(library)){
+			overviewGridPane.add(libraryBW, 4, 0);
+		}
+		if(overviewGridPane.getChildren().remove(market)){
+			overviewGridPane.add(marketBW, 1, 2);
+		}
+		if(overviewGridPane.getChildren().remove(monopoly)){
+			overviewGridPane.add(monopolyBW, 2, 2);
+		}
+		if(overviewGridPane.getChildren().remove(roadbuilding)){
+			overviewGridPane.add(roadbuildingBW, 3, 2);
+		}
+		if(overviewGridPane.getChildren().remove(university)){
+			overviewGridPane.add(universityBW, 4, 2);
+		}
+		if(overviewGridPane.getChildren().remove(yearofplenty)){
+			overviewGridPane.add(yearofplentyBW, 5, 2);
+		}
+		for(DevelopmentCardType devCard: player.getDevCards()) {
+			switch(devCard) {
+			case CHAPEL : chapelButton.setDisable(false);
+						  if(overviewGridPane.getChildren().remove(chapelBW)){
+							  overviewGridPane.add(chapel, 1, 0);
+						  }
+						  break;
+			case GREATHALL : greathallButton.setDisable(false);
+							 if(overviewGridPane.getChildren().remove(greathallBW)){
+								 overviewGridPane.add(greathall, 2, 0);
+							 }
+				             break;
+			case KNIGHT : knightButton.setDisable(false);
+						  if(overviewGridPane.getChildren().remove(knightBW)){
+							  overviewGridPane.add(knight, 3, 0);
+						  }
+				          break;
+			case LIBRARY : libraryButton.setDisable(false);
+						   if(overviewGridPane.getChildren().remove(libraryBW)){
+							   overviewGridPane.add(library, 4, 0);
+						   }
+						   break;
+			case MARKET : marketButton.setDisable(false);
+						  if(overviewGridPane.getChildren().remove(marketBW)){
+							  overviewGridPane.add(market, 1, 2);
+						  }
+						  break;
+			case MONOPOLY : monopolyButton.setDisable(false); 
+							if(overviewGridPane.getChildren().remove(monopolyBW)){
+								overviewGridPane.add(monopoly, 2, 2);
+							}
+							break;
+			case ROADBUILDING : roadbuildingButton.setDisable(false);
+								if(overviewGridPane.getChildren().remove(roadbuildingBW)){
+									overviewGridPane.add(roadbuilding, 3, 2);
+								}
+								break;
+			case UNIVERSITY : universityButton.setDisable(false);
+							  if(overviewGridPane.getChildren().remove(universityBW)){
+								  overviewGridPane.add(university, 4, 2);
+							  }
+							  break;
+			case YEAROFPLENTY : yearofplentyButton.setDisable(false);
+								if(overviewGridPane.getChildren().remove(yearofplentyBW)){
+									overviewGridPane.add(yearofplenty, 5, 2);
+								}
+								break;
+			}	
+		}
+
+	}
+
+	
+//____________________________________________________________________________________________
+	
+	/**
+	 * sets the scene of the ResourceCard scene for Monopoly
+	 * @param scene Scene
+	 */
+//____________________________________________________________________________________________
+	
+	private void setMonStageScene(Scene scene) {
+
+		devCardStage.setScene(scene);
+	}
+
+	/**
+	 * Updates the GridPane overviewGridPane
+	 */
+	public void updateMonOverview(){
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				resMonOverviewGridPane = new GridPane();
+				resMonOverviewGridPane.setStyle("-fx-background-color: #dddd; -fx-padding: 10;");
+				resMonOverviewGridPane.setPadding(new Insets(5, 0, 5, 0));
+				resMonOverviewGridPane.setVgap(10);
+				resMonOverviewGridPane.setHgap(5);
+				resMonOverviewGridPane.setPrefWidth(610);
+				ArrayList<ResourceType> allResCards = new ArrayList<ResourceType>();
+				for(ResourceType resCard : allResCards){
+					resMonOverviewGridPane.getChildren().add(resCard.getSkin());
+				}
+				resMonOverviewScene = new Scene(resMonOverviewGridPane);
+				System.out.println("[UI]Neue Overview mit " + allResCards.size() + " ResourceCards"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+			}
+		});
+	}
+
+	/**
+	 * Creates the scene opened for resCardsOverview
+	 */
+	private void createMonOverviewScene() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+			devCardStage.setTitle("Choose one resource you want from all the other players: ");
+			
+				setMonStageScene(resMonOverviewScene);
+			}
+		});
+		try {
+			System.out.println("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			System.out.println("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+
+		StackPane stackPane = new StackPane();
+		stackPane.setStyle("-fx-background-color: darkred; -fx-padding: 5;");
+		resMonOverviewGridPane = new GridPane();
+		addMonElements(resMonOverviewGridPane);
+		addButtonEventHandlerMon();
+		addMonRadioButtonEventHandler();
+		stackPane.getChildren().add(resMonOverviewGridPane);
+		
+		this.resMonOverviewScene = new Scene(stackPane);			
+	}
+
+
+
+	/**
+	 * Adds the EventHandler to the buttons "resPlaycard" and "resCancel" of the Pane
+	 */
+	private void addButtonEventHandlerMon() {
+		resCancelButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent resEvent) {
+				devCardStage.close();
+			}
+		});
+
+		resPlayButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent resEvent) {
+				if(brick1Button.isSelected()){
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.BRICK);
+//					monopolyResource(ResourceType.BRICK);
+				}
+				else if(grain1Button.isSelected()) {
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.GRAIN);
+//					monopolyResource(ResourceType.GRAIN);
+				} 
+				else if(lumber1Button.isSelected()) {
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.LUMBER);
+//					monopolyResource(ResourceType.LUMBER);
+				}
+				else if(ore1Button.isSelected()) {
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.ORE);
+//					monopolyResource(ResourceType.ORE);
+				}
+				else if(wool1Button.isSelected()) {
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.WOOL);
+//					monopolyResource(ResourceType.WOOL);
+				}
+				devCardStage.close();
+			}
+		});
+	}
+	
+//	/**
+//	 * Used when player plays a Monopoly Development card
+//	 * gives the chosen resource from all players to the current player
+//	 * @param resType
+//	 */
+//	public void monopolyResource(ResourceType resType){
+//		ArrayList<PlayerClient> players = new ArrayList<PlayerClient>();
+//		players = player.getCatan().getAllPlayers();
+//		int i;
+//		int j;
+//		//alle Player durchgehen
+//		for(i = 0; i <= players.size(); i++){
+//			ArrayList<ResourceType> res = players.get(i).getResCards();
+//			//Alle Resourcen eines Spielers durchgehen
+//			for(j = 0; j < res.size() ; j++){
+//				//Wenn Player die Resource Karte hat
+//				if(res.get(j) == resType){
+//					players.get(i).getHand().remResource(res.get(j));
+//					player.getHand().addResource(resType);
+//				}
+//			}
+//		}
+//		
+//	}
+	
+	/**
+	 * Adds the EventHandler to the RadioButtons in Pane
+	 */
+	private void addMonRadioButtonEventHandler() {
+
+		brick1Button.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherMonRadioButtons(0);
+			}
+		});
+
+		grain1Button.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherMonRadioButtons(1);
+			}
+		});
+
+		lumber1Button.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherMonRadioButtons(2);
+			}
+		});
+
+		ore1Button.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherMonRadioButtons(3);
+			}
+		});
+
+		wool1Button.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherMonRadioButtons(4);
+			}
+		});
+		
+	}
+
+	private void disableOtherMonRadioButtons(int except){
+		RadioButton[] rbutts = {brick1Button, grain1Button, lumber1Button, ore1Button, wool1Button};
+		for(int i=0; i<5;i++){
+			if(i != except){
+				rbutts[i].setSelected(false);
+			}
+		}
+	}
+	/**
+	 * Adds Buttons and resCards Images to the Pane
+	 */
+	private void addMonElements(GridPane gridPane) {
+		resCard = new ToggleGroup();
+		this.brick1Button = new RadioButton("Brick");
+		brick1Button.setSelected(false);
+		if(brick1Button.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.grain1Button = new RadioButton("Grain");
+		grain1Button.setSelected(false);
+		if(grain1Button.isSelected()){
+			playButton.setDisable(false);
+		}
+
+
+		this.lumber1Button = new RadioButton("Lumber");
+		lumber1Button.setSelected(false);
+		if(lumber1Button.isSelected()){
+			playButton.setDisable(false);
+		}
+
+
+		this.ore1Button = new RadioButton("Ore");
+		ore1Button.setSelected(false);
+		if(ore1Button.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.wool1Button = new RadioButton("Wool");
+		wool1Button.setSelected(false);
+		if(wool1Button.isSelected()){
+			playButton.setDisable(false);
+		}
+		
+		brick1Button.setToggleGroup(resCard);
+		grain1Button.setToggleGroup(resCard);
+		lumber1Button.setToggleGroup(resCard);
+		ore1Button.setToggleGroup(resCard);
+		wool1Button.setToggleGroup(resCard);
+		
+		ImageView brick = ResourceType.BRICK.getSkin();
+		ImageView grain = ResourceType.GRAIN.getSkin();
+		ImageView lumber = ResourceType.LUMBER.getSkin();
+		ImageView ore = ResourceType.ORE.getSkin();
+		ImageView wool = ResourceType.WOOL.getSkin();
+	
+		this.resCancelButton = new Button("Cancel");
+		this.resPlayButton = new Button("Play Card");
+
+		gridPane.add(brick, 1, 0);
+		gridPane.add(brick1Button, 1, 1);
+		gridPane.add(grain, 2, 0);
+		gridPane.add(grain1Button, 2, 1);
+		gridPane.add(lumber, 3, 0);
+		gridPane.add(lumber1Button, 3, 1);
+		gridPane.add(ore, 4, 0);
+		gridPane.add(ore1Button, 4, 1);
+		gridPane.add(wool, 5, 0);
+		gridPane.add(wool1Button, 5, 1);
+
+		gridPane.add(resCancelButton, 1, 4);
+		gridPane.add(resPlayButton, 5, 4);
+
+		StackPane.setMargin(gridPane, new Insets(10,10,10,20));
+
+		GridPane.setHalignment(brick1Button, HPos.CENTER);
+		GridPane.setHalignment(grain1Button, HPos.CENTER);
+		GridPane.setHalignment(lumber1Button, HPos.CENTER);
+		GridPane.setHalignment(ore1Button, HPos.CENTER);
+		GridPane.setHalignment(wool1Button, HPos.CENTER);
+
+		GridPane.setHalignment(resCancelButton, HPos.CENTER);
+		GridPane.setHalignment(resPlayButton, HPos.CENTER);
+
+		GridPane.setHalignment(brick, HPos.CENTER);
+		GridPane.setHalignment(grain, HPos.CENTER);
+		GridPane.setHalignment(lumber, HPos.CENTER);
+		GridPane.setHalignment(ore, HPos.CENTER);
+		GridPane.setHalignment(wool, HPos.CENTER);			
+	}
+
+	
+	/**
+	 * Shows the Overview over all ResourceCards
+	 */
+	public void showMonOverview(){
+		setDevelopmentCardStageScene(resMonOverviewScene);
+		this.devCardStage.show();
+	}
+//___________________________________________________________________________________________
+	
+	/**
+	 * sets the scene of the ResourceCard scene for YearOfPlenty
+	 * @param scene Scene
+	 */
+//____________________________________________________________________________________________
+	private void setYOPStageScene(Scene scene) {
+
+		devCardStage.setScene(scene);
+	}
+
+	/**
+	 * Updates the GridPane overviewGridPane
+	 */
+	public void updateYOPOverview(){
+
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				resYOPOverviewGridPane = new GridPane();
+				resYOPOverviewGridPane.setStyle("-fx-background-color: #dddd; -fx-padding: 10;");
+				resYOPOverviewGridPane.setPadding(new Insets(5, 0, 5, 0));
+				resYOPOverviewGridPane.setVgap(10);
+				resYOPOverviewGridPane.setHgap(5);
+				resYOPOverviewGridPane.setPrefWidth(610);
+				ArrayList<ResourceType> allResCards = new ArrayList<ResourceType>();
+				for(ResourceType resCard : allResCards){
+					resYOPOverviewGridPane.getChildren().add(resCard.getSkin());
+				}
+				resYOPOverviewScene = new Scene(resYOPOverviewGridPane);
+				System.out.println("[UI]Neue Overview mit " + allResCards.size() + " ResourceCards"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+			}
+		});
+	}
+
+	/**
+	 * Creates the scene opened for resCardsOverview
+	 */
+	private void createYOPOverviewScene() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+			devCardStage.setTitle("Choose two resources: ");
+			
+				
+				setYOPStageScene(resYOPOverviewScene);
+			}
+		});
+		try {
+			System.out.println("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			System.out.println("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+
+		StackPane stackPane = new StackPane();
+		stackPane.setStyle("-fx-background-color: darkred; -fx-padding: 5;");
+		resYOPOverviewGridPane = new GridPane();
+		addYOPElements(resYOPOverviewGridPane);
+		addButtonEventHandlerYOP();
+		stackPane.getChildren().add(resYOPOverviewGridPane);
+		
+		this.resYOPOverviewScene = new Scene(stackPane);			
+	}
+
+
+
+	/**
+	 * Adds the EventHandler to the buttons "resPlaycard" and "resCancel" of the Pane
+	 */
+	private void addButtonEventHandlerYOP() {
+		resCancelButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent resEvent) {
+				devCardStage.close();
+			}
+		});
+
+		resPlayButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent resEvent) {
+				// Wenn 2 beliebige Radio Buttons ausgewählt wurden, soll der Spieler diese zu seinen ResCards hizugezählt bekommen
+				
+				if(resButtons1.getSelectedToggle().isSelected() && resButtons2.getSelectedToggle().isSelected()){
+					ArrayList<ResourceType> res = new ArrayList<ResourceType>();
+//					TODO: add selected resources
+					player.getCatan().getGameManager().getClient().sendYearOfPlenty(res);
+				}
+
+			}
+		});
+	}
+	
+
+
+	/**
+	 * Adds Buttons and resCards Images to the Pane
+	 */
+	private void addYOPElements(GridPane gridPane) {
+		
+		this.brick1Button = new RadioButton("Brick");
+		this.grain1Button = new RadioButton("Grain");
+		this.lumber1Button = new RadioButton("Lumber");
+		this.ore1Button = new RadioButton("Ore");
+		this.wool1Button = new RadioButton("Wool");
+		this.brick2Button = new RadioButton("Brick");
+		this.grain2Button = new RadioButton("Grain");
+		this.lumber2Button = new RadioButton("Lumber");
+		this.ore2Button = new RadioButton("Ore");
+		this.wool2Button = new RadioButton("Wool");
+
+		brick1Button.setToggleGroup(resButtons1);
+		grain1Button.setToggleGroup(resButtons1);
+		lumber1Button.setToggleGroup(resButtons1);
+		ore1Button.setToggleGroup(resButtons1);
+		wool1Button.setToggleGroup(resButtons1);
+		
+		brick2Button.setToggleGroup(resButtons2);
+		grain2Button.setToggleGroup(resButtons2);
+		lumber2Button.setToggleGroup(resButtons2);
+		ore2Button.setToggleGroup(resButtons2);
+		wool2Button.setToggleGroup(resButtons2);
+		
+		if(resButtons1.getSelectedToggle().isSelected() && resButtons2.getSelectedToggle().isSelected()){
+			playButton.setDisable(false);
+		}
+		
+		ImageView brick = ResourceType.BRICK.getSkin();
+		ImageView grain = ResourceType.GRAIN.getSkin();
+		ImageView lumber = ResourceType.LUMBER.getSkin();
+		ImageView ore = ResourceType.ORE.getSkin();
+		ImageView wool = ResourceType.WOOL.getSkin();
+	
+		this.resCancelButton = new Button("Cancel");
+		this.resPlayButton = new Button("Play Card");
+
+
+		gridPane.add(brick, 1, 0);
+		gridPane.add(brick1Button, 1, 1);
+		gridPane.add(brick2Button, 1, 2);
+		gridPane.add(grain, 2, 0);
+		gridPane.add(grain1Button, 2, 1);
+		gridPane.add(grain2Button, 2, 2);
+		gridPane.add(lumber, 3, 0);
+		gridPane.add(lumber1Button, 3, 1);
+		gridPane.add(lumber2Button, 3, 2);
+		gridPane.add(ore, 4, 0);
+		gridPane.add(ore1Button, 4, 1);
+		gridPane.add(ore2Button, 4, 2);
+		gridPane.add(wool, 5, 0);
+		gridPane.add(wool1Button, 5, 1);
+		gridPane.add(wool2Button, 5, 2);
+		
+		gridPane.add(resCancelButton, 1, 4);
+		gridPane.add(resPlayButton, 5, 4);
+
+		StackPane.setMargin(gridPane, new Insets(10,10,10,20));
+
+		GridPane.setHalignment(brick1Button, HPos.CENTER);
+		GridPane.setHalignment(grain1Button, HPos.CENTER);
+		GridPane.setHalignment(lumber1Button, HPos.CENTER);
+		GridPane.setHalignment(ore1Button, HPos.CENTER);
+		GridPane.setHalignment(wool1Button, HPos.CENTER);
+		GridPane.setHalignment(brick2Button, HPos.CENTER);
+		GridPane.setHalignment(grain2Button, HPos.CENTER);
+		GridPane.setHalignment(lumber2Button, HPos.CENTER);
+		GridPane.setHalignment(ore2Button, HPos.CENTER);
+		GridPane.setHalignment(wool2Button, HPos.CENTER);
+
+		GridPane.setHalignment(resCancelButton, HPos.CENTER);
+		GridPane.setHalignment(resPlayButton, HPos.CENTER);
+
+		GridPane.setHalignment(brick, HPos.CENTER);
+		GridPane.setHalignment(grain, HPos.CENTER);
+		GridPane.setHalignment(lumber, HPos.CENTER);
+		GridPane.setHalignment(ore, HPos.CENTER);
+		GridPane.setHalignment(wool, HPos.CENTER);			
+	}
+
+	
+	/**
+	 * Shows the Overview over all ResourceCards
+	 */
+	public void showYOPOverview(){
+		setDevelopmentCardStageScene(resYOPOverviewScene);
+		this.devCardStage.show();
+	}
+}

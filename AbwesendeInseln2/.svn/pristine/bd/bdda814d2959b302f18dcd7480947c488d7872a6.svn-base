@@ -1,0 +1,11 @@
+package jsonstructures;
+
+public class StatusUpdateNachricht {
+	private SpielerZustandsDatenDaten Statusupdate;
+
+	public StatusUpdateNachricht(SpielerZustandsDaten statusupdate) {
+		Statusupdate = new SpielerZustandsDatenDaten(statusupdate);
+	}
+
+	
+}

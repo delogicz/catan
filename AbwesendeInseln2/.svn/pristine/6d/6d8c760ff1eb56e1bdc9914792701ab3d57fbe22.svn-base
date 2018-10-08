@@ -1,0 +1,155 @@
+package view;
+
+import java.net.URISyntaxException;
+
+import game.GameManager;
+import game.Settings;
+import javafx.geometry.Insets;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import model.Hand;
+import model.Player;
+/**
+ * 
+ * @author Lena
+ *
+ */
+
+
+
+public class HandSkin extends StackPane {
+
+
+	private Rectangle playersHand;
+	private Hand hand;
+	
+	private Player player1, player2, player3;
+	private TextField player1NN, player2NN, player3NN;
+	private TextField player1NC, player2NC, player3NC;
+
+	private VBox vbox;
+	private HBox hboxPlayer;
+	private HBox hboxCards;
+	
+	private GameManager gameManager;
+	
+	private Rectangle handRect;
+	
+	
+
+	
+	/**
+	 * Constructor
+	 * @param hand Player's Hand
+	 */
+	public HandSkin(Hand hand){
+
+		this.hand = hand;
+		this.vbox = new VBox();
+		this.hboxPlayer = new HBox();
+		this.hboxCards = new HBox();
+
+		this.handRect = new Rectangle(Settings.HANDSKIN_X, Settings.HANDSKIN_Y);
+
+		
+		
+//		String path;
+//		try {
+//			path = SetUpSkin.class.getResource("/img.hand/hintergrund.jpg" ).toURI().toString();
+//			Image image = new Image(path);
+//			ImagePattern imagePattern = new ImagePattern(image);
+//			this.handRectangle.setFill(imagePattern);
+//		} catch (URISyntaxException e) {
+//			System.out.println(e.getMessage() + " Couldn't find image of HandSkin.");
+//		}
+//			addElements();
+		
+
+		String path = "";
+		try {
+			path = SetUpSkin.class.getResource("/img/hand/hintergrund.jpg" ).toURI().toString();
+		} catch (URISyntaxException e) {
+			System.out.println(e.getMessage() + " Couldn't find image of HandSkin.");
+		}
+		Image image = new Image(path, 300, 118, false, false);
+		ImageView backgroundHand = new ImageView(image);
+		ImagePattern imagePattern = new ImagePattern(image);
+		this.handRect.setFill(imagePattern);
+		getChildren().add(backgroundHand);
+		
+		addElements();
+
+		
+
+	}
+	
+	private void addElements() {
+
+		// HBox für Nickname
+		this.player1NN = new TextField();
+		player1NN.setText(player1.getName());
+		hboxPlayer.getChildren().add(player1NN);
+		
+		this.player2NN = new TextField();
+		player2NN.setText(player2.getName());
+		hboxPlayer.getChildren().add(player2NN);
+		
+		this.player3NN = new TextField();
+		player3NN.setText(player3.getName());
+		hboxPlayer.getChildren().add(player3NN);
+		
+		//HBox für Anzahl Karten
+		this.player1NC = new TextField();
+		player1NC.setText(" "+player1.getResCardsCount() +" ");
+		hboxCards.getChildren().add(player1NC);
+		
+		this.player2NC = new TextField();
+		player2NC.setText(" "+player2.getResCardsCount() +" ");
+		hboxCards.getChildren().add(player2NC);
+		
+		this.player3NC = new TextField();
+		player3NC.setText(" "+player3.getResCardsCount() +" ");
+		hboxCards.getChildren().add(player3NC);
+		
+		
+		vbox.getChildren().add(0, hboxPlayer);
+		vbox.getChildren().add(1, hboxCards);
+		
+		
+		
+		StackPane.setMargin(hboxPlayer, new Insets(1,1,1,1));		
+	}
+	
+	
+	public 	Rectangle getHand(){
+		return this.handRect;
+		
+	}
+
+	
+	/**
+	 * @return the shape of player's hand
+	 */
+	public Rectangle getPlayersHand(){
+		return this.playersHand;
+	}
+	
+//	public void changeViewOfHand(int countOfHand){
+//		try {
+//			String path = HandSkin.class.getResource("/img/dice/dice" +countOfHand+ ".png").toURI().toString();
+//			Image image = new Image(path);
+//			ImagePattern imagePattern = new ImagePattern(image);
+//			this.playersHand.setFill(imagePattern);
+//		} catch (URISyntaxException e) {
+//			e.printStackTrace();
+//		}
+
+		
+	}

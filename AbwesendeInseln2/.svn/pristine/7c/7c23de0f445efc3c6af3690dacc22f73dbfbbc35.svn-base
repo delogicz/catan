@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class HandelAngebotDaten {
+
+	int Spieler;
+	//int Handel id;
+	RohstoffDaten Angebot;
+	RohstoffDaten Nachfrage;
+}

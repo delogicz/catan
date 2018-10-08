@@ -1,0 +1,13 @@
+package jsonstructures;
+
+public class FeldDaten {
+	private String Ort;
+	private String Typ;
+	private int Zahl;
+
+	public FeldDaten(String ort, String typ, int zahl) {
+		Ort = ort;
+		Typ = typ;
+		Zahl = zahl;
+	}
+}

@@ -1,0 +1,114 @@
+package game;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+/**
+ * Application. Run to start a new game of "The Settlers of Catan".
+ * @author Daniel Panangian
+ */
+public class App extends Application {
+		
+	private Stage stage;
+	
+	@Override
+	public void start(Stage stage) throws Exception {
+		this.stage = stage;
+		GameManager gameManager = new GameManager(this);
+		Scene scene = gameManager.getClientLoginScene();
+		stage.setTitle("Settlers of Catan");
+		stage.setScene(scene);
+		stage.setResizable(true);
+		stage.show();
+	}
+
+	public static void main(String[] args) {
+		Application.launch(args);
+	}
+	
+	/**
+	 * Changes the scene of the main stage
+	 */
+	public void changeScene(Scene scene){
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				stage.setScene(scene);
+				stage.centerOnScreen();
+				stage.setResizable(true);
+			}
+		});
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Creates PopUp-Stage to show a message
+	 * @param message message to show in PopUp-Stage
+	 */
+	public void popUpMessage(String message){
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				Stage popUpStage = new Stage();
+				popUpStage.initOwner(stage);
+				StackPane pane = new StackPane();
+				pane.setStyle("-fx-background-color: darkred; -fx-padding: 10;");
+				Text popUpMessage = new Text("\n"+message+"\n");
+				popUpMessage.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+				popUpMessage.setFill(Color.ANTIQUEWHITE);
+				pane.getChildren().add(popUpMessage);
+				Scene popUpScene = new Scene(pane);
+				popUpStage.setScene(popUpScene);
+				popUpStage.show();
+			}
+		});
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Creates PopUp-Stage to show a pane
+	 * @param pane pane to show in PopUp-Stage
+	 */
+	public void popUpPane(Pane pane){
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				Stage popUpStage = new Stage();
+				popUpStage.initOwner(stage);
+				pane.setStyle("-fx-background-color: darkred; -fx-padding: 10;");
+				Scene popUpScene = new Scene(pane);
+				popUpStage.setScene(popUpScene);
+				popUpStage.show();
+			}
+		});
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * @return the stage
+	 */
+	public Stage getStage(){
+		return this.stage;
+	}
+}

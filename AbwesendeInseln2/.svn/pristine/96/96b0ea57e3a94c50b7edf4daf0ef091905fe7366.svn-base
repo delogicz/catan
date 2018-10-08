@@ -1,0 +1,21 @@
+package jsonstructures;
+
+
+/**
+ * This class is the wrapper for the resources the client gets from the server 
+ * @author Felixi
+ *
+ */
+public class ErtragNachricht {
+	
+	private ErtragsDaten Ertrag;
+
+	/**
+	 * creates a ErtragsDaten object
+	 * @param spieler		player who receives the resources
+	 * @param rohstoffe		resource object with all that he is getting
+	 */
+	public ErtragNachricht(int spieler, RohstoffDaten rohstoffe) {
+		Ertrag = new ErtragsDaten(spieler, rohstoffe);
+	}
+}

@@ -1,0 +1,44 @@
+package view;
+
+import java.net.URISyntaxException;
+
+import game.Settings;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import model.Island;
+
+/**
+ * View of the game board. Contains e.g. view of island.
+ *
+ */
+public class GameSkin extends StackPane {
+	
+	private IslandSkin islandSkin;
+	
+	public GameSkin(Island island){
+		setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+		islandSkin = new IslandSkin(island);
+		String path;
+		try {
+			path = GameSkin.class.getResource("/img/background.jpg" ).toURI().toString();
+			Image image = new Image(path);
+			ImageView waterView = new ImageView(image);
+	
+
+			getChildren().addAll (waterView,islandSkin);
+		} catch (URISyntaxException | NullPointerException e) {
+			System.out.println("Specified file does not exist.");
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			getChildren().add(islandSkin);
+		}
+		
+
+	}
+	
+	public IslandSkin getIslandSkin(){
+		return this.islandSkin;
+	}
+}

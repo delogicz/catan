@@ -1,0 +1,11 @@
+package jsonstructures;
+
+public class WuerfelDaten {
+	private int Spieler;
+	private int Wurf;
+	
+	public WuerfelDaten(int spieler, int wurf) {
+		Spieler = spieler;
+		Wurf = wurf;
+	}
+}

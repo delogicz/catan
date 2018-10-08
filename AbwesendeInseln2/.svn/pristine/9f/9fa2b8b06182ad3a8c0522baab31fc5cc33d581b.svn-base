@@ -1,0 +1,13 @@
+package jsonstructures;
+
+public class HalloNachricht {
+	VersionDaten Hallo;
+	
+	public HalloNachricht(String version){
+		Hallo = new VersionDaten(version);
+	}
+	
+	public HalloNachricht(String version,String protokoll){
+		Hallo = new VersionProtokollDaten(version,protokoll);
+	}
+}

@@ -1,0 +1,27 @@
+package jsonstructures;
+
+/**
+ * Data of count of all resource cards of other players
+ * @author Felixi, Georg
+ *
+ */
+public class RohstoffUnbekanntDaten {
+
+	int Unbekannt;
+	
+	/**
+	 * Constructor
+	 * @param anzahl
+	 */
+	public RohstoffUnbekanntDaten(int anzahl){
+		Unbekannt = anzahl;
+	}
+	
+	/**
+	 * Getter for Anzahl
+	 * @return
+	 */
+	public int getAnzahl(){
+		return Unbekannt;
+	}
+}

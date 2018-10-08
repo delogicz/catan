@@ -1,0 +1,11 @@
+package jsonstructures;
+
+public class ServerChatDaten {
+	private int Absender;
+	private String Nachricht;
+	
+	public ServerChatDaten(int absender, String nachricht) {
+		Absender = absender;
+		Nachricht = nachricht;
+	}
+}

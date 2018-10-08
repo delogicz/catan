@@ -1,0 +1,24 @@
+package jsonstructures;
+
+import java.util.List;
+
+import model.Harbour;
+import model.Island;
+import model.Tile;
+
+public class KartenNachricht {
+	
+	private KartenDaten Karte;
+	
+	public KartenNachricht(KartenDaten kart){
+		Karte = kart;
+	}
+	
+	public KartenNachricht(Island i) {
+		Karte = new KartenDaten(i);
+	}
+
+	public KartenDaten getKartenDaten(){
+		return Karte;
+	}
+}

@@ -1,0 +1,112 @@
+#pane{
+    -fx-background-image: url("img/login.png"); 
+    -fx-background-size: cover;
+}
+#play{
+    -fx-border: none;
+    -fx-background-image: url("img/button2.png"); 
+    -fx-background-size: stretch;
+      -fx-background-radius: 30;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+     -fx-pref-height: 55px;
+    -fx-pref-width: 120px;
+}
+#stackpane{
+    -fx-background-image: url("img/login2.png"); 
+    -fx-background-size: cover;
+}
+.text-field {
+    -fx-background-color:  rgba(0,0,0,0.3);
+     -fx-text-fill: white;
+   
+}
+
+.table-view{
+   -fx-background-color: transparent;
+}
+
+.table-view:focused{
+    -fx-background-color: transparent;
+}
+
+/* Spaltenköpfe
+    Struktur column-header-background -> column-header */
+
+.table-view .column-header-background{
+    -fx-background-color: rgba(0,0,0,0.6);
+}
+
+.table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .table-cell{
+    -fx-text-fill: white;
+}
+
+.table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color,transparent;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+
+.table-row-cell:selected {
+    -fx-background-color: #005797;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+.table-view .filler {
+-fx-background-color: rgba(0,0,0,0.6);
+}
+
+.table-view > .virtual-flow > .scroll-bar:vertical,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track-background, 
+.table-view > .virtual-flow > .scroll-bar:horizontal,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
+    -fx-background-color: transparent;
+}
+
+
+
+.table-view > .virtual-flow > .scroll-bar > .increment-button, 
+.table-view > .virtual-flow > .scroll-bar > .decrement-button {
+    -fx-opacity: 0;
+}
+
+
+#left{
+	
+-fx-fill: #a19335;
+-fx-smooth:	true;	 
+-fx-stroke:	linear-gradient(to right, rgba(199,130,10,1) 0%, rgba(252,205,77,1) 0%, rgba(216,162,21,1) 60%, rgba(204,147,2,0.5) 80%, rgba(248,181,0,0.03) 99%, rgba(251,223,147,0) 100%);	 
+-fx-stroke-type: centered;	  
+-fx-stroke-line-cap:square	 ;
+-fx-stroke-line-join:miter;	 
+-fx-stroke-miter-limit:10	; 
+}
+
+.button {
+	-fx-border: none;
+    -fx-background-image: url("img/button.png"); 
+    -fx-background-size: stretch;
+      -fx-background-radius: 30;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+}
+.button:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+    -fx-scale-z: 1.1;
+}
+.hbox {
+	-fx-spacing: 10;
+}

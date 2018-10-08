@@ -1,0 +1,9 @@
+package model;
+
+/**
+ * A city.
+ *
+ */
+public class City extends Settlement {
+
+}

@@ -1,0 +1,44 @@
+package jsonstructures;
+
+import java.util.ArrayList;
+
+import model.DevelopmentCardType;
+import model.ResourceType;
+/**
+ * Object to be converted to JSON holding status data of a player without their hand
+ * @author georgschwab, Felix
+ *
+ */
+public class StatusUpdateUnbekanntNachricht {
+	SpielerZustandsUnbekanntDatenDaten Statusupdate;
+	
+
+	/**
+	 * Creates a StatusUpdateUnbekanntNachricht object
+	 * @param id
+	 * @param farbe
+	 * @param name
+	 * @param status
+	 * @param siegPunkte
+	 */
+	public StatusUpdateUnbekanntNachricht(int id, String farbe, String name, String status, int siegPunkte,
+			ArrayList<ResourceType> resourcen, int ritterGespielt, ArrayList<DevelopmentCardType> entwicklungsKarten) {
+		Statusupdate = new SpielerZustandsUnbekanntDatenDaten(new SpielerZustandsUnbekanntDaten(id, farbe, name, status, siegPunkte, resourcen.size(), ritterGespielt, entwicklungsKarten.size()));
+	}
+
+	/**
+	 * Getter for SpielerZustandsDatenDaten
+	 * @return
+	 */
+	public SpielerZustandsUnbekanntDatenDaten getStatusupdate() {
+		return Statusupdate;
+	}
+	
+	/**
+	 * Setter for SpielerZustandsDatenDaten
+	 * @param statusupdate
+	 */
+	public void setStatusupdate(SpielerZustandsUnbekanntDatenDaten statusupdate) {
+		Statusupdate = statusupdate;
+	}
+}

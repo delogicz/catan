@@ -1,0 +1,152 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import javafx.scene.shape.Shape;
+import view.IslandSkin;
+import view.SettlementSkin;
+
+/**
+ * A settlement. Defined by associated vertex and player.
+ * @author Daniel Panangian
+ */
+public class Settlement extends Building {
+	
+	private Vertex vertex;
+	private List<Tile> neighboringTiles;
+	
+	protected Shape settlementSkin;
+	protected BuildingType buildingType;
+	
+	/**
+	 * Constructor for Client
+	 * @param vertex
+	 * @param player
+	 * @param islandSkin
+	 */
+	public Settlement(Vertex vertex, Player player, IslandSkin islandSkin){
+		this.vertex = vertex;
+		this.owner = player;
+		this.neighboringTiles = vertex.getHexes();
+		this.settlementSkin = new SettlementSkin(this, islandSkin);
+		this.buildingType = BuildingType.Settlement;
+	}
+
+	/**
+	 * Constructor for Server
+	 * @param vertex
+	 * @param player
+	 */
+	public Settlement(Vertex vertex, PlayerClient player) {
+		this.vertex = vertex;
+		if(vertex.getHarbour() != null){
+			player.getHarbours().add(vertex.getHarbour());
+		}
+		this.owner = player;
+		this.neighboringTiles = vertex.getHexes();
+		this.buildingType = BuildingType.Settlement;
+	}
+	
+	
+	/**
+	 * Getter for SettlementSkin
+	 * @return the settlementSkin
+	 */
+	public Shape getSettlementSkin() {
+		return settlementSkin;
+	}
+	
+	public List<Vertex> shortestPath(Vertex to){
+		if (this.getVertex().equals(to)){
+			@SuppressWarnings("serial")
+			ArrayList<Vertex> list = new ArrayList<Vertex>() {{
+			    add(to);
+			}};
+			return list;
+		}
+	    //Initialization.
+	    HashMap<Vertex, Vertex> nextVertexMap = new HashMap<Vertex, Vertex>();
+	    Vertex currentVertex = this.getVertex();
+
+	    //Queue
+	    Queue<Vertex> queue = new LinkedList<Vertex>();
+	    queue.add(currentVertex);
+
+	    /*
+	     * The set of visited vertices doesn't have to be a Map, and, since order
+	     * is not important, an ordered collection is not needed. HashSet is 
+	     * fast for add and lookup, if configured properly.
+	     */
+	    ArrayList<Vertex> visitedVertices = new ArrayList<Vertex>();
+	    visitedVertices.add(currentVertex);
+
+	    //Search.
+	    while (!queue.isEmpty()) {
+	        currentVertex = queue.remove();
+	        if (currentVertex.equals(to)) break;
+	            for (Edge childEdge : currentVertex.getEdges()) {
+	            	if(childEdge.getOccupyingBuilding() != null){
+	            		if(childEdge.getOccupyingBuilding().getOwner() != (this.owner)) break;
+	            	}
+	            	Vertex nextVertex;
+	            	if(!currentVertex.equals((childEdge.getVertexTo())))nextVertex = childEdge.getVertexTo();
+	            	else nextVertex = childEdge.getVertexFrom();
+	            	if(nextVertex.getOccupyingBuilding() != null){
+	            		System.out.println(nextVertex.getOccupyingBuilding().getOwner().getName());
+	            		System.out.println(this);
+	            		if(nextVertex.getOccupyingBuilding().getOwner() != (this.getOwner()))break;
+	            	}
+	                if (!visitedVertices.contains(nextVertex)) {
+	                    queue.add(nextVertex);
+	                    visitedVertices.add(nextVertex);
+
+	                    //Look up of next vertex instead of previous.
+	                    nextVertexMap.put(nextVertex, currentVertex);
+	                    if (nextVertex.equals(to)) break;
+	                }
+	            }
+	    }
+
+	    //If all vertices are explored and the destination vertex hasn't been found.
+	    if (!currentVertex.equals(to)) {
+	        throw new RuntimeException("No feasible path.");
+	    }
+
+	    //Reconstruct path.
+	    List<Vertex> directions = new LinkedList<Vertex>();
+	    for (Vertex vertex = to ; vertex != null; vertex = nextVertexMap.get(vertex)) {
+	        directions.add(vertex);
+	        if(vertex.equals(this)) break;
+	    }
+	    
+	    Collections.reverse(directions);
+	    return directions;
+}
+
+	/**
+	 * Getter for Owner
+	 */
+	public Player getOwner(){
+		return this.owner;
+	}
+	/**
+	 * Getter for Vertex
+	 * @return
+	 */
+	public Vertex getVertex(){
+		return this.vertex;
+	}
+	
+	/**
+	 * @return the neighboringTiles
+	 */
+	public List<Tile> getNeighboringTiles() {
+		return neighboringTiles;
+	}
+	
+}

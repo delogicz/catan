@@ -1,0 +1,13 @@
+package jsonstructures;
+
+public class GebaeudeDaten {
+	private int Eigentuemer;
+	private String Typ;
+	private String Ort;
+	
+	public GebaeudeDaten(int eigentuemer, String typ, String ort) {
+		Eigentuemer = eigentuemer;
+		Typ = typ;
+		Ort = ort;
+	}
+}

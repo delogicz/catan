@@ -1,0 +1,5 @@
+package model;
+
+public enum ResourceType {
+	BRICK,GRAIN,WOOL,LUMBER,ORE;
+}

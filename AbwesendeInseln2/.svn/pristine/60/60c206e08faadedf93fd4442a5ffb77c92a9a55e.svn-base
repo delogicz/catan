@@ -1,0 +1,56 @@
+package jsonstructures;
+
+import model.Edge;
+import model.Vertex;
+
+/**
+ * This class is used to send from the Client to the Server a message
+ * to say what and where the Player wants to build!
+ * @author Felix
+ */
+
+public class BauDaten {
+	private String Typ;
+	private String Ort;
+	
+	/**
+	 * Creates a BauDaten Object
+	 * @param typ	type of building like Dorf, Strasse or Stadt 
+	 * @param ort	location of where to build the object
+	 */
+	public BauDaten(String typ, String ort) {
+		Typ = typ;
+		Ort = ort;
+	}
+	
+	/**
+	 * Getter for Typ
+	 * @return
+	 */
+	public String getTyp(){
+		return Typ;
+	}
+	
+	/**
+	 * Getter for Kante
+	 * @return
+	 */
+	public Edge getKante(){
+		if(Typ.equals("Strasse")){
+			return ConvertMaster.convertToEdge(Ort);
+		}else{
+			return null;
+		}
+	}
+	/**
+	 * Getter for Ecke
+	 * @return
+	 */
+	public Vertex getEcke(){
+		if(Typ.equals("Strasse")){
+			return null;
+		}else{
+			return ConvertMaster.convertToVertex(Ort);
+		}
+	}
+}

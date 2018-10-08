@@ -1,0 +1,214 @@
+package model;
+
+import java.util.ArrayList;
+
+import controller.GameControl;
+import game.GameManager;
+import javafx.scene.Cursor;
+import javafx.scene.shape.Rectangle;
+import view.GameSkin;
+
+/**
+ * Contains all units needed for a game of "The Settlers of Catan" (players included)
+ * 
+ */
+public class Catan {
+	
+	private Island island;
+	private GameSkin gameSkin;
+
+	
+	private GameControl gameControl;
+	private GameManager gameManager;
+
+	private ArrayList<Player> players;
+	private ArrayList<DevelopmentCard> devCards;
+	
+	private Player hasLongestRoad;
+	private Player hasLargestArmy;
+	
+	private Dice dice;
+	private Player currentTurnTaker;
+	private boolean turnIsComplete;
+	private boolean rollDicePressed;
+	private int rounds;
+
+	private int playerId;
+	
+	public Catan(GameManager gameManager, ArrayList<Player> players){
+		
+		this.gameManager = gameManager;
+		this.gameSkin = gameManager.getGameSkin();
+		this.island = new Island(this);
+		this.players = players;
+		this.devCards = new ArrayList<DevelopmentCard>();
+		this.playerId = 0; 
+		this.rounds = 1;
+		this.gameControl = new GameControl(this);
+		
+		this.dice = new Dice();
+		
+		this.currentTurnTaker = players.get(0);
+		this.turnIsComplete = false;
+		
+		this.gameControl.updateHand();
+
+		//TODO: fill devCards
+	}
+	
+	public void changeTurn(){
+		gameControl.enableBuildRoadButton();
+		gameControl.enableBuildSetButton();
+		if (rounds == 1){
+			if (currentTurnTaker == players.get(4 - 1)){
+				rounds ++;
+			}
+			else{
+			currentTurnTaker = players.get(currentTurnTaker.getPlayerId() + 1);
+			}
+			gameControl.disableRollDiceButton();
+		}
+		else if (rounds == 2){
+			if (currentTurnTaker == players.get(0)){
+				rounds ++;
+				distributeResources();
+				gameControl.disableBuildRoadButton();
+				gameControl.disableBuildSetButton();
+				gameControl.disableEndTurnButton();
+				gameControl.enableRollDiceButton();
+				gameControl.enableBuildCityButton();
+			}
+			else{
+			currentTurnTaker = players.get(currentTurnTaker.getPlayerId() - 1);
+			gameControl.disableRollDiceButton();
+			}
+		}
+		else {
+			if (currentTurnTaker == players.get(4 - 1)){
+				currentTurnTaker = players.get(0);
+				rounds ++;
+			}
+			else{
+			currentTurnTaker = players.get(currentTurnTaker.getPlayerId() + 1);
+			}
+			gameControl.enableRollDiceButton();
+			gameControl.disableBuildRoadButton();
+			gameControl.disableBuildSetButton();
+			gameControl.disableEndTurnButton();
+		}
+		
+	}
+	
+	/**
+	 * call when player won a game
+	 * 
+	 * @param winner the player who won
+	 */
+	public void gameWon(Player winner) {
+		//TODO: message: you won
+	}
+	
+	public Island getIsland() {
+		return this.island;
+	}
+	public GameSkin getGameSkin() {
+		return gameSkin;
+	}
+	public GameControl getGameControl() {
+		return gameControl;
+	}
+	
+	public Player getPlayer(int count){
+		return players.get(count);
+	}
+	
+	public Player getCurrentTurnTaker() {
+		return currentTurnTaker;
+	}
+
+
+	public void setCurrentTurnTaker(Player currentTurnTaker) {
+		this.currentTurnTaker = currentTurnTaker;
+	}
+
+
+	public ArrayList<Player> getPlayers(){
+		return players;
+	}
+
+	/**
+	 * Dices the dice and distributes resources/ allows player to relocate the robber
+	 * @param player that rolled the dice
+	 */
+	public void dice(Player player){
+		this.dice.dice();
+		int result = this.dice.getDice1() + this.dice.getDice2();
+		if(result != 7){
+			this.distributeResources(result);
+		}
+		else{
+			player.setRelocateRobber(true);
+			gameManager.relocateRobber(true);
+		}
+			
+	}
+	
+	/**
+	 * @return the dice
+	 */
+	public Dice getDice() {
+		return dice;
+	}
+
+	/**
+	 * @return the gameManager
+	 */
+	public GameManager getGameManager() {
+		return gameManager;
+	}
+
+	/**
+	 * distributes the resources after the second round 
+	 * (every player gets resources for the first time, no dice result)
+	 */
+	public void distributeResources(){
+	
+		for(Player player: getPlayers()){
+			for(Settlement settlement : player.getSettlements()){
+				for(Tile tile : settlement.getNeighboringTiles()){
+					player.getPlayerCards().addResources((tile.getTerrain().getProduce()));
+						if(settlement instanceof City){
+							player.getPlayerCards().addResources((tile.getTerrain().getProduce()));
+						}
+	}	}	}	}	
+	
+
+	/**
+	 * distributes the resources to every player
+	 * @param diceResult
+	 */
+	public void distributeResources(int diceResult){
+	
+		for(Player player: getPlayers()){
+			for(Settlement settlement : player.getSettlements()){
+				for(Tile tile : settlement.getNeighboringTiles()){
+					if(tile.getToken().getNumber() == diceResult && !tile.getHasRobberOnIt()){
+						player.getPlayerCards().addResources(tile.getTerrain().getProduce());
+						if(settlement instanceof City){
+							player.getPlayerCards().addResources((tile.getTerrain().getProduce()));
+						}
+	}	}	}	}	}
+	
+	
+	public int getRounds() {
+		return rounds;
+	}
+
+	public boolean isRollDicePressed() {
+		return rollDicePressed;
+	}
+
+	public void setRollDicePressed(boolean rollDicePressed) {
+		this.rollDicePressed = rollDicePressed;
+	}
+}

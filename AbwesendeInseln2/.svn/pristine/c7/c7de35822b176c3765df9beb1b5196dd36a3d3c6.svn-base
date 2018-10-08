@@ -1,0 +1,57 @@
+package jsonstructures;
+
+import model.Building;
+import model.City;
+import model.Road;
+import model.Settlement;
+
+/**
+ * This class is send by the server to all clients when someone build a new building
+ * @author Felixi
+ */
+
+public class BauvorgangNachricht {
+	private GebaeudeDatenDaten Bauvorgang;
+
+	/**
+	 * Initializes GebaeudeDatenDaten object
+	 * @param b
+	 */
+	public BauvorgangNachricht(Building b) {
+		int id = b.getOwner().getPlayerID();
+		String typ = "ERROR";
+		String ort = "ERROR";
+		if(b instanceof Road){
+			Road r = (Road) b;
+			typ = "Strasse";
+			ort = ConvertMaster.convertEdge(r.getEdge());
+		}else if (b instanceof City){
+			City c = (City) b;
+			typ = "Stadt";
+			ort = ConvertMaster.convertVertex(c.getVertex());
+		}else if (b instanceof Settlement){
+			Settlement s = (Settlement) b;
+			typ = "Siedlung";
+			ort = ConvertMaster.convertVertex(s.getVertex());
+		}	
+		Bauvorgang = new GebaeudeDatenDaten(new GebaeudeDaten(id,typ,ort));
+	}
+
+	/**
+	 * Getter for GebaeudeDatenDaten
+	 * @return	Bauvorgang
+	 */
+	public GebaeudeDatenDaten getBauvorgang() {
+		return Bauvorgang;
+	}
+
+	/**
+	 * Setter for GebaeudeDatenDaten
+	 * @param bauvorgang
+	 */
+	public void setBauvorgang(GebaeudeDatenDaten bauvorgang) {
+		Bauvorgang = bauvorgang;
+	}
+	
+
+}

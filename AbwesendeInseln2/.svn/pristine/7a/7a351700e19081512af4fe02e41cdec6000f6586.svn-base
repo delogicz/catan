@@ -1,0 +1,228 @@
+package view;
+
+import java.net.URISyntaxException;
+
+import java.util.ArrayList;
+
+import controller.StatsControl;
+import game.Settings;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import model.Catan;
+import model.Dice;
+import model.Hand;
+import model.Player;
+import model.PlayerClient;
+import model.Tile;
+
+
+/**
+ * View of the game board. Contains e.g. view of island.
+ * @author Daniel Panangian, Stefanie Kloss
+ */
+public class GameSkin extends StackPane {
+	
+	private Catan catan;
+	
+	private IslandSkin islandSkin;
+	private HandSkin handSkin;
+	
+	public GameSkin(Catan catan){
+		
+		this.catan = catan;
+		setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+		this.islandSkin = catan.getIsland().getSkin();
+//		this.handSkin = catan.getHand().getHandSkin();
+		PlayerControlSkin playerControl = catan.getPlayerClient().getPlayerControl().getSkin();
+		BorderPane statsControl = new StatsControl(catan).getSkin();
+		String path;
+		try {
+			path = GameSkin.class.getResource("/img/background_2.jpg" ).toURI().toString();
+			Image image = new Image(path);
+			ImageView waterView = new ImageView(image);
+
+			getChildren().addAll (waterView,islandSkin,playerControl,statsControl);
+//			getChildren().add(handSkin);
+		} catch (URISyntaxException | NullPointerException e) {
+			System.out.println("Specified file does not exist.");
+			e.printStackTrace();
+			getChildren().add(islandSkin);
+			getChildren().add(handSkin);
+		}
+		locateDice(catan.getDice());
+//		locateHand(catan.getHand());
+	}
+	
+	/**
+	 * Window opened to let PlayerClient choose which Player he wants to steal from
+	 * @param tile	Tile on which the robber is going to be positioned
+	 * @param players Players the PlayerClient can steal from
+	 * @param playerClient PlayerClient
+	 */
+	public void chooseRobbingVictim(Tile tile, ArrayList<Player> players) {
+		
+		Text text = new Text("\nWhich player do you want to rob from?");
+		changeFontAndFill(text);
+		RadioButton[] playerButtons = new RadioButton[players.size()];
+		ToggleGroup toggleGroup = new ToggleGroup();
+		VBox vBox = new VBox();
+		vBox.setSpacing(10);
+		vBox.getChildren().add(text);
+		for(int i = 0; i < players.size(); i++){
+			playerButtons[i] = new RadioButton(players.get(i).getName() + ", " + players.get(i).getPlayerColor().toServerString());
+			playerButtons[i].setToggleGroup(toggleGroup);
+			playerButtons[i].setFont(Font.loadFont(Settings.OSWALD_PATH, 14));
+			playerButtons[i].setTextFill(Color.ANTIQUEWHITE);
+			vBox.getChildren().add(playerButtons[i]);
+		}
+		Button confirm = new Button("OK");
+		confirm.setFont(Font.loadFont(Settings.OSWALD_PATH, 14));
+		vBox.getChildren().add(confirm);
+		catan.getGameManager().getApp().popUpPane(vBox);
+		
+		confirm.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				for(int i = 0; i < players.size(); i++){
+					if(playerButtons[i].isSelected()){	
+						Player player = players.get(i);
+						ArrayList<Player> victim = new ArrayList<Player>();
+						victim.add(player);
+						catan.getPlayerClient().robbingVictim(tile, victim);
+				}	}
+			}
+		});		
+	}
+	
+	/**
+	 * Open when PlayerClient has to discard half of his cards
+	 * @param discardCount count of cards that have to be discarded
+	 */
+	public void discardCardsStage(int discardCount) {
+		
+		Text instruction = new Text("Please choose the " + discardCount + " cards you want to get rid of!");
+		changeFontAndFill(instruction);
+		Text lumber = new Text("Lumber");
+		changeFontAndFill(lumber);
+		Text brick = new Text("Brick");
+		changeFontAndFill(brick);
+		Text wool = new Text("Wool");
+		changeFontAndFill(wool);
+		Text grain = new Text("Grain");
+		changeFontAndFill(grain);
+		Text ore = new Text("Ore");
+		changeFontAndFill(ore);
+		
+		ChoiceBox<Integer> lumberBox = new ChoiceBox<Integer>();
+		ChoiceBox<Integer> brickBox = new ChoiceBox<Integer>();
+		ChoiceBox<Integer> woolBox = new ChoiceBox<Integer>();
+		ChoiceBox<Integer> grainBox = new ChoiceBox<Integer>();
+		ChoiceBox<Integer> oreBox = new ChoiceBox<Integer>();
+		for(int i = 0; i < 10; i++){
+			lumberBox.getItems().add(i);
+			brickBox.getItems().add(i);
+			woolBox.getItems().add(i);
+			grainBox.getItems().add(i);
+			oreBox.getItems().add(i);
+		}
+		lumberBox.getSelectionModel().selectFirst();
+		brickBox.getSelectionModel().selectFirst();
+		woolBox.getSelectionModel().selectFirst();
+		grainBox.getSelectionModel().selectFirst();
+		oreBox.getSelectionModel().selectFirst();
+		
+		GridPane choiceBoxes = new GridPane();
+		choiceBoxes.add(lumber, 0, 0);
+		choiceBoxes.add(lumberBox, 1, 0);
+		choiceBoxes.add(brick, 0, 1);
+		choiceBoxes.add(brickBox, 1, 1);
+		choiceBoxes.add(wool, 0, 2);
+		choiceBoxes.add(woolBox, 1, 2);
+		choiceBoxes.add(grain, 0, 3);
+		choiceBoxes.add(grainBox, 1, 3);
+		choiceBoxes.add(ore, 0, 4);
+		choiceBoxes.add(oreBox, 1, 4);
+		choiceBoxes.setHgap(8);
+		choiceBoxes.setVgap(8);
+		
+		Button confirm = new Button("OK");
+		confirm.setFont(Font.loadFont(Settings.OSWALD_PATH, 14));
+		
+		VBox vBox = new VBox();
+		vBox.setSpacing(10);
+		vBox.getChildren().addAll(instruction, choiceBoxes, confirm);
+		
+		catan.getGameManager().getApp().popUpPane(vBox);
+		
+		confirm.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				catan.getGameManager().getClient().sendGiveCards(lumberBox.getValue(), 
+						brickBox.getValue(), woolBox.getValue(), grainBox.getValue(), oreBox.getValue());
+			}
+			
+		});
+		
+	}
+	
+	/**
+	 * locates the dices on the gameSkin
+	 * @param dice
+	 */
+	private void locateDice(Dice dice){
+		
+		Rectangle dice1 = dice.getDiceSkin().getDice1();
+		Rectangle dice2 = dice.getDiceSkin().getDice2();
+		
+		dice1.setTranslateX(Settings.DICE1_X);
+		dice1.setTranslateY(Settings.DICE1_Y);
+		dice2.setTranslateX(Settings.DICE2_X);
+		dice2.setTranslateY(Settings.DICE2_Y);
+		
+		getChildren().add(dice1);
+		getChildren().add(dice2);
+		
+	}
+	
+	private void locateHand(Hand hand) {
+		Rectangle handRect = hand.getHandSkin().getHand();
+	
+		handRect.setTranslateX(0);
+		handRect.setTranslateY(0);
+		
+		getChildren().add(handRect);
+	}
+	
+	/**
+	 * changes font and fill of a text
+	 * @param text
+	 */
+	private void changeFontAndFill(Text text){
+		text.setFont(Font.loadFont(Settings.OSWALD_PATH, 14));
+		text.setFill(Color.ANTIQUEWHITE);
+	}
+	
+	/**
+	 * @return the island skin
+	 */
+	public IslandSkin getIslandSkin(){
+		return this.islandSkin;
+	}
+
+	
+}

@@ -1,0 +1,106 @@
+package jsonstructures;
+
+import model.TerrainType;
+import model.Tile;
+import model.TokenNumber;
+
+/**
+ * This class contains the data for the tiles on the island
+ * @author Felixi
+ *
+ */
+public class FeldDaten {
+	private String Ort;
+	private String Typ;
+	private int Zahl;
+	
+	/**
+	 * Creates a FeldDaten object 
+	 * @param ort		location of the tile
+	 * @param typ		type of tile
+	 * @param zahl		number on the tile
+	 */
+
+	public FeldDaten(String ort, String typ, int zahl) {
+		Ort = ort;
+		Typ = typ;
+		Zahl = zahl;
+	}
+
+	/**
+	 * Getter for the Location
+	 * @return
+	 */
+	public Tile getOrt() {
+		return ConvertMaster.convertToTile(Ort);
+	}
+	
+	public int getOrtNum(){
+		return ConvertMaster.getTileNumber(Ort);
+	}
+	
+
+	/**
+	 * Setter for the Ort
+	 * @param ort
+	 */
+	public void setOrt(String ort) {
+		Ort = ort;
+	}
+
+	/**
+	 * Getter for the Type of the Tile
+	 * @return
+	 */
+	public TerrainType getTyp() {
+		switch(Typ){
+		case "Ackerland":	return TerrainType.FIELDS;
+		case "Huegelland":	return TerrainType.HILLS;
+		case "Weideland": 	return TerrainType.PASTURE;
+		case "Wald":		return TerrainType.FOREST;
+		case "Gebirge":		return TerrainType.MOUNTAINS;
+		case "Wueste":		return TerrainType.DESERT;
+		}
+		return null;
+	}
+
+	/**
+	 * Setter for the Type
+	 * @param typ
+	 */
+	public void setTyp(String typ) {
+		Typ = typ;
+	}
+	
+	/**
+	 * Getter for the tile number
+	 * @return
+	 */
+
+	public TokenNumber getZahl() {
+		switch(Zahl){
+		case 2: return TokenNumber.TWO;
+		case 3: return TokenNumber.THREE;
+		case 4: return TokenNumber.FOUR;
+		case 5: return TokenNumber.FIVE;
+		case 6: return TokenNumber.SIX;
+		case 7: return TokenNumber.SEVEN;
+		case 8: return TokenNumber.EIGHT;
+		case 9: return TokenNumber.NINE;
+		case 10: return TokenNumber.TEN;
+		case 11: return TokenNumber.ELEVEN;
+		case 12: return TokenNumber.TWELVE;
+		default: return TokenNumber.SEVEN;
+		}
+	}
+	
+	/**
+	 * Setter for the tile number
+	 * @param zahl
+	 */
+
+	public void setZahl(int zahl) {
+		Zahl = zahl;
+	}
+
+}

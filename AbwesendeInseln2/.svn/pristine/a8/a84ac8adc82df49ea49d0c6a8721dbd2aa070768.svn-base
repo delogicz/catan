@@ -1,0 +1,109 @@
+package view;
+
+import game.GameManager;
+import game.Settings;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+
+/**
+ * The Login View to create a Client
+ * @author Stefanie Kloss
+ *
+ */
+public class ClientLogin extends StackPane{
+	
+	private GameManager gameManager;
+	
+	/**
+	 * Constructor
+	 * @param gameManager
+	 */
+	public ClientLogin(GameManager gameManager){
+		
+		super();
+		this.gameManager = gameManager;
+		
+		setPrefSize(Settings.GAME_SKIN_WIDTH/2.7, Settings.GAME_SKIN_HEIGHT/3.2);
+		setStyle("-fx-background-color: darkred; -fx-padding: 10;");
+		
+		addElements();
+		
+	}
+	
+	/**
+	 * Adds text, textfields, buttons, etc
+	 */
+	private void addElements() {
+		
+		Text host = new Text("Host:            ");
+		host.setFill(Color.ANTIQUEWHITE);
+		host.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		TextField enterHost = new TextField();
+		enterHost.setText("localhost");
+		enterHost.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		HBox hBoxHost = new HBox();
+		hBoxHost.getChildren().addAll(host, enterHost);
+		hBoxHost.setAlignment(Pos.BASELINE_LEFT);
+		
+		Text port = new Text("Port:            ");
+		port.setFill(Color.ANTIQUEWHITE);
+		port.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		TextField enterPort = new TextField();
+		enterPort.setText("5506");
+		enterPort.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		HBox hBoxPort = new HBox();
+		hBoxPort.getChildren().addAll(port, enterPort);
+		hBoxPort.setAlignment(Pos.BASELINE_LEFT);
+		
+		Button loginButton = new Button("Login as Client");
+		loginButton.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		
+		Button loginButtonBot = new Button("Login as BotClient");
+		loginButtonBot.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		
+		loginButton.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				try{
+					int portInt = Integer.parseInt(enterPort.getText());
+					gameManager.initializeClient(enterHost.getText(), portInt);
+				}catch(Exception e){
+					gameManager.getApp().popUpMessage("The port must consist out of numbers.");
+				}
+			}
+		});
+
+		loginButtonBot.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				try{
+					int portInt = Integer.parseInt(enterPort.getText());
+					gameManager.initializeBotClient(enterHost.getText(), portInt);
+				}catch(Exception e){
+					gameManager.getApp().popUpMessage("The port must consist out of numbers.");
+				}
+			}
+		});
+		
+		VBox vBox = new VBox();
+		vBox.setSpacing(30);
+		vBox.getChildren().addAll(hBoxHost, hBoxPort, loginButton,loginButtonBot);
+		
+		setMargin(vBox, new Insets(40,40,40,40));
+		getChildren().add(vBox);	
+		
+	}
+
+}

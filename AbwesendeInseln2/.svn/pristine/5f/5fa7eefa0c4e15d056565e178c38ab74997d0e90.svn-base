@@ -1,0 +1,9 @@
+package model;
+
+/**
+ * Determines all different types of resources.
+ *
+ */
+public enum ResourceType {
+	BRICK,GRAIN,WOOL,LUMBER,ORE;
+}

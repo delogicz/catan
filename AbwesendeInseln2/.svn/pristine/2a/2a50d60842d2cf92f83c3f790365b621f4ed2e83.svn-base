@@ -1,0 +1,14 @@
+package model;
+
+/**
+ * Determines all different types of harbours
+ *
+ */
+public enum Harbour {
+	THREETOONE,
+	TWOTOONEBRICK,
+	TWOTOONEGRAIN,
+	TWOTOONEWOOL,
+	TWOTOONELUMBER,
+	TWOTOONEORE;
+}

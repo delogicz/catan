@@ -1,0 +1,321 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+import game.GameManager;
+
+/**
+ * Describes a participant in the game. Stores his current state (victoryPoints, resCards, etc.).
+ *
+ */
+public class Player {
+	
+	private int victoryPoints;
+	private PlayerColor playerColor;
+	private int playerId;
+	private String name;
+	
+	private Catan catan;
+
+	private int knightCount;
+	private boolean hasLargestArmy;
+	private boolean hasLongestRoad;
+	
+	private ArrayList<Harbour> harbours;
+	private ArrayList<Road> roads;
+	private int longestRoad;
+	private ArrayList<Settlement> settlements;
+	private ArrayList<City> cities;
+	
+	
+	private Hand playerCards;
+
+	private Dice dice;
+	
+	private int roadsLeft;
+	private int settlementsLeft;
+	private int citiesLeft;
+	
+	private ArrayList<ResourceType> resCards;
+	private ArrayList<DevelopmentCard> devCards;
+	private boolean canBuildSettlement;
+	private boolean canBuildRoad;
+	
+	
+	public Player(PlayerColor playerColor, int playerId, String name){
+		
+		this.catan = null;
+		playerCards = new Hand();
+		this.playerId = playerId;
+		this.name = name;
+		this.victoryPoints = 0;
+		this.playerColor = playerColor;
+		this.knightCount = 0;
+		setCards(new ArrayList<ResourceType>());
+		harbours = new ArrayList<Harbour>();
+		roads = new ArrayList<Road>();
+		longestRoad = 0;
+		settlements = new ArrayList<Settlement>();
+		cities = new ArrayList<City>();
+		roadsLeft = 15;
+		settlementsLeft = 5;
+		citiesLeft = 4;
+		
+		hasLongestRoad = false;
+		hasLargestArmy = false;
+		
+	}
+	
+	public Hand getPlayerCards() {
+		return playerCards;
+	}
+
+	public PlayerColor getPlayerColor(){
+		return this.playerColor;
+	}
+
+	public int getVictoryPoints() {
+		return victoryPoints;
+	}
+	
+	
+	public void setVictoryPoints(int newVictoryPoints) {
+		victoryPoints = newVictoryPoints;		
+	}
+	
+	public int getKnightCount(){
+		return knightCount;
+	}
+	
+	public void setHasLargestArmy(Boolean b) {
+		if (hasLargestArmy == true && b == false)
+			victoryPoints--;
+		else if (hasLargestArmy == false && b == true)
+			victoryPoints++;
+		hasLargestArmy = b;
+	}
+	
+	private boolean hasLargestArmy(){
+		return hasLargestArmy;
+	}
+	
+	/**
+	 * Try to build a new road
+	 * @param edge where road is tried to be build on
+	 * @param gameSkin 
+	 */
+	public void buildRoad(Edge edge){
+		if(roadsLeft > 0 && edge.getRoad() == null){
+			
+			Road newRoad = new Road(edge, this, catan.getGameSkin().getIslandSkin());
+			roads.add(newRoad);
+			roadsLeft--;
+			
+			edge.setRoad(newRoad);
+			// TODO: UPDATE longestRoad of this player
+			
+			
+			// TODO: UPDATE: longestRoad of all players
+		}
+		else{
+			System.out.println("building road failed");
+		}
+		
+	}
+	
+	
+	/**
+	 * Try to build a new settlement
+	 * @param vertex where settlement is tried to be build on
+	 * @param gameSkin
+	 */
+	public void buildSettlement(Vertex vertex) {
+		if(settlementsLeft > 0 && vertex.getSettlement() == null){
+			
+			Settlement newSettlement = new Settlement(vertex, this, catan.getGameSkin().getIslandSkin());
+			settlements.add(newSettlement);
+			settlementsLeft--;
+			
+			victoryPoints++;
+			checkVictoryPoints();
+			
+			vertex.setSettlement(newSettlement);
+		}
+		else{
+			System.out.println("building settlement failed");
+		}
+		
+	}
+	
+	
+
+//	public int longestRoad(){
+//		Stack stack = new Stack();
+//		 longestRoad = 0;
+//		 Edge edge;
+//		 /**settlements = new ArrayList<Settlement>();*/
+//		//geht die ganze Settlements Liste durch
+//		 for(Settlement settlement:settlements){
+//			 //geht jede Kante durch
+//			 for(int i = 0; i<3; i++){
+//				 edge = settlement.getVertex().getEdges().get(i);
+//				 if(!(edge.getRoad() == null) && edge.getRoad().getPlayer() == player){
+//					 longestRoad++;
+//				 }
+//			 }
+//		 }
+//		
+//	}
+
+	public int longestRoad(){
+		Stack stack = new Stack();
+		 longestRoad = 0;
+		 Edge edge;
+		 /**settlements = new ArrayList<Settlement>();*/
+		//geht die ganze Settlements Liste durch
+		 for(Settlement settlement:settlements){
+			 //geht jede Kante durch
+			 for(int i = 0; i<2; i++){
+				 edge = settlement.getVertex().getEdges().get(i);
+				 if(!(edge.getRoad() == null) && edge.getRoad().getOwner() == this){
+					 longestRoad++;
+				 }
+			 }
+		 }
+		 System.out.println("Player " + this.playerColor + " longestRoad = " + longestRoad);
+		 return longestRoad;
+	}
+
+	/**
+	 * Try to build a new city
+	 * @param vertex where city is tried to be build on
+	 * @param gameSkin
+	 */
+	public void buildCity(Vertex vertex){
+		if(citiesLeft > 0 && vertex.getCity() == null) {
+			City newCity = new City(vertex, this, catan.getGameSkin().getIslandSkin());
+			settlements.add(newCity);
+			playerCards.addBuilding(newCity);
+			citiesLeft--;
+			
+			victoryPoints += 2;
+			checkVictoryPoints();
+			
+			vertex.setCity(newCity);
+		}
+		else{
+			System.out.println("building city failed");
+			
+		}
+		
+	}
+	
+	/**
+	 * Checks whether player won the game or not
+	 * Calls catan.gameWon(Player winner)
+	 */
+	private void checkVictoryPoints(){
+		if(victoryPoints >= 10){
+			catan.gameWon(this);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param dice
+	 * @param gm
+	 */
+	public void dice(Dice dice, GameManager gm){
+		dice.dice();
+		int result = dice.getDice1() + dice.getDice2();
+		if(result != 7){
+			gm.getCatan().distributeResources(result);
+		}
+		else{
+//			TODO: gm.relocateRobber(); 
+		}
+			
+	}
+	
+	public void trade() {
+		
+	}
+
+	/**
+	 * @return the resCards
+	 */
+	public ArrayList<ResourceType> getCards() {
+		return resCards;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param resCards the resCards to set
+	 */
+	public void setCards(ArrayList<ResourceType> resCards) {
+		this.resCards = resCards;
+	}
+	
+	public int getPlayerId() {
+		return playerId;
+	}
+	
+	
+	/**
+	 * @param catan the catan to set
+	 */
+	public void setCatan(Catan catan) {
+		this.catan = catan;
+	}
+
+	/**
+	 * 
+	 * @return the settlements
+	 */
+	public ArrayList<Settlement> getSettlements() {
+		return settlements;
+	}
+
+	public boolean canBuildSettlement() {
+		return canBuildSettlement;
+	}
+	
+	public void setCanBuildSettlement(boolean bool) {
+		canBuildSettlement = bool;
+	}
+	
+	public void setCanBuildRoad(boolean bool) {
+		canBuildRoad = bool;
+		
+	}
+	public boolean CanBuildRoad() {
+		return canBuildRoad;
+	}
+
+	public int countSettlements(){
+		return settlements.size();
+	}
+	public int countRoads(){
+		return roads.size();
+	}
+	public int countCity(){
+		return cities.size();
+	}
+
+
+	public void endingTurn() {
+		this.canBuildSettlement = false;
+		this.canBuildRoad = false;
+		
+	}
+
+	
+
+}

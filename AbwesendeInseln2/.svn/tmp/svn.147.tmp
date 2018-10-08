@@ -1,0 +1,1004 @@
+package model;
+
+import java.util.ArrayList;
+
+import controller.LogMaster;
+import controller.PlayerControl;
+import game.Settings;
+import javafx.application.Platform;
+import javafx.scene.Cursor;
+import view.RoadSkin;
+
+/**
+ * Describes a participant in the game. Stores his current state (victoryPoints, resCards, etc.).
+ * @author Daniel Panangian, Stefanie Kloss, Lena Sonnleitner
+ */
+public class PlayerClient extends Player {
+	
+	private boolean readyToStartGame;  //for Server
+	protected String previousStatus;
+	
+	private ArrayList<Road> roads;
+	private ArrayList<Settlement> settlements;
+	private ArrayList<City> cities;
+	
+	private ArrayList<Harbour> harboursNext;
+	private ArrayList<Harbour> harbours;
+	
+	private int longestRoad;
+	
+	protected Hand hand;
+	
+	private ArrayList<DevelopmentCardType> devCardsNext;
+	protected ArrayList<DevelopmentCardType> devCards;
+	
+	private boolean buildSettlementPressed;
+	private boolean buildRoadPressed;
+	private boolean buildCityPressed;
+	private boolean showDevCardPressed;
+
+	protected boolean relocateRobber;
+	private boolean discardCards;
+	
+	protected Player currentTurnTaker;
+	protected boolean active;
+	protected PlayerControl playerControl;
+	
+	/**
+	 * False if already played a DevelopmentCard in this round (exception: victoryPoints)
+	 */
+	private boolean canPlayDevCard;
+	private int devVictoryPoints;
+	/**
+	 * True if player is currently playing the "roadbuilding"-development card
+	 */
+	private boolean roadBuilding;
+	private ArrayList<RoadSkin> temporarilyRoadSkins;
+	
+	
+	/**
+	 * Constructor
+	 */
+	public PlayerClient(PlayerColor playerColor, int playerId, String name){
+		
+		super(playerColor, playerId, name);
+		
+		this.previousStatus = "";
+		
+		this.hand = new Hand();
+		this.devCardsNext = new ArrayList<DevelopmentCardType>();
+		this.devCards = new ArrayList<DevelopmentCardType>();
+
+		this.longestRoad = 0;
+		
+		this.roads = new ArrayList<Road>();
+		this.settlements = new ArrayList<Settlement>();
+		this.cities = new ArrayList<City>();
+		
+		this.harbours = new ArrayList<Harbour>();
+		this.harboursNext = new ArrayList<Harbour>();
+		
+		this.relocateRobber = false;
+		this.discardCards = false;
+		if(playerColor != null){
+			this.playerControl = new PlayerControl(this);
+		}
+		
+		this.canPlayDevCard = true;
+		this.devVictoryPoints = 0;
+		this.roadBuilding = false;
+		this.temporarilyRoadSkins = new ArrayList<RoadSkin>();
+	}
+	
+	public PlayerClient(PlayerColor playerColor, int playerId, String name, String status) {
+		super(playerColor, playerId, name,status);
+		
+		this.previousStatus = "";
+		
+		this.hand = new Hand();
+		this.devCardsNext = new ArrayList<DevelopmentCardType>();
+		this.devCards = new ArrayList<DevelopmentCardType>();
+
+		this.longestRoad = 0;
+		
+		this.harbours = new ArrayList<Harbour>();
+		this.roads = new ArrayList<Road>();
+		this.settlements = new ArrayList<Settlement>();
+		this.cities = new ArrayList<City>();
+		
+		this.harbours = new ArrayList<Harbour>();
+		this.harboursNext = new ArrayList<Harbour>();
+		
+		this.relocateRobber = false;
+		this.discardCards = false;
+		if(playerColor != null){
+			this.playerControl = new PlayerControl(this);
+		}
+		
+		this.canPlayDevCard = true;
+		this.devVictoryPoints = 0;
+		this.roadBuilding = false;
+		this.temporarilyRoadSkins = new ArrayList<RoadSkin>();
+	}
+
+	/**
+	 * Updates the information of the player
+	 * @param victoryPoints
+	 * @param name
+	 * @param status
+	 * @param color
+	 * @param resources
+	 * @param knightCount 
+	 * @param developmentCards
+	 */
+	public void update(int victoryPoints, String name, String status, PlayerColor color,
+			ArrayList<ResourceType> resources, int knightCount, ArrayList<DevelopmentCardType> developmentCards) {
+		this.victoryPoints = victoryPoints;
+		this.name = name;
+		this.previousStatus = this.status;
+		this.status = status;
+		this.playerColor = color;
+		this.hand.updateHand(resources);;
+		this.resCardsCount = resources.size();
+		this.knightCount = knightCount;
+		this.devCards = developmentCards;
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				
+				playerControl.updateHandView();
+				playerControl.disableAllButtons(); 
+				switch(status){
+					case Settings.DORF_BAUEN: playerControl.buildSettlement();
+					                          playerControl.enableBuildSetButton(); 
+					                          if(previousStatus.equals(Settings.WARTEN)) catan.getGameManager().getApp().closeAllPopUpStages();
+					                          break;
+					case Settings.STRASSE_BAUEN: playerControl.buildRoad();
+					                             playerControl.enableBuildRoadButton(); 
+					                             break;
+					case Settings.WUERFELN: playerControl.enableRollDiceButton(); 
+											playerControl.enableShowDevCardButton();
+					                        catan.getTrades().clear();
+					                        break;
+					case Settings.KARTEN_ABGEBEN: discardCards = true;
+												  catan.getGameSkin().discardCardsStage(getResCards().size()/2); 
+					                              break;
+					case Settings.RAEUBER_VERSETZEN: setRelocateRobber(true); break;
+					case Settings.HANDELN_BAUEN: playerControl.enableAllButtons(); break;
+					case Settings.WARTEN: if(previousStatus.equals(Settings.KARTEN_ABGEBEN))catan.getGameManager().getApp().closeAllPopUpStages();
+				}
+			}
+		});
+		try {
+			LogMaster.log("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(Settings.SLEEP_SHORT);
+		} catch (InterruptedException e) {
+			LogMaster.log("[Exc]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+		
+	}
+	
+	/**
+	 * Builds a new settlement or city (handleConstruction)
+	 * @param typ type of the new building
+	 * @param vertex vertex on which the building is located
+	 */
+	public Building build(String typ, Vertex vertex, boolean server) {
+		
+		if(!server)updateHandView();
+		if(typ.equals(Settings.DORF)){
+			Settlement newSettlement;
+			if(server) newSettlement = new Settlement(vertex, this);
+			else newSettlement = new Settlement(vertex, this, catan.getIsland().getSkin());
+			settlements.add(newSettlement);
+			vertex.setOccupyingBuilding(newSettlement);
+			vertex.setOccupied(true);
+			vertex.checkIntersection();
+			if(vertex.getHarbour()!=null){
+				addHarbourNext(vertex.getHarbour());
+			}
+			return newSettlement;
+		}
+		else if(typ.equals(Settings.STADT)){
+			City newCity;
+			if(server) newCity = new City(vertex, this);
+			else newCity = new City(vertex, this, catan.getIsland().getSkin());
+			settlements.remove(vertex.getOccupyingBuilding());
+			vertex.setOccupyingBuilding(newCity);
+			this.cities.add(newCity);
+			vertex.setOccupied(true);
+			if(vertex.getHarbour()!=null){
+				addHarbourNext(vertex.getHarbour());
+			}
+			return newCity;
+		}
+		return null;
+	}
+	
+	/**
+	 * Builds a new road (handleConstruction)
+	 * @param edge edge on which the road is located
+	 */
+	public Road build(Edge edge, boolean server) {
+		if(!server) updateHandView();
+		Road newRoad;
+		if(server) newRoad = new Road(edge, this);
+		else newRoad = new Road(edge, this, catan.getIsland().getSkin());
+		edge.setOccupyingBuilding(newRoad);
+		edge.setOccupied(true);
+		this.roads.add(newRoad);
+		return newRoad;
+	}
+
+	
+	/**
+	 * Use when PlayerClient has costs in form of resource cards 
+	 */
+	public void resCardsCosts(ArrayList<ResourceType> costs){
+		this.hand.spend(costs);
+		resCardsCosts(costs.size());
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				playerControl.updateHandView();
+			}
+		});
+		try {
+			LogMaster.log("[Thr]Thread sleeps for 20ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(Settings.SLEEP_SHORT);
+		} catch (InterruptedException e) {
+			LogMaster.log("[Exc]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	
+	/**
+	 * Use when PlayerClient receives resource cards 
+	 */
+	public void resCardsProduce(ArrayList<ResourceType> resources) {
+		this.hand.produce(resources);
+		resCardsCountProduce(resources.size());
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				playerControl.updateHandView();
+			}
+		});
+		try {
+			LogMaster.log("[Thr]Thread sleeps for 20ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(Settings.SLEEP_SHORT);
+		} catch (InterruptedException e) {
+			LogMaster.log("[Exc]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	
+	/**
+	 * Adds a certain amount of victoryPoints
+	 * @param pointsToBeAdded
+	 * @return true, if game is won
+	 */
+	public boolean addAndCheckVictoryPoints(int pointsToBeAdded){
+		this.victoryPoints += pointsToBeAdded;
+		if(victoryPoints >= 10 || victoryPoints + devVictoryPoints >= 10){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * check if the rules for building a settlement is fulfilled
+	 * Rules:
+	 * First building phase:
+	 * a settlement must built within two space of another city or settlement
+	 * Next turn: 
+	 * a settlement must be built within two space of another city or settlement and must be built on an 
+	 * end of a player's road 
+	 * @param vertex
+	 */
+	public boolean canBuildSettlement(Vertex vertex) {
+		if(vertex.isOccupied()){
+			return false;
+		}
+		if(settlements.size() < 2){
+			for (Vertex connected : vertex.getConnectedVertices()) {
+				if (connected.isOccupied()) {
+					LogMaster.log("[Mod]Cannot build within one space of another city or settlement"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+					return false;
+				}
+			}
+			return true;
+		}
+		for (Vertex connected : vertex.getConnectedVertices()) {
+			if (connected.isOccupied()) {
+				LogMaster.log("[Mod]Cannot build within one space of another city or settlement"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+				return false;
+			}
+		}
+		for (Edge connected : vertex.getEdges()) {
+			if (Building.isOwner(this, connected.getOccupyingBuilding())) {
+				return true;
+			}
+		}
+		LogMaster.log("[Mod]Cannot build without your own road"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+		return false;
+	}
+	
+	/**
+	 * check if the rules for building a road is fulfilled
+	 * Rules:
+	 * One of two vertices of the edge must consist a building (road or settlement or city) and 
+	 * the building must belong to the player
+	 * 
+	 *@param edge
+	 */
+	public boolean canBuildRoad(Edge edge) {
+		Building fromPiece = edge.getVertexFrom().getOccupyingBuilding();
+		Building toPiece = edge.getVertexTo().getOccupyingBuilding();
+		boolean fromPieceIsOwned = Building.isOwner(this, fromPiece);
+		boolean toPieceIsOwned = Building.isOwner(this, toPiece);
+		if(edge.isOccupied()){
+			return false;
+		}
+		if(roads.size() == 1){
+			Vertex sndSettlementVertex = settlements.get(1).getVertex();
+			for(Edge e :sndSettlementVertex.getEdges()){
+				if(e == edge){
+					return true;
+				}
+			}
+			return false;
+		}
+		if (fromPieceIsOwned || toPieceIsOwned) {
+			return true;
+		}
+		for (Edge fromVertexEdge : edge.getVertexFrom().getEdges()) {
+			if (Building.isOwner(this, fromVertexEdge.getOccupyingBuilding())) {
+				return true;
+			}
+		}
+		for (Edge toVertexEdge : edge.getVertexTo().getEdges()) {
+			if (Building.isOwner(this, toVertexEdge.getOccupyingBuilding())) {
+				return true;
+			}
+		}
+		LogMaster.log("[Mod]Only build on your building !"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+		return false;
+	}
+	
+	/**
+	 * Call after player decided on which tile he wants to put the robber on
+	 * @param tile on which the robber will be
+	 * @param players that can be robbed from
+	 */
+	public void robbingVictim(Tile tile, ArrayList<Player> players) {
+		final boolean SEVEN_DICED = status.equals(Settings.RAEUBER_VERSETZEN);
+		if(players.size() == 0){
+			if(SEVEN_DICED) catan.getGameManager().getClient().sendSetRobber(tile, -1);
+			else catan.getGameManager().getClient().sendPlayKnight(tile, -1);
+		}
+		else if(players.size() == 1){
+			catan.getGameManager().getApp().popUpMessage("You decided to rob from " + players.get(0).getName() + "!");
+			if(SEVEN_DICED) catan.getGameManager().getClient().sendSetRobber(tile, players.get(0).getPlayerID());
+			else catan.getGameManager().getClient().sendPlayKnight(tile, players.get(0).getPlayerID());
+		}
+		else catan.getGameSkin().chooseRobbingVictim(tile, players);
+	}
+	
+	/**
+	 * Updates the playerControl's hand view
+	 */
+	private void updateHandView(){
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				playerControl.updateHandView();
+			}
+		});
+		try {
+			LogMaster.log("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(Settings.SLEEP_SHORT);
+		} catch (InterruptedException e) {
+			LogMaster.log("[Exc]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	
+	public int longestRoad(){
+		 longestRoad = 0;
+		 Edge edge;
+		 /**settlements = new ArrayList<Settlement>();*/
+		//geht die ganze Settlements Liste durch
+		 for(Settlement settlement:settlements){
+			 //geht jede Kante durch
+			 for(int i = 0; i<2; i++){
+				 edge = settlement.getVertex().getEdges().get(i);
+				 if(!(edge.getOccupyingBuilding() == null) && edge.getOccupyingBuilding().getOwner() == this){
+					 longestRoad++;
+				 }
+			 }
+		 }
+		 LogMaster.log("[Mod]Player " + this.playerColor + " longestRoad = " + longestRoad+ " [Thread : "+ Thread.currentThread().getId() + "]");
+		 return longestRoad;
+	}
+	
+	/**
+	 * Adds a Harbour to the List after 1 round if its not already on it
+	 * @param h Harbour, to wich the Player has access to
+	 */
+	protected void addHarbourNext(Harbour h){
+		if(!harboursNext.contains(h)){
+			harboursNext.add(h);
+		}
+	}
+	
+	/**
+	 * Moves Harbours from HarboursNext to Harbours so they can be used
+	 */
+	public void migrateHarbours(){
+		for(Harbour h : harboursNext){
+			addHarbour(h);
+		}
+		harboursNext.clear();
+	}
+	
+	/**
+	 * Moves DevCards from DevCardsNext to DevCards so they can be used
+	 */
+	public void migrateDevCards() {
+		for(DevelopmentCardType devCard : devCardsNext){
+			devCards.add(devCard);
+		}
+		devCardsNext.clear();
+	}
+	
+	/**
+	 * Adds a Harbour to the List if its not already on it
+	 * @param h Harbour, to wich the Player has access to
+	 */
+	protected void addHarbour(Harbour h){
+		if(!harbours.contains(h)){
+			harbours.add(h);
+		}
+	}
+	/**
+	 * Returns whether the player controls a harbour from which he can trade the desired resource 2:1
+	 * @param r desired Resource
+	 * @return true, if player has the right harbour, otherwise false
+	 */
+	private boolean hasTwoToOneHarbour(ResourceType r){
+		switch(r){
+		case LUMBER: return(harbours.contains(Harbour.TWOTOONELUMBER));
+		case BRICK: return(harbours.contains(Harbour.TWOTOONEBRICK));
+		case WOOL: return(harbours.contains(Harbour.TWOTOONEWOOL));
+		case GRAIN: return(harbours.contains(Harbour.TWOTOONEGRAIN));
+		case ORE: return(harbours.contains(Harbour.TWOTOONEORE));
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the amount of each ResourceType needed to trade 1 of the requested ResourceType
+	 * @param request Type the prices are for
+	 * @return int Array with prices in following order: Lumber,Brick,Wool,Grain,Ore
+	 */
+	public int[] getMaritimePrices(ResourceType request){
+		ResourceType[] res = {ResourceType.LUMBER,ResourceType.BRICK,ResourceType.WOOL,
+				ResourceType.GRAIN,ResourceType.ORE};
+		int[] prices = new int[5];
+		for(int i = 0; i < 5; i++){
+			if(request.equals(res[i])){
+				prices[i] = 1;//Trade 1:1 of the same resource (basically no trade)
+			}else if(hasTwoToOneHarbour(res[i])){
+				prices[i] = 2;//Trade 2:1 with offer Harbour
+			}else if(harbours.contains(Harbour.THREETOONE)){
+				prices[i] = 3;//Trade with 3:1 Harbour
+			}else{
+				prices[i] = 4;//Trade 4:1 without Harbour 
+			}
+		}
+		return prices;
+	}
+	
+	/**
+	 * @return the devCards
+	 */
+	public ArrayList<DevelopmentCardType> getDevCards() {
+		return devCards;
+	}
+	
+	/**
+	 * @return the devCardsNext
+	 */
+	public ArrayList<DevelopmentCardType> getDevCardsNext() {
+		return devCardsNext;
+	}
+
+	/**
+	 * @return the roads the player has left
+	 */
+	public int getRoadsLeft() {
+		return Settings.AMOUNT_OF_ROADS - roads.size();
+	}
+
+	/**
+	 * @return the settlementsLeft
+	 */
+	public int getSettlementsLeft() {
+		return Settings.AMOUNT_OF_SETTLEMENTS - settlements.size();
+	}
+
+	/**
+	 * @return the citiesLeft
+	 */
+	public int getCitiesLeft() {
+		return Settings.AMOUNT_OF_CITIES - cities.size();
+	}
+	
+	/**
+	 * @param relocateRobber the boolean relocateRobber to be set
+	 */
+	public void setRelocateRobber(boolean relocateRobber) {
+		this.relocateRobber = relocateRobber;
+		if(relocateRobber){
+			catan.getGameSkin().setCursor(Cursor.OPEN_HAND);
+		}
+		else catan.getGameSkin().setCursor(Cursor.DEFAULT);
+	}
+	
+	public void setCurrentTurnTaker(Player player) {
+		this.currentTurnTaker = player;
+		this.active = (currentTurnTaker == this);
+		
+	}
+	
+	/**
+	 * @return the relocateRobber
+	 */
+	public boolean getRelocateRobber() {
+		return relocateRobber;
+	}
+
+	/**
+	 * Bool for buildSettlementPressed
+	 * @return
+	 */
+	public boolean isBuildSettlementPressed() {
+		return buildSettlementPressed;
+	}
+
+	/**
+	 * Setter for buildSettlementPressed
+	 * @param bool
+	 */
+	public void setBuildSettlementPressed(boolean bool) {
+		buildSettlementPressed = bool;
+		if(bool){
+			try{ 										   //try-catch for beginning (when catan not existing yet)
+				catan.getIsland().getSkin().showBuildableVertices(getBuildableVertices()); 
+			}catch(Exception e){}
+		}
+		else{
+			try{ 										   //try-catch for beginning (when catan not existing yet)
+				catan.getIsland().getSkin().removeBuildableVertices(); 
+			}catch(Exception e){}
+		}
+	}
+	
+	/**
+	 * bool for buildRoadPressed
+	 * @return
+	 */
+	public boolean isBuildRoadPressed() {
+		return buildRoadPressed;
+	}
+
+	/**
+	 * Setter for buildRoadPressed
+	 * @param buildRoadPressed
+	 */
+	public void setBuildRoadPressed(boolean buildRoadPressed) {
+		this.buildRoadPressed = buildRoadPressed;
+		if(buildRoadPressed){
+			try{ 										   //try-catch for beginning (when catan not existing yet)
+				catan.getIsland().getSkin().showBuildableEdges(getBuildableEdges()); 
+			}catch(Exception e){}
+		}
+		else{
+			try{ 										   //try-catch for beginning (when catan not existing yet)
+				catan.getIsland().getSkin().removeBuildableEdges(); 
+			}catch(Exception e){}
+		}
+	}
+
+	/**
+	 * Bool for buildCityPressed
+	 * @return
+	 */
+	public boolean isBuildCityPressed() {
+		return buildCityPressed;
+	}
+
+	/**
+	 * Setter for buildCityPressed
+	 * @param buildCityPressed
+	 */
+	public void setBuildCityPressed(boolean buildCityPressed) {
+		this.buildCityPressed = buildCityPressed;
+	}
+	
+	/**
+	 * Bool for showDevCardPressed
+	 * @return
+	 */
+	public boolean isShowDevCardPressed(){
+		return showDevCardPressed;
+	}
+	
+	/**
+	 * Setter for showDevCardPressed
+	 * @param showDevCardPressed
+	 */
+	public void setShowDevCardPressed(boolean showDevCardPressed) {
+		this.showDevCardPressed =	showDevCardPressed;			
+	}
+	
+	/**
+	 * @return the readyToStartGame
+	 */
+	public boolean isReadyToStartGame() {
+		return readyToStartGame;
+	}
+
+	/**
+	 * @param readyToStartGame the readyToStartGame to set
+	 */
+	public void setReadyToStartGame(boolean readyToStartGame) {
+		this.readyToStartGame = readyToStartGame;
+	}
+	
+	/**
+	 * @return the resCards of the Hand
+	 */
+	public ArrayList<ResourceType> getResCards(){
+		return hand.getResCards();
+	}
+	
+	/**
+	 * @param resCards the resCards to set in hand
+	 */
+	public void setResCards(ArrayList<ResourceType> resCards) {
+		hand.updateHand(resCards);
+	}
+	
+	/**
+	 * get player's Hand
+	 *@return hand
+	 */
+	public Hand getHand() {
+		return hand;
+	}
+	
+	/**
+	 * @return the playerControl
+	 */
+	public PlayerControl getPlayerControl() {
+		return playerControl;
+	}
+	
+	/**
+	 * get knight count
+	 *@return knightCount
+	 */
+	public int getKnightCount(){
+		return knightCount;
+	}
+	
+	/**
+	 * 
+	 * @return the settlements
+	 */
+	public ArrayList<Settlement> getSettlements() {
+		return settlements;
+	}
+
+	/**
+	 * Count of settlments
+	 * @return
+	 */
+	public int countSettlements(){
+		return settlements.size();
+	}
+	/**
+	 * Counts of Roads
+	 * @return
+	 */
+	public int countRoads(){
+		return roads.size();
+	}
+	/**
+	 * Counts of city
+	 * @return
+	 */
+	public int countCity(){
+		return cities.size();
+	}
+	
+	/**
+	 * @return the roads
+	 */
+	public ArrayList<Road> getRoads() {
+		return roads;
+	}
+	
+	/**
+	 * @return the cities
+	 */
+	public ArrayList<City> getCities() {
+		return cities;
+	}
+
+	/**
+	 * Getter for harbours
+	 * @return
+	 */
+	public ArrayList<Harbour> getHarbours() {
+		return harbours;
+	}
+
+	/**
+	 * Abstract method discardCard for bot
+	 */
+	public void discardCard() {
+		// abstract method for bot
+	}
+
+	/**
+	 * @return the canPlayDevCard
+	 */
+	public boolean isCanPlayDevCard() {
+		return canPlayDevCard;
+	}
+
+	/**
+	 * @param canPlayDevCard the canPlayDevCard to set
+	 */
+	public void setCanPlayDevCard(boolean canPlayDevCard) {
+		this.canPlayDevCard = canPlayDevCard;
+	}
+
+	public void createPlayerControl(){
+		this.playerControl = new PlayerControl(this);
+	}
+	
+	/**
+	 * Gets the amount of cards the player owns
+	 */
+	public int getDevCardCount(){
+		return devCards.size() + devCardsNext.size();
+	}
+	
+	/**
+	 * @return the devVictoryPoints
+	 */
+	public int getDevVictoryPoints() {
+		return devVictoryPoints;
+	}
+	
+	/**
+	 * Sets the devVictoryPoints
+	 * @param devVictoryPoints
+	 */
+	public void setDevVictoryPoints(int devVictoryPoints) {
+		this.devVictoryPoints = devVictoryPoints;
+	}
+	
+	/**
+	 * Sets the roadBuilding
+	 * @param roadBuilding
+	 */
+	public void setRoadBuilding(boolean roadBuilding) {
+		this.buildRoadPressed = false;
+		this.roadBuilding = roadBuilding;
+		if(roadBuilding){
+			try{ 										   //try-catch for beginning (when catan not existing yet)
+				catan.getIsland().getSkin().showBuildableEdges(getBuildableEdges()); 
+			}catch(Exception e){}
+		}
+		else{
+			try{ 										   //try-catch for beginning (when catan not existing yet)
+				catan.getIsland().getSkin().removeBuildableEdges(); 
+			}catch(Exception e){}
+		}
+	}
+	
+	/**
+	 * @return roadBuilding
+	 */
+	public boolean isRoadBuilding() {
+		return this.roadBuilding;
+	}
+	
+	/**
+	 * Adds black roadSkins to the list temporarilyRoadSkins 
+	 * when the "roadbuilding"-DevelopmentCard is played
+	 * Send the roadBuilding message to the server in case both roads are built
+	 * @param roadSkin
+	 */
+	public void addTemporarilyRoadSkin(RoadSkin roadSkin) {
+
+		this.temporarilyRoadSkins.add(roadSkin);
+		if(temporarilyRoadSkins.size()>=2){
+			setRoadBuilding(false);
+			Edge roadOne = temporarilyRoadSkins.get(0).getEdge();
+			Edge roadTwo = roadSkin.getEdge();
+			try {
+				Thread.sleep(Settings.SLEEP_LONG);
+			} catch (InterruptedException e) {
+				LogMaster.log("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + 
+						                " [Thread : "+ Thread.currentThread().getId() + "]");
+			}
+			catan.getIsland().getSkin().getChildren().remove(temporarilyRoadSkins.get(0));
+			roadSkin.setVisible(false);
+			temporarilyRoadSkins.clear();
+			catan.getGameManager().getClient().sendRoadBuilding(roadOne, roadTwo);
+			return;
+		}
+		if(status.equals(Settings.ROADBUILDING_ONE_ROAD)){
+			Edge roadOne = roadSkin.getEdge();
+			if(!canBuildSecondRoad(roadOne)){
+				setRoadBuilding(false);
+				try {
+					Thread.sleep(Settings.SLEEP_LONG);
+				} catch (InterruptedException e) {
+					LogMaster.log("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + 
+							                " [Thread : "+ Thread.currentThread().getId() + "]");
+				}
+				roadSkin.setVisible(false);
+				temporarilyRoadSkins.clear();
+				catan.getGameManager().getClient().sendRoadBuilding(roadOne);
+			}
+			else playRoadBuildingDevCard(true);
+		}
+	}
+	
+	/**
+	 * Checks whether player can build another road after building the first one
+	 * @param roadOne edge first road is getting placed on
+	 * @return true if player can build second road 
+	 */
+	private boolean canBuildSecondRoad(Edge roadOne) {
+		if(getRoadsLeft() < 3) return false;
+		for(Edge edge:roadOne.getVertexFrom().getEdges()){
+			if(!edge.isOccupied()){
+				return true;
+			}
+		}
+		for(Edge edge:roadOne.getVertexTo().getEdges()){
+			if(!edge.isOccupied()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				try{
+				playerControl.getSkin().getStatus().setText(status);
+				}catch(Exception e){}
+			}
+		});
+		
+		this.status = status;
+	}
+
+	/**
+	 * @return the discardCards
+	 */
+	public boolean isDiscardCards() {
+		return discardCards;
+	}
+
+	/**
+	 * @param discardCards the discardCards to set
+	 */
+	public void setDiscardCards(boolean discardCards) {
+		this.discardCards = discardCards;
+	}
+	
+	/**
+	 * Adds 1 to the knightCount and checks for the largest army
+	 * @return true if player with largestArmy has changed
+	 */
+	public boolean addAndCheckKnightCount() {
+		this.knightCount++;
+		return catan.checkLargestArmy();
+	}
+	
+	/**
+	 * Calculates the edges a player can build roads on
+	 * @return the edges the player can build roads on
+	 */
+	private ArrayList<Edge> calculateBuildableEdges(){
+		ArrayList<Edge> buildableEdges = new ArrayList<Edge>();
+		for(Edge edge : catan.getIsland().getEdges()){
+			if(canBuildRoad(edge)){
+				buildableEdges.add(edge);
+			}
+		}
+		return buildableEdges;
+	}
+	
+	/**
+	 * Gets the edges the player can build roads on
+	 * @return the edges the player can build roads on
+	 */
+	public ArrayList<Edge> getBuildableEdges(){
+		return calculateBuildableEdges();
+	}
+	
+	/**
+	 * Calculates the vertices a player can build settlements on
+	 * @return the vertices the player can build settlements on
+	 */
+	private ArrayList<Vertex> calculateBuildableVertices(){
+		ArrayList<Vertex> buildableVertices = new ArrayList<Vertex>();
+		for(Vertex vertex : catan.getIsland().getVertices()){
+			if(canBuildSettlement(vertex)){
+				buildableVertices.add(vertex);
+			}
+		}
+		return buildableVertices;
+	}
+	
+	/**
+	 * Gets the vertices the player can build settlements on
+	 * @return the vertices the player can build settlements on
+	 */
+	public ArrayList<Vertex> getBuildableVertices(){
+		return calculateBuildableVertices();
+	}
+	
+	/**
+	 * For Client
+	 * Handles the request to play a roadbuilding development card
+	 * @param onlyOneRoad when player already built one of the two roads and 
+	 * has another road and a place to build it on
+	 */
+	public void playRoadBuildingDevCard(boolean onlyOneRoad) {
+		int buildableEdgesCount = calculateBuildableEdges().size();
+		if(onlyOneRoad){
+			setStatus(Settings.ROADBUILDING_ONE_ROAD);
+			setRoadBuilding(true);
+			catan.getGameManager().getApp().popUpMessage("Place your second road.");
+		}
+		else if(getRoadsLeft() == 0){
+			catan.getGameManager().getApp().popUpMessage("You don't have any roads left.");
+		}
+		else if(buildableEdgesCount == 0){
+			catan.getGameManager().getApp().popUpMessage("There is no location you can\n"
+					+ "build a road on.");
+		}
+		else if(buildableEdgesCount == 1){
+			setStatus(Settings.ROADBUILDING_ONE_ROAD);
+			setRoadBuilding(true);	
+			catan.getGameManager().getApp().popUpMessage("There's only one location to "
+					+ "/nbuild a road on left.");
+		}
+		else if(getRoadsLeft() == 1){
+			setStatus(Settings.ROADBUILDING_ONE_ROAD);
+			catan.getGameManager().getApp().popUpMessage("You have only one road left.");
+			setRoadBuilding(true);	
+		}
+		else{
+			setStatus(Settings.ROADBUILDING_TWO_ROADS);
+			setRoadBuilding(true);	
+		}
+	}
+}

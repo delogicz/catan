@@ -1,0 +1,112 @@
+package game;
+
+import javafx.scene.Cursor;
+import controller.GameControl;
+import javafx.scene.Scene;
+import model.Catan;
+import model.SetUp;
+import view.GameSkin;
+
+/**
+ * The game manager initializes a new game.
+ * @author Daniel Panangian, Stefanie Kloss
+ */
+public class GameManager {
+	
+	private App app;
+	
+	private SetUp setUp;
+	private Scene setUpScene;
+	
+	private Scene gameScene;
+	private Catan catan;
+	private GameSkin gameSkin; 
+	private GameControl gameControl;
+	
+	/**
+	 * Constructor
+	 * @param app 
+	 */
+	public GameManager(App app) {
+		this.app = app;
+		setGameUp();
+	}
+	
+	/**
+	 * Starts the set up of the game
+	 */
+	private void setGameUp() {
+		this.setUp = new SetUp(this);
+		this.setUpScene = new Scene(setUp.getSetUpSkin());
+	}
+
+	/**
+	 *  Establishes new Game after all players joined (setUp)
+	 *  Creates a new instance of GameSkin
+	 */
+	public void newGame(Catan catan) {
+		
+		this.gameSkin = new GameSkin(catan, this);
+		this.gameScene = new Scene(gameSkin);
+		app.changeScene(gameScene);
+		
+	}
+	
+	public void quit() {
+		gameScene.getWindow().hide();
+	}
+	
+	/**
+	 * @return the gameScene
+	 */
+	public Scene getGameScene() {
+		return gameScene;
+	}
+	
+	/**
+	 * @return the gameControl
+	 */
+	public GameControl getGameControl() {
+		return gameControl;
+	}
+	
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+	
+	/**
+	 * Changes the cursor to a open hand or back to the default cursor
+	 * @param relocate true changes cursor to open hand, false changes it back to normal
+	 */
+	public void relocateRobber(boolean relocate){
+		if(relocate) gameSkin.setCursor(Cursor.OPEN_HAND);
+		else gameSkin.setCursor(Cursor.DEFAULT);
+	}
+	
+	/**
+	 * @return the setUpScene
+	 */
+	public Scene getSetUpScene() {
+		return setUpScene;
+	}
+	
+	/**
+	 * @return the app
+	 */
+	public App getApp() {
+		return this.app;
+	}
+
+	/**
+	 * @return the gameSkin
+	 */
+	public GameSkin getGameSkin() {
+		return gameSkin;
+	}
+	
+}
+
+				

@@ -1,0 +1,145 @@
+package model;
+
+import java.util.ArrayList;
+
+import bot.Bot;
+import controller.SetUpControl;
+import game.GameManager;
+import view.SetUpSkin;
+
+/**
+ * The SetUp adds new players 
+ * @author Stefanie Kloss
+ *
+ */
+public class SetUp {
+	
+	private GameManager gameManager;
+	private Catan catan;
+	
+	private SetUpControl setUpControl;
+	private SetUpSkin setUpSkin;
+	private ArrayList<Player> players;
+	private PlayerClient playerClient;
+	
+	/**
+	 * Constructor
+	 * @param gameManager the gameManager of the game
+	 */
+	public SetUp(GameManager gameManager){
+		
+		this.gameManager = gameManager;
+		this.setUpControl = new SetUpControl(this);
+		this.players = new ArrayList<Player>();
+
+		this.setUpSkin = new SetUpSkin(this, setUpControl);
+		
+	}
+	
+	/**
+	 * Starts the game when all players were added (handleStartMatch)
+	 * @param terrains
+	 * @param tokens
+	 */
+	public void startMatch(TerrainType[] terrains, TokenNumber[] tokens, Harbour[] harbours, int[] harbourPositions){
+		this.catan = new Catan(gameManager, players, playerClient, terrains, tokens, harbours, harbourPositions);
+		
+		gameManager.newGame(catan);
+	}
+	
+	/**
+	 * Adjusts view after game was started (Status "Wartet auf Spielbeginn") 
+	 */
+	public void waitForStart(){
+		setUpSkin.waitView();
+	}
+	
+	/**
+	 * Adjusts choice of name and color of a player or creates a new player 
+	 * @param playerColor The color of the player
+	 * @param name The name of the new player
+	 * @param playerID The ID of the player
+	 * @param isPlayerClient
+	 */
+	public void adjustPlayer(PlayerColor playerColor, String name, int playerID, boolean isPlayerClient){
+
+		boolean alreadyExists = false;
+		for(Player player : players){
+			if(player.getPlayerID() == playerID){
+				alreadyExists = true;
+				player.setPlayerColor(playerColor);
+				player.setName(name);
+				System.out.println("[Mod]Player already exists"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+			}
+		}
+		if(!alreadyExists){
+			System.out.println("[Mod]Add new player"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+			addPlayer(playerColor, name, playerID, isPlayerClient);
+		}
+	}
+	
+	/**
+	 * Adds a new player to the game
+	 * @param playerColor The color of the new player
+	 * @param name The name of the new player
+	 * @param playerID The ID of the new player
+	 * @param isPlayerClient
+	 */
+	public void addPlayer(PlayerColor playerColor, String name, int playerID, boolean isPlayerClient) {
+		if(!isPlayerClient){
+			Player player = new Player(playerColor, playerID, name);
+			players.add(player);
+			if(catan != null){
+				player.setCatan(catan);
+			}
+		}else{
+			if(gameManager.getClient().isBotClient()){
+				this.playerClient = new Bot(playerColor, playerID, name);
+			}
+			else{
+				this.playerClient = new PlayerClient(playerColor, playerID, name);
+			}
+			players.add(playerClient);
+			setUpSkin.getStartMatchButton().setDisable(false);
+			setUpSkin.getLoginButton().setDisable(true);
+		}
+	}
+
+	/**
+	 * @return the setUpSkin
+	 */
+	public SetUpSkin getSetUpSkin() {
+
+		return setUpSkin;
+	}
+	
+	/**
+	 * @return the players
+	 */
+	public ArrayList<Player> getPlayers(){
+		return this.players;
+	}
+	
+	/**
+	 * @return the gameManager
+	 */
+	public GameManager getGameManager() {
+		return this.gameManager;
+	}
+	
+	/**
+	 * Sends a message to the Server
+	 * @param name
+	 * @param chosenColor
+	 */
+	public void clientSendPlayerRequest(String name, PlayerColor chosenColor) {
+		String color = "";
+		switch(chosenColor){
+		case RED :		color = "Rot"; break;
+		case ORANGE:	color = "Orange"; break;
+		case BLUE:		color = "Blau"; break;
+		case WHITE:		color = "Weiss"; break;
+		}
+		gameManager.getClient().sendPlayerInit(name, color);	
+	}
+}

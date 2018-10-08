@@ -1,0 +1,126 @@
+package view;
+
+
+import java.net.URISyntaxException;
+
+import game.GameManager;
+import game.Settings;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Control;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
+public class TradeSkin extends StackPane {
+	
+	GridPane gridPane;
+	
+	GameManager gamemanager;
+	Stage tradeStage;
+	
+	public TradeSkin(GameManager gm) {
+		super();
+		
+		this.gridPane = new GridPane();
+		this.gamemanager = gm;
+			
+		String path = "";
+		try {
+			path = SetUpSkin.class.getResource("/img/trade_background.jpg" ).toURI().toString();
+		} catch (URISyntaxException e) {
+			System.out.println(e.getMessage() + " Couldn't find image of TradeSkin.");
+		}
+		Image image = new Image(path, 650, 301, false, false);
+		ImageView backgroundTrade = new ImageView(image);
+		getChildren().add(backgroundTrade);
+
+		addElements();
+		addStage();
+	}
+
+	private void addStage() {
+		Scene scene = new Scene(this, 650, 301);
+		
+
+		Stage stage = new Stage();
+		
+		stage.initOwner(gamemanager.getApp().getStage());
+		stage.setScene(scene);
+		this.tradeStage = stage;
+		stage.show();
+	}
+	
+	
+	private void addElements() {
+		Button buttonOK = new Button();
+		buttonOK.setText("OK");
+		buttonOK.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		Button buttonCancel = new Button();
+		buttonCancel.setText("Cancel");
+		buttonCancel.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		
+		TextField lumberCount = new TextField();
+		changeFont(lumberCount);
+		lumberCount.setPrefWidth(80);
+		
+		TextField brickCount = new TextField();
+		changeFont(brickCount);
+		brickCount.setPrefWidth(80);
+		
+		TextField woolCount = new TextField();
+		changeFont(woolCount);
+		woolCount.setPrefWidth(80);
+		
+		TextField grainCount = new TextField();
+		changeFont(grainCount);
+		grainCount.setPrefWidth(80);
+		
+		TextField oreCount = new TextField();
+		changeFont(oreCount);
+		oreCount.setPrefWidth(80);
+		
+		gridPane.add(lumberCount, 0,0);
+		gridPane.add(brickCount, 1,0);
+		gridPane.add(woolCount, 2,0);
+		gridPane.add(grainCount, 3,0);
+		gridPane.add(oreCount, 4,0);
+		
+
+		
+		gridPane.add(buttonCancel, 3,1);
+		gridPane.add(buttonOK, 4,1);
+		
+		gridPane.setHgap(50);
+		gridPane.setVgap(30);
+		
+		this.getChildren().add(gridPane);
+		
+		this.setMargin(gridPane, new Insets(180,30,10,45));
+
+		gridPane.setHalignment(buttonCancel, HPos.CENTER);
+		gridPane.setHalignment(buttonOK, HPos.CENTER);
+		gridPane.setHalignment(lumberCount, HPos.CENTER);
+		gridPane.setHalignment(brickCount, HPos.CENTER);
+		gridPane.setHalignment(woolCount, HPos.CENTER);
+		gridPane.setHalignment(grainCount, HPos.CENTER);
+		gridPane.setHalignment(oreCount, HPos.CENTER);
+		
+	}
+	
+	/**
+	 * changes font of a labeled object
+	 * @param labeled
+	 */
+	private void changeFont(TextField textfield){
+		textfield.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+	}
+}

@@ -1,0 +1,288 @@
+package view;
+
+
+import java.net.URISyntaxException;
+
+import game.Settings;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import model.Catan;
+
+/**
+ * Contains all different scenes of stages of trade
+ * @author Lena Sonnleitner, Stefanie Kloss
+ *
+ */
+public class TradeSkin {
+	
+	private Catan catan;
+	private Stage tradeStage;
+	
+	private Scene newOfferScene;
+	private Scene tradeOptionsScene;
+
+	private ChoiceBox<Integer> lumberOffer, brickOffer, woolOffer, grainOffer, oreOffer;
+	private ChoiceBox<Integer> lumberRequest, brickRequest, woolRequest, grainRequest, oreRequest;
+	private Button confirmNewOffer, cancelNewOffer;
+	
+	/**
+	 * Constructor
+	 * @param gm
+	 */
+	public TradeSkin(Catan catan) {
+
+		this.catan = catan;
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				tradeStage = new Stage();
+				tradeStage.setTitle("Internal Trade");
+				tradeStage.setResizable(false);
+				tradeStage.initOwner(catan.getGameManager().getApp().getStage());
+				
+				newOfferScene = createNewOfferScene();
+				tradeOptionsScene = createTradeOptionsScene();
+				
+				setTradeStageScene(tradeOptionsScene);
+			}
+		});
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Sets the scene of the tradeStage
+	 */
+	private void setTradeStageScene(Scene scene) {
+		
+		tradeStage.setScene(scene);
+		tradeStage.sizeToScene();
+
+	}
+	
+	/**
+	 * Creates the scene opened for new trade offer
+	 */
+	private Scene createNewOfferScene() {
+
+		StackPane newOfferPane = new StackPane();
+
+		GridPane gridPane = new GridPane();
+		
+		String path = "";
+		try {
+			path = SetUpSkin.class.getResource("/img/trade_background.jpg" ).toURI().toString();
+		} catch (URISyntaxException e) {
+			System.out.println(e.getMessage() + " Couldn't find image of TradeSkin.");
+		}
+		Image image = new Image(path, 650, 301, false, false);
+		ImageView backgroundTrade = new ImageView(image);
+		newOfferPane.getChildren().add(backgroundTrade);
+
+		addElements(gridPane);
+		newOfferPane.getChildren().add(gridPane);
+		
+		addButtonEventHandler();
+		
+		return new Scene(newOfferPane, 650, 301);
+	}
+
+	
+	/**
+	 * Adds the EventHandler to the buttons "ok" and "cancel" of the newOfferPane
+	 */
+	private void addButtonEventHandler() {
+		confirmNewOffer.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				int[] offer = {lumberOffer.getValue(), brickOffer.getValue(), woolOffer.getValue(), 
+						       grainOffer.getValue(), oreOffer.getValue()};
+				int[] request = {lumberRequest.getValue(), brickRequest.getValue(), woolRequest.getValue(), 
+					             grainRequest.getValue(), oreRequest.getValue()};
+				
+				catan.getGameManager().getClient().sendTradeOffer(offer, request);
+			}
+			
+		});
+		
+		cancelNewOffer.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				tradeStage.close();
+			}
+		});
+		
+	}
+	
+	/**
+	 * Adds Buttons and TextFields to the newOfferPane
+	 */
+	private void addElements(GridPane gridPane) {
+		this.confirmNewOffer = new Button("OK");
+		changeFont(confirmNewOffer, false);
+		this.cancelNewOffer = new Button("Cancel");
+		changeFont(cancelNewOffer, false);
+		
+		// TODO: mit Request und Offer beschriften
+		this.lumberOffer = new ChoiceBox<Integer>();
+		this.brickOffer = new ChoiceBox<Integer>();
+		this.woolOffer = new ChoiceBox<Integer>();
+		this.grainOffer = new ChoiceBox<Integer>();
+		this.oreOffer = new ChoiceBox<Integer>();
+		this.lumberRequest = new ChoiceBox<Integer>();
+		this.brickRequest = new ChoiceBox<Integer>();
+		this.woolRequest = new ChoiceBox<Integer>();
+		this.grainRequest = new ChoiceBox<Integer>();	
+		this.oreRequest = new ChoiceBox<Integer>();
+		
+		for(int i = 0; i < 10; i++){
+			lumberOffer.getItems().add(i);
+			brickOffer.getItems().add(i);
+			woolOffer.getItems().add(i);
+			grainOffer.getItems().add(i);
+			oreOffer.getItems().add(i);
+			lumberRequest.getItems().add(i);
+			brickRequest.getItems().add(i);
+			woolRequest.getItems().add(i);
+			grainRequest.getItems().add(i);
+			oreRequest.getItems().add(i);
+		}
+		lumberOffer.getSelectionModel().selectFirst();
+		brickOffer.getSelectionModel().selectFirst();
+		woolOffer.getSelectionModel().selectFirst();
+		grainOffer.getSelectionModel().selectFirst();
+		oreOffer.getSelectionModel().selectFirst();
+		lumberRequest.getSelectionModel().selectFirst();
+		brickRequest.getSelectionModel().selectFirst();
+		woolRequest.getSelectionModel().selectFirst();
+		grainRequest.getSelectionModel().selectFirst();
+		oreRequest.getSelectionModel().selectFirst();
+		
+		gridPane.add(lumberOffer, 0,0);
+		gridPane.add(brickOffer, 1,0);
+		gridPane.add(woolOffer, 2,0);
+		gridPane.add(grainOffer, 3,0);
+		gridPane.add(oreOffer, 4,0);
+		gridPane.add(lumberRequest, 0,1);
+		gridPane.add(brickRequest, 1,1);
+		gridPane.add(woolRequest, 2,1);
+		gridPane.add(grainRequest, 3,1);
+		gridPane.add(oreRequest, 4,1);
+	
+		gridPane.add(cancelNewOffer, 3,2);
+		gridPane.add(confirmNewOffer, 4,2);
+		
+		gridPane.setHgap(50);
+		gridPane.setVgap(10);
+		
+		StackPane.setMargin(gridPane, new Insets(160,30,10,45));
+
+		GridPane.setHalignment(cancelNewOffer, HPos.CENTER);
+		GridPane.setHalignment(confirmNewOffer, HPos.CENTER);
+		GridPane.setHalignment(lumberOffer, HPos.CENTER);
+		GridPane.setHalignment(brickOffer, HPos.CENTER);
+		GridPane.setHalignment(woolOffer, HPos.CENTER);
+		GridPane.setHalignment(grainOffer, HPos.CENTER);
+		GridPane.setHalignment(oreOffer, HPos.CENTER);
+		GridPane.setHalignment(lumberRequest, HPos.CENTER);
+		GridPane.setHalignment(brickRequest, HPos.CENTER);
+		GridPane.setHalignment(woolRequest, HPos.CENTER);
+		GridPane.setHalignment(grainRequest, HPos.CENTER);
+		GridPane.setHalignment(oreRequest, HPos.CENTER);
+		
+	}
+	
+	/**
+	 * Creates the tradeOptionsScene
+	 */
+	private Scene createTradeOptionsScene() {
+		
+		StackPane pane = new StackPane();
+		pane.setStyle("-fx-background-color: darkred; -fx-padding: 20;");
+		
+		GridPane gridPane = new GridPane();
+		
+		RadioButton tradeOverView = new RadioButton("Get an overview of all Internal Trade Offers");
+		tradeOverView.setSelected(true);
+		changeFont(tradeOverView, true);
+		RadioButton internalTradeOffer = new RadioButton("Place a new Internal Trade Offer");
+		changeFont(internalTradeOffer, true);
+		RadioButton maritimeTrade = new RadioButton("Enter a Maritime Trade");
+		changeFont(maritimeTrade, true);
+		
+		ToggleGroup toggleGroup = new ToggleGroup();
+		tradeOverView.setToggleGroup(toggleGroup);
+		internalTradeOffer.setToggleGroup(toggleGroup);
+		maritimeTrade.setToggleGroup(toggleGroup);
+		
+		Button confirm = new Button("OK");
+		changeFont(confirm, false);
+		
+		confirm.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				switch(((RadioButton)toggleGroup.getSelectedToggle()).getText().substring(0, 3)){
+//				case "Get": setTradeStageScene(offerOverviewScene); break; TODO
+				case "Pla": setTradeStageScene(newOfferScene); 		break;
+//				case "Ent": setTradeStageScene(maritimeTradeScene); break; TODO
+				}
+				
+			}
+			
+		});
+		
+		pane.getChildren().add(gridPane);
+		
+		return new Scene(pane);
+	}
+	
+	/**
+	 * opens the TradeStage with tradeOptions as Scene
+	 */
+	public void showTradeStage(){
+		setTradeStageScene(tradeOptionsScene);
+		this.tradeStage.show();
+	}
+	
+	/**
+	 * changes font of a labeled object									
+	 * @param labeled
+	 * @param changeColor
+	 */
+	private void changeFont(Labeled labeled, boolean changeColor){
+		if(changeColor) labeled.setTextFill(Color.ANTIQUEWHITE);
+		labeled.setFont(Font.loadFont(Settings.OSWALD_PATH, 14)); //TODO: magic numbers (evtl 14 als standard schriftgröße?)
+	}
+	
+	/**
+	 * changes font of a labeled object
+	 * @param labeled
+	 */
+	private void changeFontBig(Labeled labeled, boolean changeColor){
+		if(changeColor) labeled.setTextFill(Color.ANTIQUEWHITE);
+		labeled.setFont(Font.loadFont(Settings.OSWALD_PATH, 16)); //TODO: magic numbers
+	}
+}

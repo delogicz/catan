@@ -1,0 +1,89 @@
+package bot;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import model.Catan;
+import model.Player;
+import model.ResourceType;
+import model.Tile;
+import model.TokenNumber;
+import model.Vertex;
+
+public class BotBrain {
+	private ArrayList<Tile> rankedHexes;
+	private ArrayList<ResourceType> rankedResources;
+	private ArrayList<Player> rankedThreats;
+	private ArrayList<Vertex> rankedVertex;
+	private Map<Integer, Integer> tokenProbability ;
+	private Map<Vertex, Integer> vertexProbability ;
+	private Catan catan;
+	private Bot bot;
+
+	
+	public BotBrain(Bot bot){
+		this.bot = bot;
+		tokenProbability = new HashMap<Integer, Integer>(){
+			private static final long serialVersionUID = 1L;
+		{put(2, 1);put(3, 2);put(4, 3);put(5, 4);put(6, 5);
+		 put(7, 6);put(8, 5);put(9, 4);put(10, 3);put(11, 2);
+		 put(12, 1);}};
+		
+		rankedHexes = new ArrayList<Tile>();
+		rankedThreats = new ArrayList<Player>();
+		rankedVertex = new ArrayList<Vertex>();
+		rankedResources = new ArrayList<ResourceType>();
+		
+		vertexProbability = new LinkedHashMap<Vertex, Integer>();
+		
+	
+	}
+	
+	public void analyzeHexes(){
+		for (Vertex vertex : bot.getAvailableVertices()){
+			int vertexProb = 0;
+			for (Tile hex : vertex.getHexes()){
+				if(hex.getToken() != TokenNumber.SEVEN){
+					vertexProb += this.tokenProbability.get(hex.getToken().getNumber());
+					}
+				}
+			this.vertexProbability.put(vertex, vertexProb);
+		}
+		Set<Entry<Vertex, Integer>> set = this.vertexProbability.entrySet();
+        List<Entry<Vertex, Integer>> list = new ArrayList<Entry<Vertex, Integer>>(set);
+        Collections.sort( list, new Comparator<Map.Entry<Vertex, Integer>>()
+        {
+            public int compare( Map.Entry<Vertex, Integer> o1, Map.Entry<Vertex, Integer> o2 )
+            {
+                return (o2.getValue()).compareTo( o1.getValue() );
+            }
+        } );
+        for(Entry<Vertex, Integer> entry:list){
+            this.rankedVertex.add(entry.getKey());
+        }
+    }
+	
+
+	public Map<Vertex, Integer> getVertexProbability() {
+		return vertexProbability;
+	}
+
+	public ArrayList<Vertex> getRankedVertex() {
+		return rankedVertex;
+	}
+	
+}

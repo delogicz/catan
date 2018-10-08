@@ -1,0 +1,30 @@
+package view;
+
+import game.Settings;
+
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import model.Edge;
+
+
+public class EdgeSkin {
+
+	
+	private Shape shape;
+	private Edge edge;
+
+	public EdgeSkin(Edge edge) {
+		this.edge = edge;
+		shape = new Rectangle(0.68, 0.070);
+		shape.setScaleX(Settings.SCALE);
+		shape.setScaleY(Settings.SCALE);
+		shape.setFill(Settings.EDGE_SKIN_COLOR);
+		
+	}
+
+
+	public Shape getShape() {
+		return shape;
+	}
+
+}

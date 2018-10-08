@@ -1,0 +1,17 @@
+package controller;
+
+import model.Catan;
+import view.StatsControlSkin;
+
+public class StatsControl {
+	private StatsControlSkin skin;
+	private Catan catan;
+	public StatsControl(Catan catan) {
+		this.catan = catan;
+		skin = new StatsControlSkin();
+	}
+	public StatsControlSkin getSkin() {
+		return skin;
+	}
+
+}

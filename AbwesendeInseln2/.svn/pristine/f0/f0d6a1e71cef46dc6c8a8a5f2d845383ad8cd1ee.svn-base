@@ -1,0 +1,42 @@
+package view;
+
+import java.net.URISyntaxException;
+
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import model.Dice;
+
+public class DiceSkin {
+	
+	private Dice dice;
+	private Rectangle dice1;
+	private Rectangle dice2;
+	
+	public DiceSkin(Dice dice){
+		this.dice = dice;
+		dice1 = new Rectangle(35,35); //TODO: magic numbers entfernen
+		dice2 = new Rectangle(35,35);
+		
+		String path;
+		try {
+			path = DiceSkin.class.getResource("/img/dice/dice1.png").toURI().toString();
+			Image image = new Image(path);
+			ImagePattern imagePattern = new ImagePattern(image);
+			dice1.setFill(imagePattern);
+			dice2.setFill(imagePattern);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public Rectangle getDice1(){
+		return this.dice1;
+	}
+	
+	public Rectangle getDice2(){
+		return this.dice2;
+	}
+	
+}

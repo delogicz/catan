@@ -1,0 +1,132 @@
+package network;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
+import com.google.gson.Gson;
+
+import jsonstructures.BauNachricht;
+import jsonstructures.ClientChatDaten;
+import jsonstructures.HalloNachricht;
+import jsonstructures.SpielerInitNachricht;
+import jsonstructures.WillkommenNachricht;
+import model.Edge;
+import model.Vertex;
+
+
+public class Client extends Thread{
+	private static final String version = "JavaFXClient 0.1 (AbwesendeInseln)";
+	private Gson gson;
+	private Socket server;
+	/**
+	 * Creates new Client
+	 * @param host IP-Adress of Host
+	 * @param port Port
+	 */
+	public Client(String host, int port){
+		gson = new Gson();
+		/*try {
+			server = new Socket(host, port);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
+	}
+	
+	/**
+	 * Sends message Server
+	 * @param text Message
+	 */
+	public void sendText(String text){
+		PrintWriter out;
+		try {
+			out = new PrintWriter(server.getOutputStream(),true);
+			out.println(text);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Receives messages from Server
+	 */
+	public void receive(){
+		try {
+			Scanner in  = new Scanner(server.getInputStream());
+			if(!in.hasNextLine()){
+				in.close();
+				return;
+			}
+			String text = in.nextLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Run-Method of Client Thread
+	 */
+	@Override
+	public void run(){
+		while(true){
+			receive();
+		}
+	}
+	
+	public void sendTest(){
+		
+		
+		
+	}
+	
+	public void sendEndTurn(){
+		sendText("{ \"Zug beenden\":{}}");
+	}
+	
+	public void sendRollDice(){
+		sendText("{ \"Wuerfeln\":{}}");
+	}
+	
+	public void sendStartMatch(){
+		sendText("{ \"Spiel starten\":{}}");
+	}
+	
+	public void sendChat(String text){
+		ClientChatDaten ccd = new ClientChatDaten(text);
+		sendText("{ \"Chatnachricht senden\":" + gson.toJson(ccd)+ "}");
+	}
+	
+	public void sendHello(){
+		HalloNachricht HelloMessage = new HalloNachricht(version);
+		sendText(gson.toJson(HelloMessage));
+	}
+	
+	public void sendPlayerInit(String name, String color){
+		SpielerInitNachricht initMessage = new SpielerInitNachricht(name,color);
+		sendText(gson.toJson(initMessage));
+	}
+	
+	public void sendConstructSettlement(Vertex target){
+		BauNachricht bn = new BauNachricht("Dorf", target);
+		sendText(gson.toJson(bn));
+	}
+	
+	public void sendConstructCity(Vertex target){
+		BauNachricht bn = new BauNachricht("Stadt", target);
+		sendText(gson.toJson(bn));
+	}
+	
+public void sendConstructRoad(Edge target){
+	BauNachricht bn = new BauNachricht("Strasse", target);
+	sendText(gson.toJson(bn));
+	}
+
+	public static void main(String[] args){
+		Client c = new Client("localhost", 4404);
+		c.sendTest();
+	}
+	
+}

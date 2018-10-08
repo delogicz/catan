@@ -1,0 +1,437 @@
+package view;
+
+import java.util.ArrayList;
+
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import model.Catan;
+import model.DevelopmentCardType;
+import model.PlayerClient;
+
+/**
+ * 
+ * @author Lena Sonnleitner, Samantha Meindl
+ *
+ */
+
+public class DevelopmentCardSkin extends GridPane{
+
+	private Stage devCardStage;
+
+	private Scene overviewScene;
+
+	private GridPane overviewGridPane;
+
+	private Button cancelButton, playButton;
+	private RadioButton chapelButton, greathallButton, knightButton, 
+				libraryButton, marketButton, monopolyButton, roadbuildingButton, 
+				universityButton, yearofplentyButton;
+	private ToggleGroup devCard;
+	private PlayerClient player;
+
+	/**
+	 * Constructor
+	 * @param devcard
+	 * @param catan
+	 */
+	public DevelopmentCardSkin(Catan catan){
+
+		this.player = catan.getPlayerClient();
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				devCardStage = new Stage();
+				devCardStage.setTitle("Your Development Cards: ");
+				devCardStage.setResizable(false);
+				devCardStage.initOwner(catan.getGameManager().getApp().getStage());
+
+				overviewGridPane = new GridPane();
+				createOverviewScene();
+
+				setDevelopmentCardStageScene(overviewScene);
+
+			}
+		});
+		try {
+			System.out.println("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			System.out.println("[Err]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+		//
+		//		this.setVgap(8);
+		//		this.setHgap(15);
+		//		this.setPrefSize(300, 100);
+		//		
+		//		Button playButton = new Button("Play DevelopementCard");
+		//		playButton.setDisable(true);
+		//		this.add(playButton, 2, 3);
+		//		
+		//		Button cancelButton = new Button("Cancel");
+		//		this.add(cancelButton, 1, 3);	
+
+	}
+	/**
+	 * sets the scene of the Developmentcard scene
+	 * @param scene Scene
+	 */
+	private void setDevelopmentCardStageScene(Scene scene) {
+
+		devCardStage.setScene(scene);
+	}
+
+	/**
+	 * Updates the GridPane overviewGridPane
+	 */
+	public void updateOverview(){
+
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				overviewGridPane = new GridPane();
+				overviewGridPane.setStyle("-fx-background-color: #dddd; -fx-padding: 10;");
+				overviewGridPane.setPadding(new Insets(5, 0, 5, 0));
+				overviewGridPane.setVgap(10);
+				overviewGridPane.setHgap(5);
+				overviewGridPane.setPrefWidth(610);
+				ArrayList<DevelopmentCardType> allDevCards = player.getDevCards();
+				for(DevelopmentCardType devCard : allDevCards){
+					overviewGridPane.getChildren().add(devCard.getSkin());
+				}
+				overviewScene = new Scene(overviewGridPane);
+				System.out.println("[UI]Neue Overview mit " + allDevCards.size() + " Entwicklungskarten"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+			}
+		});
+		//			try {
+		//			Thread.sleep(300);
+		//		} catch (InterruptedException e) {
+		//			e.printStackTrace();
+		//		}
+	}
+
+	/**
+	 * Creates the scene opened for devCardsOverview
+	 */
+	private void createOverviewScene() {
+		StackPane stackPane = new StackPane();
+		stackPane.setStyle("-fx-background-color: darkred; -fx-padding: 5;");
+		
+		addElements(overviewGridPane);
+
+		addButtonEventHandler();
+		stackPane.getChildren().add(overviewGridPane);
+		
+		this.overviewScene = new Scene(stackPane);			
+	}
+
+
+
+	/**
+	 * Adds the EventHandler to the buttons "playcard" and "cancel" of the Pane
+	 */
+	private void addButtonEventHandler() {
+		cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				devCardStage.close();
+			}
+		});
+
+		playButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				//TODO Karte ausspielen methode in model
+				if(chapelButton.isSelected() || greathallButton.isSelected() || libraryButton.isSelected() || marketButton.isSelected() || universityButton.isSelected() ){
+					player.playVPDevCard();
+				}
+				else if(knightButton.isSelected()) {
+					player.playKDevCard();
+				} 
+				else if(roadbuildingButton.isSelected()) {
+					player.playRBDevCard();
+				}
+				else if(yearofplentyButton.isSelected()) {
+					player.playYOPDevCard();
+				}
+				else if(monopolyButton.isSelected()) {
+					player.playMDevCard();
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Adds the EventHandler to the RadioButtons in Pane
+	 */
+	private void addRadioButtonEventHandler() {
+
+		//RadioButtons
+		chapelButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+
+			}
+		});
+
+		greathallButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(1);
+			}
+		});
+
+		knightButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(2);
+			}
+		});
+
+		libraryButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(3);
+			}
+		});
+
+		marketButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(4);
+			}
+		});
+		monopolyButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(2);
+			}
+		});
+
+		roadbuildingButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(3);
+			}
+		});
+
+		universityButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(4);
+			}
+		});
+		yearofplentyButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				disableOtherRadioButtons(2);
+			}
+		});
+	}
+
+	private void disableOtherRadioButtons(int except){
+		RadioButton[] rbutts = {chapelButton,greathallButton,knightButton,
+				libraryButton,marketButton, monopolyButton, roadbuildingButton, universityButton, yearofplentyButton};
+		for(int i=0; i<9;i++){
+			if(i != except){
+				rbutts[i].setSelected(false);
+			}
+		}
+	}
+	/**
+	 * Adds Buttons and DevCards Images to the Pane
+	 */
+	private void addElements(GridPane gridPane) {
+		devCard = new ToggleGroup();
+		this.chapelButton = new RadioButton("Chapel");
+		chapelButton.setSelected(false);
+		if(chapelButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.greathallButton = new RadioButton("Greathall");
+		greathallButton.setSelected(false);
+		if(greathallButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+
+		this.knightButton = new RadioButton("Knight");
+		knightButton.setSelected(false);
+		if(knightButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+
+		this.libraryButton = new RadioButton("Library");
+		libraryButton.setSelected(false);
+		if(libraryButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.marketButton = new RadioButton("Market");
+		marketButton.setSelected(false);
+		if(marketButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.monopolyButton = new RadioButton("Monopoly");
+		monopolyButton.setSelected(false);
+		if(monopolyButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.roadbuildingButton = new RadioButton("Roadbuilding");
+		roadbuildingButton.setSelected(false);
+		if(roadbuildingButton.isSelected()){
+			playButton.setDisable(false);
+		}
+
+		this.universityButton = new RadioButton("University");
+		universityButton.setSelected(false);
+		if(universityButton.isSelected()){
+			playButton.setDisable(false);
+		}
+		
+
+		this.yearofplentyButton = new RadioButton("Yearofplenty");
+		yearofplentyButton.setSelected(false);
+		if(yearofplentyButton.isSelected()){
+			playButton.setDisable(false);
+		}
+		
+		chapelButton.setToggleGroup(devCard);
+		greathallButton.setToggleGroup(devCard);
+		knightButton.setToggleGroup(devCard);
+		libraryButton.setToggleGroup(devCard);
+		marketButton.setToggleGroup(devCard);
+		monopolyButton.setToggleGroup(devCard);
+		roadbuildingButton.setToggleGroup(devCard);
+		universityButton.setToggleGroup(devCard);
+		yearofplentyButton.setToggleGroup(devCard);
+		
+		//Bilder werden schwarz weiß angezeigt am Anfang
+		ImageView chapel = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/chapel1.jpg"),180,180,true,true));
+		ImageView greathall = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/greathall1.jpg"),180,180,true,true));
+		ImageView knight = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/knight1.jpg"),180,180,true,true));
+		ImageView library = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/library1.jpg"),180,180,true,true));
+		ImageView market = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/market1.jpg"),180,180,true,true));
+		ImageView monopoly = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/monopoly1.jpg"),180,180,true,true));
+		ImageView roadbuilding = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/roadbuilding1.jpg"),180,180,true,true));
+		ImageView university = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/university1.jpg"),180,180,true,true));
+		ImageView yearofplenty = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/yearofplenty1.jpg"),180,180,true,true));
+
+		this.cancelButton = new Button("Cancel");
+		this.playButton = new Button("Play Card");
+
+
+		gridPane.add(chapel, 1, 0);
+		gridPane.add(chapelButton, 1, 1);
+		gridPane.add(greathall, 2, 0);
+		gridPane.add(greathallButton, 2, 1);
+		gridPane.add(knight, 3, 0);
+		gridPane.add(knightButton, 3, 1);
+		gridPane.add(library, 4, 0);
+		gridPane.add(libraryButton, 4, 1);
+		gridPane.add(market, 1, 2);
+		gridPane.add(marketButton, 1, 3);
+		gridPane.add(monopoly, 2, 2);
+		gridPane.add(monopolyButton, 2, 3);
+		gridPane.add(roadbuilding, 3, 2);
+		gridPane.add(roadbuildingButton, 3, 3);
+		gridPane.add(university, 4, 2);
+		gridPane.add(universityButton, 4, 3);
+		gridPane.add(yearofplenty, 5, 2);
+		gridPane.add(yearofplentyButton, 5, 3);
+
+		gridPane.add(cancelButton, 1, 6);
+		gridPane.add(playButton, 5, 6);
+
+		StackPane.setMargin(gridPane, new Insets(10,10,10,20));
+
+		GridPane.setHalignment(chapelButton, HPos.CENTER);
+		GridPane.setHalignment(greathallButton, HPos.CENTER);
+		GridPane.setHalignment(knightButton, HPos.CENTER);
+		GridPane.setHalignment(libraryButton, HPos.CENTER);
+		GridPane.setHalignment(monopolyButton, HPos.CENTER);
+		GridPane.setHalignment(roadbuildingButton, HPos.CENTER);
+		GridPane.setHalignment(universityButton, HPos.CENTER);
+		GridPane.setHalignment(yearofplentyButton, HPos.CENTER);
+
+		GridPane.setHalignment(cancelButton, HPos.CENTER);
+		GridPane.setHalignment(playButton, HPos.CENTER);
+
+		GridPane.setHalignment(chapel, HPos.CENTER);
+		GridPane.setHalignment(greathall, HPos.CENTER);
+		GridPane.setHalignment(knight, HPos.CENTER);
+		GridPane.setHalignment(library, HPos.CENTER);
+		GridPane.setHalignment(market, HPos.CENTER);
+		GridPane.setHalignment(monopoly, HPos.CENTER);
+		GridPane.setHalignment(roadbuilding, HPos.CENTER);
+		GridPane.setHalignment(university, HPos.CENTER);
+		GridPane.setHalignment(yearofplenty, HPos.CENTER);					
+	}
+
+	
+	/**
+	 * Shows the Overview over all DevelopmentCards
+	 */
+	public void showDevelopmentCardOverview(){
+		setDevelopmentCardStageScene(overviewScene);
+		this.devCardStage.show();
+	}
+	
+	/**
+	 * Shows a CloseUp of the chosen DevelopmentCard
+	 * @param devCard the card to be shown
+	 */
+	public void showCloseUp(DevelopmentCardType devCard){
+		setDevelopmentCardStageScene(new Scene(new StackPane(devCard.getSkin())));
+		this.devCardStage.show();
+	}
+
+
+//	public void showDevCards(DevelopmentCardType devCardType){
+//		//Alle Dev Cards werden anfangs schwarz weiß angezeigt (addElements)
+//
+//		// die Karten die ein Player hat sollen "normal" angezeigt werden
+//		for(int i = 0; i< player.getDevCardType().size(); i++) {
+//			switch(player.getDevCardType().get(i)) {
+//			case CHAPEL : ImageView chapel = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/chapel.jpg"),55,55,true,true)); 
+//			this.add(chapel, 1, 0);;
+//			case GREATHALL : ImageView greathall = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/greathall.jpg"),55,55,true,true)); 
+//			this.add(greathall, 2, 0);;
+//			case KNIGHT : ImageView knight = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/knight.jpg"),55,55,true,true));
+//			this.add(knight, 3, 0);;
+//			case LIBRARY : ImageView library = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/library.jpg"),55,55,true,true));;
+//			this.add(library, 4, 0);
+//			case MARKET : ImageView market = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/market.jpg"),55,55,true,true)); ;
+//			this.add(market, 1, 2);
+//			case MONOPOLY : ImageView monopoly = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/monopoly.jpg"),55,55,true,true)); ;
+//			this.add(monopoly, 2, 2);
+//			case ROADBUILDING : ImageView roadbuilding = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/roadbuilding.jpg"),55,55,true,true)); ;
+//			this.add(roadbuilding, 3, 2);
+//			case UNIVERSITY : ImageView university = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/university.jpg"),55,55,true,true));;
+//			this.add(university, 4, 2);
+//			case YEAROFPLENTY : ImageView yearofplenty = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/devcards/yearofplenty.jpg"),55,55,true,true));;
+//			this.add(yearofplenty, 5, 2);
+//			}	
+//		}
+//
+//	}
+
+}

@@ -1,0 +1,26 @@
+package controller;
+
+import javafx.scene.layout.BorderPane;
+import model.Catan;
+import view.StatsControlSkin3p;
+import view.StatsControlSkin4p;
+
+public class StatsControl {
+	private BorderPane skin;
+	private Catan catan;
+	public StatsControl(Catan catan) {
+		this.catan = catan;
+		if (catan.getPlayers().size() == 3){
+			skin = new StatsControlSkin3p();
+		}
+		else{
+//		else if (catan.getPlayers().size() == 4){
+			skin = new StatsControlSkin4p();
+		}
+	}
+	
+	public BorderPane getSkin() {
+		return skin;
+	}
+
+}

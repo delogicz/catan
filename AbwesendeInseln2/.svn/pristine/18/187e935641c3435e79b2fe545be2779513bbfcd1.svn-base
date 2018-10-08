@@ -1,0 +1,9 @@
+package model;
+
+public enum DevelopmentCard {
+	KNIGHT,
+	VICTORYPOINT,
+	MONOPOLY,
+	YEAROFPLENTY,
+	ROADBUILDING;
+}

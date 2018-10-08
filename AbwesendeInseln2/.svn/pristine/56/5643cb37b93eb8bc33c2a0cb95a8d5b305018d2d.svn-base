@@ -1,0 +1,660 @@
+package network;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import com.google.gson.Gson;
+
+import game.GameManager;
+import jsonstructures.BauNachricht;
+import jsonstructures.BauvorgangNachricht;
+import jsonstructures.ClientChatDaten;
+import jsonstructures.ClientHandelAngebot;
+import jsonstructures.ClientRaeuberDaten;
+import jsonstructures.ConvertMaster;
+import jsonstructures.ErtragNachricht;
+import jsonstructures.FehlerNachricht;
+import jsonstructures.GebaeudeDaten;
+import jsonstructures.GebaeudeDatenDaten;
+import jsonstructures.HalloNachricht;
+import jsonstructures.HalloServerNachricht;
+import jsonstructures.HandelsangebotDaten;
+import jsonstructures.KartenAbgebenDaten;
+import jsonstructures.KartenDaten;
+import jsonstructures.KostenDaten;
+import jsonstructures.KostenNachricht;
+import jsonstructures.RaeuberDaten;
+import jsonstructures.RohstoffDaten;
+import jsonstructures.RohstoffUnbekanntDaten;
+import jsonstructures.SeehandelNachricht;
+import jsonstructures.ServerChatNachricht;
+import jsonstructures.ServerantwortNachricht;
+import jsonstructures.SpielBeendetDaten;
+import jsonstructures.SpielerInitNachricht;
+import jsonstructures.SpielerZustandsDaten;
+import jsonstructures.SpielerZustandsDatenDaten;
+import jsonstructures.StatusUpdateNachricht;
+import jsonstructures.StatusUpdateUnbekanntNachricht;
+import jsonstructures.SpielerZustandsUnbekanntDaten;
+import jsonstructures.SpielerZustandsUnbekanntDatenDaten;
+import jsonstructures.WillkommenNachricht;
+import jsonstructures.WuerfelDaten;
+import jsonstructures.WuerfelNachricht;
+import model.Edge;
+import model.Player;
+import model.PlayerColor;
+import model.ResourceType;
+import model.TerrainType;
+import model.Tile;
+import model.TokenNumber;
+import model.TradeOffer;
+import model.Vertex;
+
+/**
+ * This class is the Client for the connection to the server
+ * @author Felixi, Stefanie Kloss
+ *
+ */
+public class Client extends Thread{
+	
+	protected static String version = "JavaFXClient 0.2 (AbwesendeInseln)";
+	protected Gson gson;
+	private Socket server;
+	private Scanner in;
+	private InputStream input;
+	
+	
+	private ClientQueueHandler handler;
+	
+	private int clientID;
+	private GameManager gameManager;
+	
+	/**
+	 * Creates new Client
+	 * @param host IP-Adress of Host
+	 * @param port Port
+	 */
+	public Client(String host, int port, GameManager gameManager){
+		System.out.println("Created Client on port " + port);
+		gson = new Gson();
+		handler = new ClientQueueHandler(this);
+		handler.start();
+		try {
+			server = new Socket(host, port);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.gameManager = gameManager;
+	}
+	
+	/**
+	 * Sends message Server
+	 * @param text Message
+	 */
+	public void sendText(String text){
+		System.out.println("Client sends: " + text);
+		PrintWriter out;
+		try {
+			out = new PrintWriter(server.getOutputStream(),true);
+			out.println(text);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Receives messages from Server
+	 */
+	public void receive(){
+		if(server == null){
+			in.close();
+			return;
+		}
+		
+		if(!in.hasNextLine()){
+			in.close();
+			return;
+		}
+		String text = in.nextLine();
+		handler.addMessage(text);
+	}
+	
+	/**
+	 * Handles the JSON text input and handles which message is send by the server
+	 * @param text	input by the server
+	 */
+	public void handleInput(String text) {
+		System.out.println("Client " + clientID +  " received: " + text);
+		String head = text.substring(0,10);
+		String head2 = text.substring(0,19);
+		switch(head){
+		case "{\"Hallo\":{": handleHello(text);break;
+		case "{\"Willkomm": handleWelcome(text);break;
+		case "{\"Chatnach": handleChat(text);break;
+		case "{\"Fehler\":": handleError(text);break;
+		case "{\"Spiel ge": handleStartMatch(text);break;
+		case "{\"Statusup": handleStatusUpdate(text);break;
+		case "{\"Wuerfelw": handleDice(text);break;
+		case "{\"Ertrag\":": handleProduce(text);break;
+		case "{\"Bauvorga": handleConstruction(text);break;
+		case "{\"Spiel be": handleEndMatch(text);break;
+		case "{\"Kosten\":": handleCost(text);break;
+		case "{\"Raeuber ": handleSetRobber(text);break;
+		case "{\"Handel a": handleTradeDone(text);break; //Handel ausgefuehrt
+		case "{\"Serveran": handleServerMsg(text);break;
+		case "{\"Handelsa": 			switch(head2){
+									case "{\"Handelsangebot\":{": handleTrade(text);break;
+									case "{\"Handelsangebot an": handleAcceptedTrade(text);break;
+									case "{\"Handelsangebot ab": handleCanceledTrade(text);break;
+									}break;
+		default: System.out.println("ERRRRRROR: " + head);break;
+		}
+		
+	}
+	
+	/**
+	 * When the player cancels the trade "Handelsangebot abgebrochen"
+	 * @param text
+	 */
+	private void handleCanceledTrade(String text) {
+			int start = text.indexOf("Spieler") + 9;
+			int mid = text.indexOf(",");
+			int end = text.indexOf(" id") + 5;
+			String player = text.substring(start, mid);
+			String trade = text.substring(end, text.length()-2);
+			int tradeId = Integer.parseInt(trade);
+			int playerId = Integer.parseInt(player);
+			TradeOffer tradeOffer = gameManager.getCatan().getTrade(tradeId);
+			if(playerId == tradeOffer.getPlayerId()){
+				gameManager.getCatan().getTrades().remove(tradeOffer);
+			}
+			else{
+				tradeOffer.decline(playerId);
+				if(tradeOffer.getDeclinedTraders().size() == gameManager.getCatan().getPlayerCount()-1){
+					gameManager.getCatan().getTrades().remove(tradeOffer);
+				}
+			}
+			gameManager.getGameSkin().getTradeSkin().updateOfferOverview(gameManager.getCatan().getTrades());
+	}
+
+	/**
+	 * When the trade is done "Handel ausgefuehrt"
+	 * @param text
+	 */
+	private void handleTradeDone(String text) {
+		int start = text.indexOf("Spieler") + 9;
+		int mid = text.indexOf(",");
+		int end = text.indexOf("Mitspieler") + 12;
+		String trade = text.substring(start, mid);
+		String player = text.substring(end, text.length()-2);
+		int tradeId = Integer.parseInt(trade);
+		int playerId = Integer.parseInt(player);
+		TradeOffer tradeOffer = gameManager.getCatan().getTrade(tradeId);
+		gameManager.getCatan().getTrades().remove(tradeOffer);
+		gameManager.getGameSkin().getTradeSkin().updateOfferOverview(gameManager.getCatan().getTrades());
+	}
+	
+	/**
+	 * When the offer has been accepted "Handelsangebot angenommen"
+	 * @param text
+	 */
+	private void handleAcceptedTrade(String text) {
+		int start = text.indexOf("Spieler") + 9;
+		int mid = text.indexOf(",");
+		int end = text.indexOf(" id") + 5;
+		String player = text.substring(start, mid);
+		int playerId = Integer.parseInt(player);
+		String trade = text.substring(end, text.length()-2);
+		int tradeId = Integer.parseInt(trade);
+		gameManager.getCatan().getTrade(tradeId).accept(playerId);
+		if(gameManager.getCatan().getTrade(tradeId).getPlayerId() == clientID){
+			gameManager.getApp().popUpMessage("Your trade with the ID " + tradeId + 
+					" just got accepted by " + gameManager.getCatan().getPlayerWithID(playerId).getName() + ".");
+		}
+		else if(playerId == clientID){
+			gameManager.getApp().popUpMessage("You just accepted the trade\nwith the ID " + tradeId);
+		}	
+	}
+
+	/**
+	 * When the client receives an offer to trade
+	 * @param text
+	 */
+	private void handleTrade(String text) {
+		int startPosQ = text.indexOf(" id") - 7;
+		String preQ = text.substring(0, startPosQ);
+		String postQ = text.substring(startPosQ+11, text.length());
+		String finl = preQ + "\"Q\"" + postQ;
+		int start = finl.indexOf(":") + 1;
+		int end = finl.length() - 1;
+		String sub = finl.substring(start, end);
+		HandelsangebotDaten had = gson.fromJson(sub, HandelsangebotDaten.class);
+
+		int tradeId = had.getHandel();
+		int playerId = had.getSpieler();
+		ArrayList<ResourceType> offer = had.getAngebot().getResources();
+		ArrayList<ResourceType> demand = had.getNachfrage().getResources();
+
+		Player offerer = gameManager.getCatan().getPlayerWithID(playerId);
+		gameManager.getCatan().getTrades().add(new TradeOffer(tradeId, offerer, offer, demand, false));
+		gameManager.getGameSkin().getTradeSkin().updateOfferOverview(gameManager.getCatan().getTrades());
+	}
+	
+	/**
+	 * When the robber has been set "Raeuber versetzt"
+	 * @param text
+	 */
+	private void handleSetRobber(String text) {
+		int start = text.indexOf(":") + 1;
+		int end = text.length() - 1;
+		String robber = text.substring(start, end);
+		RaeuberDaten rd = gson.fromJson(robber, RaeuberDaten.class);
+		Tile tile = rd.getOrt();
+		int player = rd.getSpieler();
+		int robbedPlayer = rd.getZiel();
+		gameManager.getCatan().getIsland().changeRobberPosition(tile);
+		gameManager.getCatan().getPlayerClient().setRelocateRobber(false);
+		//TODO: perhaps chat message about player who robbed and player who got robbed
+		//System.out.println(rd.getSpieler());
+		//System.out.println(rd.getZiel());
+		//System.out.println(rd.getStringOrt());
+	}
+
+	/**
+	 * When the client has to give a way his resources, when he builds a building or when the robber hits "Kosten"
+	 * @param text
+	 */
+	private void handleCost(String text) {
+		KostenNachricht kn = gson.fromJson(text, KostenNachricht.class);
+		KostenDaten kd = kn.getKosten();
+		int playerID = kd.getSpieler();
+		ArrayList<ResourceType> costs = kd.getRohstoffe();
+		if(playerID == gameManager.getCatan().getPlayerClient().getPlayerID()){
+			gameManager.getCatan().getPlayerClient().resCardsCosts(costs);
+		}
+		else gameManager.getCatan().getPlayerWithID(playerID).resCardsCosts(costs.size());
+	}
+
+	/**
+	 * When someone won the game "Spiel beendet"
+	 * @param text
+	 */
+	private void handleEndMatch(String text) {
+		int start = text.indexOf(":") + 1;
+		int end = text.length() - 1;
+		String endGame = text.substring(start, end);
+		SpielBeendetDaten sbd = gson.fromJson(endGame, SpielBeendetDaten.class);
+		String message = sbd.getNachricht();
+		int winner = sbd.getSieger();
+		if(winner == gameManager.getCatan().getPlayerClient().getPlayerID()){
+			gameManager.getApp().popUpMessage("Glückwunsch, du hast das Spiel gewonnen!");
+		}
+		else gameManager.getApp().popUpMessage(message); 
+	}
+
+	/**
+	 * Handles the construction message
+	 * @param text
+	 */
+	private void handleConstruction(String text) {
+		BauvorgangNachricht bn = gson.fromJson(text, BauvorgangNachricht.class);
+		GebaeudeDatenDaten gdd = bn.getBauvorgang();
+		GebaeudeDaten gd = gdd.getGebaeude();
+		int playerID = gd.getEigentuemer();
+		String typ = gd.getTyp();
+		Object location = gd.getOrt();
+		
+		if(location instanceof Edge){
+			Edge edge = (Edge) location; 
+			gameManager.getCatan().getPlayerWithID(playerID).build(edge, false);
+		}else{
+			Vertex vertex = (Vertex) location;
+			System.out.println(typ + " bauen jetzt aufrufen"); 
+			gameManager.getCatan().getPlayerWithID(playerID).build(typ, vertex, false);
+		}
+		
+	}
+
+	/**
+	 * handles the produce message
+	 * @param text
+	 */
+	private void handleProduce(String text) {
+		ErtragNachricht en = gson.fromJson(text, ErtragNachricht.class);
+		int playerID = en.getSpieler();
+		RohstoffDaten rd = en.getRohstoffe();
+		ArrayList<ResourceType> resources = rd.getResources();
+		if(playerID == gameManager.getCatan().getPlayerClient().getPlayerID()){
+			gameManager.getCatan().getPlayerClient().resCardsProduce(resources);
+		}
+		else gameManager.getCatan().getPlayerWithID(playerID).resCardsCountProduce(resources.size());
+	}
+
+	/**
+	 * handles the dice roll message
+	 * @param text
+	 */
+	private void handleDice(String text) {
+		WuerfelNachricht wn = gson.fromJson(text, WuerfelNachricht.class);
+		WuerfelDaten wd = wn.getWuerfelwurf();
+		int playerID = wd.getSpieler();
+		int result = wd.getWurf();
+		gameManager.getCatan().getDice().diceRolled(result);
+	}
+
+	/**
+	 * handles the status update message
+	 * @param text
+	 */
+	private void handleStatusUpdate(String text) {
+		if (text.contains("Unbekannt")){
+			StatusUpdateUnbekanntNachricht suun = gson.fromJson(text, StatusUpdateUnbekanntNachricht.class);
+			SpielerZustandsUnbekanntDatenDaten szudd = suun.getStatusupdate();
+			SpielerZustandsUnbekanntDaten szud = szudd.getSpieler();
+			int playerID = szud.getId();
+			int victoryPoints = szud.getSiegpunkte();
+			String name = szud.getName();
+			String status = szud.getStatus();
+			PlayerColor color = szud.getFarbe();
+			RohstoffUnbekanntDaten rd = szud.getRohstoffe();
+			int unknownResources = rd.getAnzahl();
+			if(status.equals("Spiel starten")){
+				gameManager.getSetUp().adjustPlayer(color, name, playerID, false);
+			}else if(status.equals("Wartet auf Spielbeginn")){
+				gameManager.getSetUp().adjustPlayer(color, name, playerID, false);
+			}else{
+				if(gameManager.getCatan().getPlayerWithID(playerID)==null){
+					gameManager.getSetUp().adjustPlayer(color, name, playerID, false);
+				}
+				gameManager.getCatan().getPlayerWithID(playerID).update(victoryPoints, name, status, color, unknownResources);
+			}
+		}else{
+			StatusUpdateNachricht sn = gson.fromJson(text, StatusUpdateNachricht.class);
+			SpielerZustandsDatenDaten szdd = sn.getStatusupdate();
+			SpielerZustandsDaten szd = szdd.getSpieler();
+			int playerID = szd.getId();
+			int victoryPoints = szd.getSiegpunkte();
+			String name = szd.getName();
+			String status = szd.getStatus();
+			PlayerColor color = szd.getFarbe();
+			RohstoffDaten rd = szd.getRohstoffe();
+			ArrayList<ResourceType> resources = rd.getResources();
+			if(status.equals("Spiel starten")){
+				gameManager.getSetUp().adjustPlayer(color, name, playerID, true);
+			}else if(status.equals("Wartet auf Spielbeginn")){ 
+				gameManager.getSetUp().waitForStart();
+			}else{
+				gameManager.getCatan().getPlayerClient().update(victoryPoints, name, status, color, resources);
+			}
+		}
+	}
+	
+	/**
+	 * handles the start match message
+	 * @param text
+	 */
+	private void handleStartMatch(String text) {
+		String sub = text.substring(19,text.length()-1);
+		KartenDaten kd = gson.fromJson(sub, KartenDaten.class);
+		TerrainType[] terrain = kd.getFeldTypen();
+		TokenNumber[] token = kd.getFeldZahlen();
+		gameManager.getSetUp().startMatch(terrain, token);
+	}
+
+	/**
+	 * handles the error messages
+	 * @param text
+	 */
+	private void handleError(String text) {
+		FehlerNachricht fn = gson.fromJson(text, FehlerNachricht.class);
+		String error = fn.getDaten();
+		gameManager.getApp().popUpMessage(error);
+	}
+
+	/** 
+	 * handles the chat messages
+	 * @param text
+	 */
+	private void handleChat(String text) {
+		ServerChatNachricht cn = gson.fromJson(text, ServerChatNachricht.class);
+		int authorId = cn.getDaten().getId();
+		String message = cn.getDaten().getNachricht();
+		String author = gameManager.getCatan().getPlayerWithID(authorId).getName();
+		gameManager.getCatan().getPlayerClient().getPlayerControl().getSkin().getChatVBox().appendText(author,message);
+	}
+
+	/**
+	 * handles the server messages
+	 * @param text
+	 */
+	private void handleServerMsg(String text) {
+		ServerantwortNachricht sn = gson.fromJson(text, ServerantwortNachricht.class);
+		String answer = sn.getDaten();
+		//TODO Handle
+	}
+
+	/**
+	 * handles the welcome message
+	 * @param text
+	 */
+	private void handleWelcome(String text) {
+		WillkommenNachricht wn = gson.fromJson(text, WillkommenNachricht.class);
+		this.clientID = wn.getDaten();
+		
+	}
+	
+	/**
+	 * handles the first message send by the server
+	 * @param text
+	 */
+
+	private void handleHello(String text) {
+		HalloServerNachricht hn = gson.fromJson(text, HalloServerNachricht.class);
+		String ver = hn.getVersion();
+		String prot = hn.getProtokoll();
+		sendHello();
+		// TODO auf GUI anzeigen?
+	}
+
+	/**
+	 * Run-Method of Client Thread
+	 */
+	@Override
+	public void run(){
+		try {
+			input = server.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		in  = new Scanner(input);
+		while(true){
+			receive();
+		}
+	}
+	
+	/**
+	 * sends end turn message to the server
+	 */
+	public void sendEndTurn(){
+		sendText("{\"Zug beenden\":{}}");
+	}
+	
+	/**
+	 * sends roll dice request
+	 */
+	public void sendRollDice(){
+		sendText("{\"Wuerfeln\":{}}");
+	}
+	
+	/**
+	 * sends start match request
+	 */
+	public void sendStartMatch(){
+		System.out.println("spiel starten gedrückt");
+		sendText("{\"Spiel starten\":{}}");
+	}
+	
+	/**
+	 * sends text for the chat
+	 * @param text
+	 */
+	public void sendChat(String text){
+		ClientChatDaten ccd = new ClientChatDaten(text);
+		sendText("{\"Chatnachricht senden\":" + gson.toJson(ccd)+ "}");
+	}
+	
+	/**
+	 * sends server handshake
+	 */
+	public void sendHello(){
+		HalloNachricht HelloMessage = new HalloNachricht(version);
+		
+		sendText(gson.toJson(HelloMessage));
+	}
+	
+	/**
+	 * sends player initialize message
+	 * @param name		name of the player
+	 * @param color		color of the player
+	 */
+	public void sendPlayerInit(String name, String color){
+		SpielerInitNachricht initMessage = new SpielerInitNachricht(name,color);
+		sendText(gson.toJson(initMessage));
+	}
+	
+	/**
+	 * sends construct settlement request
+	 * @param target		location of the settlment
+	 */
+	public void sendConstructSettlement(Vertex target){
+		BauNachricht bn = new BauNachricht("Dorf", target);
+		sendText(gson.toJson(bn));
+	}
+	
+	/**
+	 * sends construct city request
+	 * @param target		location of the city
+	 */
+	public void sendConstructCity(Vertex target){
+		System.out.println("Senden der city baunachricht");
+		BauNachricht bn = new BauNachricht("Stadt", target);
+		sendText(gson.toJson(bn));
+	}
+	
+	/**
+	 * sends construct road request
+	 * @param target		location of the road
+	 */
+	public void sendConstructRoad(Edge target){
+		BauNachricht bn = new BauNachricht("Strasse", target);
+		sendText(gson.toJson(bn));
+	}
+	
+	/**
+	 * When you rolled a 7 and set the robber to a different tile
+	 * @param tile
+	 * @param robbedPlayer
+	 */
+	public void sendSetRobber(Tile tile, int robbedPlayer){
+		ClientRaeuberDaten crd = new ClientRaeuberDaten(ConvertMaster.convertTile(tile), robbedPlayer);
+		String string = "{\"Raeuber versetzen\":" + gson.toJson(crd) + "}";
+		sendText(string);
+	}
+	
+	
+	/**
+	 * Sends status update
+	 */
+	public void sendStatusUpdate(){
+		// for robber and maybe other stuff as well
+		//sendText(gson.toJson());
+	}
+	
+	/**
+	 * When the client handles with the harbor 
+	 * @param offer			offered resources
+	 * @param demand		demanded resources
+	 */
+	public void sendMaritimeTrade(int[] offer, int[] demand){
+		SeehandelNachricht sn = new SeehandelNachricht(offer,demand);
+		sendText(gson.toJson(sn));
+	}
+	
+	/**
+	 * When the client wants to trade with the other players
+	 * @param offer			offered resources
+	 * @param demand		demanded resources
+	 */
+	public void sendTradeOffer(int[] offer, int[] demand){
+		ClientHandelAngebot cha = new ClientHandelAngebot(offer,demand);
+		String string = "{\"Handel anbieten\":" + gson.toJson(cha) + "}";
+		sendText(string);
+	}
+	
+	/**
+	 * When the client accepts the trade
+	 * @param tradeID
+	 */
+	public void sendAcceptTrade(int tradeID){
+		String string = "{\"Handel annehmen\":{\"Handel id\":" + tradeID + "}}";
+		sendText(string);
+	}
+	
+	/**
+	 * When the client chose with whom he wants to trade
+	 * @param tradeID			
+	 * @param tradePartnerID
+	 */
+	public void sendSuccessfullTrade(int tradeID, int tradePartnerID){
+		String string = "{\"Handel abschliessen\":{\"Handel id\":"+ tradeID+",\"Mitspieler\":" + tradePartnerID + "}}";
+		sendText(string);
+	}
+	
+	/**
+	 * When the client wants to cancel the trade
+	 * @param tradeID
+	 */
+	public void sendCancelTrade(int tradeID){
+		String string = "{\"Handel abbrechen\":{\"Handel id\":" + tradeID + "}}";
+		sendText(string);
+	}
+	
+	/**
+	 * When the client has to pay resources for example by the robber
+	 * @param lumber count of lumber to give away
+	 * @param brick count of brick to give away
+	 * @param wool count of wool to give away
+	 * @param grain count of grain to give away
+	 * @param ore count of ore to give away
+	 */
+	public void sendGiveCards(int lumber, int brick, int wool, int grain, int ore){
+		KartenAbgebenDaten kad = new KartenAbgebenDaten(lumber, brick, wool, grain, ore);
+		RohstoffDaten rd = kad.getAbgeben();
+		String string = "{\"Karten abgeben\":" + gson.toJson(rd) + "}";
+		sendText(string);
+	}
+	/**
+	 * add Bots
+	 */
+	public boolean isBotClient(){
+		return false;
+	}
+	
+
+	//public static void main(String[] args){
+		//Client c = new Client("localhost",10000, new GameManager(new App()));//new Client("sep.dbs.ifi.lmu.de",10000);
+		//c.start();
+		//c.sendHello();
+		//c.sendPlayerInit("Gurke25", "Rot");
+		//String a = "{\"Raeuber versetzt\":{ \"Spieler\": 42, \"Ort\": \"F\",\"Ziel\":13}}";
+		//c.handleSetRobber(a);
+	//}
+	
+}

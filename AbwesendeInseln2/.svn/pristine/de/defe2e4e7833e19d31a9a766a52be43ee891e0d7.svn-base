@@ -1,0 +1,43 @@
+package view;
+
+import controller.PlayerControl;
+import game.Settings;
+import javafx.event.EventHandler;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
+
+public class ChatSkin extends VBox {
+	private TextArea messages;
+	private TextField input;
+	private PlayerControl control;
+	public ChatSkin(PlayerControl controller){
+		control = controller;
+		messages = new TextArea();
+	    messages.setEditable(false);
+	    input = new TextField();
+	    setMaxSize(Settings.CHAT_WIDTH, Settings.CHAT_WIDTH);
+		getChildren().addAll(messages,input);
+		
+		 this.setOnKeyPressed(new EventHandler<KeyEvent>() {
+	            @Override
+	            public void handle(KeyEvent event) {
+	            	if (event.getCode().equals(KeyCode.ENTER))
+	                {
+	            		String message = input.getText();
+	            		control.getPlayer().getCatan().getGameManager().getClient().sendChat(message);
+	            		input.clear();
+	                }
+	            }
+	        });
+	}
+	
+	
+	public void appendText(String author, String message){
+		messages.appendText("\n");
+		messages.appendText(author + ": "+ message);
+	}
+	
+}

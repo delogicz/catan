@@ -1,0 +1,34 @@
+package model;
+
+public enum TokenNumber {
+		TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, ELEVEN, TWELVE;
+
+public String getImgUrl() {
+	switch (this) {
+	case TWO:
+		return "img/num2.png";
+	case THREE:
+		return "img/num3.png";
+	case FOUR:
+		return "img/num4.png";
+	case FIVE:
+		return "img/num5.png";
+	case SIX:
+		return "img/num6.png";
+	case EIGHT:
+		return "img/num8.png";
+	case NINE:
+		return "img/num9.png";
+	case TEN:
+		return "img/num10.png";
+	case ELEVEN:
+		return "img/num11.png";
+	case TWELVE:
+		return "img/num12.png";
+
+	default:
+		return "img/num7.png";
+		}
+	
+	}
+}

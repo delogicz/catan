@@ -1,0 +1,65 @@
+package model;
+
+import java.util.ArrayList;
+
+import view.IslandSkin;
+
+/**
+ * Describes a participant in the game. Stores his current state (victoryPoints, cards, etc.).
+ *
+ */
+public class Player {
+	private int victoryPoints;
+	private PlayerColor playerColor;
+	private int knightCount;
+	private ArrayList<ResourceType> cards;
+	private ArrayList<Harbour> harbours;
+	private ArrayList<Road> roads;
+	private int longestRoad;
+	private ArrayList<Settlement> settlements;
+	
+	private int roadsLeft;
+	private int settlementsLeft;
+	private int citiesLeft;
+	
+	private ArrayList<ResourceType> resCards;
+	private ArrayList<DevelopmentCard> devCards;
+	
+	public Player(PlayerColor playerColor){
+		
+		this.victoryPoints = 0;
+		this.playerColor = playerColor;
+		this.knightCount = 0;
+		cards = new ArrayList<ResourceType>();
+		harbours = new ArrayList<Harbour>();
+		roads = new ArrayList<Road>();
+		longestRoad = 0;
+		settlements = new ArrayList<Settlement>();
+		
+		roadsLeft = 15;
+		settlementsLeft = 5;
+		citiesLeft = 4;
+		
+	}
+	
+	public PlayerColor getPlayerColor(){
+		return this.playerColor;
+	}
+	
+	public void buildRoad(Edge edge, IslandSkin islandSkin){
+		if(roadsLeft > 0 && edge.getRoad() == null){
+			
+			Road newRoad = new Road(edge, this, islandSkin);
+			roads.add(newRoad);
+			roadsLeft--;
+			
+			edge.setRoad(newRoad);
+			// UPDATE: longestRoad of this player
+			// UPDATE: longestRoad of all players
+		}
+		else{
+			System.out.println("building road failed");
+		}
+		
+	}
+}

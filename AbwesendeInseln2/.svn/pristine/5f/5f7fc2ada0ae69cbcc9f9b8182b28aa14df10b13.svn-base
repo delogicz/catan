@@ -1,0 +1,81 @@
+package model;
+
+import javafx.scene.paint.Color;
+
+/**
+ * Determines available colors for players 
+ * @author Stefanie Kloss
+ */
+public enum PlayerColor {
+	
+	RED (Color.SALMON, "/img/building/settlement_RED.png", "/img/building/city_RED.png","/img/knight_red.png" ,"/img/road_red.png"), 
+	ORANGE (Color.ORANGE, "/img/building/settlement_YELLOW.png", "/img/building/city_YELLOW.png","/img/knight_yellow.png","/img/road_yellow.png"), 
+	WHITE (Color.WHITE, "/img/building/settlement_WHITE.png", "/img/building/city_WHITE.png","/img/knight_white.png","/img/road_white.png"), 
+	BLUE (Color.DEEPSKYBLUE, "/img/building/settlement_BLUE.png", "/img/building/city_BLUE.png","/img/knight_blue.png","/img/road_blue.png");
+
+	private Color color;
+	private String settlementImageURL;
+	private String cityImageURL;
+	private String knightImageURL;
+	private String roadImageURL;
+	
+	/**
+	 * Constructor
+	 * @param color
+	 * @param settlementImageURL
+	 * @param cityImageURL
+	 * @param knightImageURL
+	 * @param roadImageURL
+	 */
+	private PlayerColor(Color color, String settlementImageURL, String cityImageURL,String knightImageURL, String roadImageURL){
+		this.color = color;
+		this.settlementImageURL = settlementImageURL;
+		this.cityImageURL = cityImageURL;
+		this.knightImageURL = knightImageURL;
+		this.roadImageURL = roadImageURL;
+	}
+	
+	/**
+	 * @return the color
+	 */
+	public Color getColor(){
+		return this.color;
+	}
+
+	/**
+	 * @return the settlementImageURL
+	 */
+	public String getSettlementImageURL() {
+		return settlementImageURL;
+	}
+
+	/**
+	 * @return the cityImageURL
+	 */
+	public String getCityImageURL() {
+		return cityImageURL;
+	}
+	
+	/**
+	 * Returns the String needed for json objects
+	 * @return
+	 */
+	public String toServerString() {
+		switch(this){
+		case RED: 		return "Rot";
+		case BLUE: 		return "Blau";
+		case ORANGE: 	return "Orange";
+		case WHITE:  	return "Weiss";
+		}
+		return null;
+	}
+
+	public String getKnightImageURL() {
+		return knightImageURL;
+	}
+
+	public String getRoadImageURL() {
+		return roadImageURL;
+	}
+	
+}

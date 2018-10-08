@@ -1,0 +1,59 @@
+package model;
+
+import java.util.ArrayList;
+
+public class TradeOffer {
+	private int tradeId;
+	private int playerId;
+	private ArrayList<ResourceType> offer;
+	private ArrayList<ResourceType> demand;
+	private ArrayList<Integer> acceptedTraders;
+	private ArrayList<Integer> declinedTraders;
+	
+	public TradeOffer(int idTrade,int idPlayer, ArrayList<ResourceType> off, ArrayList<ResourceType> dem){
+		acceptedTraders = new ArrayList<Integer>();
+		tradeId = idTrade;
+		playerId = idPlayer;
+		offer = off;
+		demand = dem;
+	}
+
+	public int getTradeId() {
+		return tradeId;
+	}
+
+	public int getPlayerId() {
+		return playerId;
+	}
+
+	public ArrayList<ResourceType> getOffer() {
+		return offer;
+	}
+
+	public ArrayList<ResourceType> getDemand() {
+		return demand;
+	}
+
+	public void accept(int clientId) {
+		if(declinedTraders.contains(clientId))declinedTraders.remove(clientId);
+		if(!acceptedTraders.contains(clientId))acceptedTraders.add(clientId);
+	}
+	
+	public boolean hasAccepted(int clientId){
+		return acceptedTraders.contains(clientId);
+	}
+	
+	public ArrayList<Integer> getAcceptedTraders(){
+		return acceptedTraders;
+	}
+	
+	public void decline(int clientId) {
+		if(acceptedTraders.contains(clientId))acceptedTraders.remove(clientId);
+		if(!declinedTraders.contains(clientId))declinedTraders.add(clientId);
+	}
+	
+	public ArrayList<Integer> getDeclinedTraders(){
+		return declinedTraders;
+	}
+	
+}

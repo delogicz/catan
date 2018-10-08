@@ -1,0 +1,11 @@
+package jsonstructures;
+
+public class HafenDaten {
+	private String Ort;
+	private String Typ;
+	
+	public HafenDaten(String ort, String typ) {
+		Ort = ort;
+		Typ = typ;
+	}
+}

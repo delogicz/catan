@@ -1,0 +1,87 @@
+package view;
+
+import java.net.URISyntaxException;
+
+import game.GameManager;
+import game.Settings;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Rectangle;
+import model.Catan;
+import model.Dice;
+import model.Hand;
+
+
+/**
+ * View of the game board. Contains e.g. view of island.
+ * @author Daniel Panangian, Stefanie Kloss
+ */
+public class GameSkin extends StackPane {
+	
+	private IslandSkin islandSkin;
+	private GameManager manager;
+	private HandSkin handSkin;
+
+	
+	public GameSkin(Catan catan, GameManager manager){
+		
+		setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+		this.islandSkin = catan.getIsland().getSkin();
+		this.manager = manager;
+		this.handSkin = catan.getHand().getHandSkin();
+		PlayerControlSkin playerControl = catan.getPlayers().get(0).getPlayerControl().getSkin();
+		GameControlSkin gameControl = new GameControlSkin();
+		String path;
+		try {
+			path = GameSkin.class.getResource("/img/background_2.jpg" ).toURI().toString();
+			Image image = new Image(path);
+			ImageView waterView = new ImageView(image);
+
+			getChildren().addAll (waterView,islandSkin,playerControl,gameControl, handSkin);
+		} catch (URISyntaxException | NullPointerException e) {
+			System.out.println("Specified file does not exist.");
+			e.printStackTrace();
+			getChildren().add(islandSkin);
+			getChildren().add(handSkin);
+		}
+		locateDice(catan.getDice());
+		locateHand(catan.getHand());
+	}
+	
+	/**
+	 * locates the dices on the gameSkin
+	 * @param dice
+	 */
+	private void locateDice(Dice dice){
+		
+		Rectangle dice1 = dice.getDiceSkin().getDice1();
+		Rectangle dice2 = dice.getDiceSkin().getDice2();
+		
+		dice1.setTranslateX(380);		//TODO magic numbers entfernen
+		dice1.setTranslateY(290);
+		dice2.setTranslateX(430);
+		dice2.setTranslateY(290);
+		
+		getChildren().add(dice1);
+		getChildren().add(dice2);
+		
+	}
+	
+	private void locateHand(Hand hand) {
+		Rectangle handRect = hand.getHandSkin().getHand();
+	
+		handRect.setTranslateX(0);
+		handRect.setTranslateY(0);
+		
+		getChildren().add(handRect);
+	}
+	
+	/**
+	 * @return the island skin
+	 */
+	public IslandSkin getIslandSkin(){
+		return this.islandSkin;
+	}
+	
+}

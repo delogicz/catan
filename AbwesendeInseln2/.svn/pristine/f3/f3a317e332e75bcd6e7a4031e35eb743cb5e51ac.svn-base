@@ -1,0 +1,30 @@
+package model;
+
+/**
+ * Determines all different types of development cards
+ * @author Stefanie Kloss
+ */
+public enum DevelopmentCard {
+	KNIGHT,
+	VICTORYPOINT,
+	MONOPOLY,
+	YEAROFPLENTY,
+	ROADBUILDING;
+	
+	/**
+	 * Returns a random Deveopment Card
+	 * @return the random Development Card
+	 */
+	public static DevelopmentCard random(){
+		int random = (int)(Math.random()* 5);
+		switch(random){
+		case 0: return KNIGHT;
+		case 1: return VICTORYPOINT;
+		case 2: return MONOPOLY;
+		case 3: return YEAROFPLENTY;
+		case 4: return ROADBUILDING;
+		default: return KNIGHT;
+		}
+	}
+
+}

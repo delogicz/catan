@@ -1,0 +1,74 @@
+package controller;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+public class LogMaster {
+	 private static Logger log;
+	 //private static final CustomLevel thr = new CustomLevel("THR",Level.FINE.intValue());
+	
+	
+	public static void initialize(){
+		if(true){
+			return;
+		}
+		/*System.setProperty( "java.util.logging.config.file", "log/logging.properties" );
+		try {
+			LogManager.getLogManager().readConfiguration();
+		} catch (SecurityException e) {
+			//mimimi
+		} catch (IOException e) {
+			//mimimi
+		}*/
+		log = Logger.getLogger(LogMaster.class.getName());
+		try {
+			LogManager.getLogManager().readConfiguration(new FileInputStream("log/logging.properties"));
+		} catch (SecurityException e) {
+			// TODO Auto-generated ca
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		System.out.println(log.getLevel().getName());
+		log.fine("mimimimimo");
+		//log.log(thr,"pizza");
+		log.log(Level.WARNING,"fine");
+		
+		
+		//log.warning("mimimimimo");
+	}
+	
+	public static void logAI(String msg){
+		
+	}
+	
+	public static void logMod(String msg){
+		
+	}
+	
+	public static void logNet(String msg){
+		
+	}
+	
+	public static void logUI(String msg){
+		
+	}
+	
+	public static void logThr(String msg){
+	
+	}
+	
+	public static void logExc(String msg){
+		
+	}
+}

@@ -1,0 +1,29 @@
+package jsonstructures;
+
+/**
+ * This class containes the data of the version and the protocol the server sends the client
+ * @author Felixi
+ *
+ */
+public class VersionProtokollDaten extends VersionDaten{
+	
+	private String Protokoll;
+	
+	/**
+	 * Creates a VersionProtokollDaten object
+	 * @param version		version of the server
+	 * @param protocol		protocol of the server
+	 */
+	public VersionProtokollDaten(String version, String protocol){
+		super(version);
+		this.Protokoll=protocol;
+	}
+	
+	/**
+	 * Getter for Protokoll
+	 * @return
+	 */
+	public String getProtokoll(){
+		return Protokoll;
+	}
+}

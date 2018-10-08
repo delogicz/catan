@@ -1,0 +1,210 @@
+package model;
+
+import java.util.ArrayList;
+
+import controller.GameControl;
+import game.GameManager;
+import javafx.scene.shape.Rectangle;
+import view.GameSkin;
+
+/**
+ * Contains all units needed for a game of "The Settlers of Catan" (players included)
+ * 
+ */
+public class Catan {
+	
+	private Island island;
+	private GameSkin gameSkin;
+	
+
+
+	private GameControl gameControl;
+	private GameManager gameManager;
+
+
+	private ArrayList<Player> players;
+	private ArrayList<DevelopmentCard> devCards;
+	
+	private Player hasLongestRoad;
+	private Player hasLargestArmy;
+	
+	private Dice dice;
+	private Player currentTurnTaker;
+	private boolean turnIsComplete;
+	private int rounds;
+
+
+	private int playerId;
+	
+	public Catan(GameManager gameManager){
+		this.gameManager = gameManager;
+		this.island = new Island(this);
+		this.players = new ArrayList<Player>();
+		this.devCards = new ArrayList<DevelopmentCard>();
+		gameControl = new GameControl(this);
+		gameSkin = new GameSkin(this, gameManager);
+		dice = new Dice();
+		locateDice();
+		
+		playerId = 0; 
+		
+		addPlayer(PlayerColor.RED);
+		addPlayer(PlayerColor.BLUE);
+		addPlayer(PlayerColor.WHITE);
+		addPlayer(PlayerColor.YELLOW);
+	
+		rounds = 1;
+		currentTurnTaker = players.get(0);
+		turnIsComplete = false;
+		
+		gameControl.updateHand();
+		
+		//TODO: fill devCards
+	}
+	
+
+	/**
+	 * Adds a new player to the game
+	 * @param playerColor The color of the new player
+	 */
+	public void addPlayer(PlayerColor playerColor){
+		if(players.size() < 4){
+			Player player = new Player(this,playerColor,this.playerId);
+			players.add(player);
+			this.playerId++;
+		}
+		else{
+			System.out.println("There are already four players");
+		}
+		
+	}
+	public void changeTurn(){
+		gameControl.enableBuildRoadButton();
+		gameControl.enableBuildSetButton();
+		if (rounds == 1){
+			if (currentTurnTaker == players.get(4 - 1)){
+				rounds ++;
+			}
+			else{
+			currentTurnTaker = players.get(currentTurnTaker.getPlayerId() + 1);
+			}
+		}
+		else if (rounds == 2){
+			if (currentTurnTaker == players.get(0)){
+				rounds ++;
+				distributeResources();
+				System.out.println("hit");
+			}
+			else{
+			currentTurnTaker = players.get(currentTurnTaker.getPlayerId() - 1);
+			}
+		}
+		else {
+			if (currentTurnTaker == players.get(4 - 1)){
+				currentTurnTaker = players.get(0);
+				rounds ++;
+			}
+			else{
+			currentTurnTaker = players.get(currentTurnTaker.getPlayerId() + 1);
+			}
+		}
+		
+	}
+	
+	public Island getIsland() {
+		return this.island;
+	}
+	public GameSkin getGameSkin() {
+		return gameSkin;
+	}
+	public GameControl getGameControl() {
+		return gameControl;
+	}
+	
+	public Player getPlayer(int count){
+		return players.get(count);
+	}
+	
+	public Player getCurrentTurnTaker() {
+		return currentTurnTaker;
+	}
+
+
+	public void setCurrentTurnTaker(Player currentTurnTaker) {
+		this.currentTurnTaker = currentTurnTaker;
+	}
+
+
+	public ArrayList<Player> getPlayers(){
+		return players;
+	}
+
+	/**
+	 * @return the dice
+	 */
+	public Dice getDice() {
+		return dice;
+	}
+
+
+	/**
+	 * @param dice the dice to set
+	 */
+	public void setDice(Dice dice) {
+		this.dice = dice;
+	}
+
+
+	public void locateDice(){
+		
+		Rectangle dice1 = this.dice.getDiceSkin().getDice1();
+		Rectangle dice2 = this.dice.getDiceSkin().getDice2();
+		
+		dice1.setTranslateX(380);		//TODO magic numbers entfernen
+		dice1.setTranslateY(290);
+		dice2.setTranslateX(430);
+		dice2.setTranslateY(290);
+		
+		gameSkin.getChildren().add(dice1);
+		gameSkin.getChildren().add(dice2);
+		
+	}
+
+	/**
+	 * distributes the resources to every player
+	 * @param diceResult TODO
+	 */
+	public void distributeResources(){
+	
+		for(Player player: getPlayers()){
+			for(Settlement settlement : player.getSettlements()){
+				for(Tile tile : settlement.getNeighboringTiles()){
+					player.getPlayerCards().addResources((tile.getTerrain().getProduce()));
+						if(settlement instanceof City){
+							player.getPlayerCards().addResources((tile.getTerrain().getProduce()));
+						}
+	}	}	}	}	
+	
+
+	/**
+	 * distributes the resources to every player
+	 * @param diceResult TODO
+	 */
+	public void distributeResources(int diceResult){
+	
+		for(Player player: getPlayers()){
+			for(Settlement settlement : player.getSettlements()){
+				for(Tile tile : settlement.getNeighboringTiles()){
+					if(tile.getToken().getNumber() == diceResult && !tile.getHasRobberOnIt()){
+						player.getCards().add(tile.getTerrain().getProduce());
+						if(settlement instanceof City){
+							player.getCards().add(tile.getTerrain().getProduce());
+						}
+	}	}	}	}	}
+	
+	
+	public int getRounds() {
+		return rounds;
+	}
+
+}

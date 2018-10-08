@@ -1,0 +1,39 @@
+package controller;
+
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import model.Catan;
+import model.Island;
+import model.Tile;
+import view.IslandSkin;
+
+public class IslandControl {
+	
+	private Island island;
+	private IslandSkin islandSkin;
+	
+	public IslandControl(Island island){
+		this.island = island;
+		this.islandSkin = island.getSkin();
+		listener();
+	}
+	
+	private void listener(){
+		
+		for(Tile tile: island.getHexes()){
+			tile.getSkin().getShape().setOnMouseClicked(new EventHandler<MouseEvent>(){
+
+				@Override
+				public void handle(MouseEvent event) {
+					if(island.getRelocateRobber()){
+						island.setRelocateRobber(false);
+						island.changeRobberPosition(tile);
+						System.out.println("robber: row: " + tile.getRow()+ " and pos: " + tile.getPos());
+					}
+				}
+				
+			});
+		}
+		
+	}
+}

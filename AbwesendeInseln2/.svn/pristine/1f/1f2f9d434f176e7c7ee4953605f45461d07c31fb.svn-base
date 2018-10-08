@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>CATAN</title>
+        <meta name="description" content="Download free Bootstrap 4 multipurpose template CATAN." />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--Bootstrap 4-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+        <!--icons-->
+        <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <!--header-->
+        <nav class="navbar navbar-toggleable-md navbar-inverse fixed-top sticky-navigation">
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="ion-grid icon-sm"></span>
+            </button>
+            <a class="navbar-brand hero-heading" href="#">CATAN | ABWESENDE INSELN</a>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item mr-3">
+                        <a class="nav-link page-scroll" href="#main">App<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item mr-3">
+                        <a class="nav-link page-scroll" href="#team">Team</a>
+                    </li>
+                    <li class="nav-item mr-3">
+                        <a class="nav-link page-scroll" href="#blog">Milestones</a>
+                    </li>
+                    <li class="nav-item mr 3">
+                        <a class="nav-link page-scroll" href="#userdoc">Userdoc</a>
+                    </li>
+                    <li>
+                    <li class="nav-item mr 3">
+                        <a class="nav-link page-scroll" href="#testprotocol">Test protocol</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!--main section-->
+        <section class="bg-texture hero" id="main">
+            <div class="container">
+                <div class="row d-md-flex brand">
+                    <div class="col-md-6 hidden-sm-down wow fadeIn">
+                        <img class="img-fluid mx-auto d-block" src="img/catan.png" style="width:80%"/>
+                    </div>
+                    <div class="col-md-6 col-sm-12 text-white wow fadeIn">
+                        <h2 class="pt-4">Experience <b class="text-primary-light">The Settlers of Catan </b> With CATAN</h2>
+                        <p class="mt-5">
+                            Java Implementation of the best-selling Board Game <i>The Settlers of Catan</i>.
+                        </p>
+                        <p class="mt-5">
+                            <a href="http://sep.dbs.ifi.lmu.de/h/AbwesendeInseln/doc/index.html" class="btn btn-primary mr-2 mb-2 page-scroll">JavaDoc</a>
+                            <a href="http://sep.dbs.ifi.lmu.de/h/AbwesendeInseln/jar/Catan_AbwesendeInseln.jar" class="btn btn-white mb-2 page-scroll">Download JAR<br></a>
+     
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!--features-->
+       
+       
+       
+        <!--team-->
+        <section class="bg-alt" id="team">
+            
+                    <div class="col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-xs-12 text-center">
+                        <h2 class="text-primary">Our Team</h2>
+                        <p class="lead pt-3">
+                            Meet our awesome team.
+                        </p>
+                    <div class="row">
+						<div class="col-lg-12">
+						
+						<hr></div>
+						<div class="team col-lg-4 col-sm-6 text-center">
+						<img src="img/avatar1.png" class="img-team img-fluid rounded-circle"/>
+                        <h5>Felix Sommer</h5>
+                        <p>Informatiker</p>
+						</div>
+						<div class="team col-lg-4 col-sm-6 text-center">
+						<img src="img/avatar2.png" class="img-team img-fluid rounded-circle"/>
+                        <h5>Lena Sonnleitner</h5>
+                        <p>Informatiker</p>
+						</div>
+						<div class="team col-lg-4 col-sm-6 text-center">
+						<img src="img/avatar3.png" class="img-team img-fluid rounded-circle"/>
+                        <h5>Georg Schwab</h5>
+                        <p>Informatiker</p>
+						
+						</div>
+						<div class="team col-lg-4 col-sm-6 text-center">
+						<img src="img/avatar4.png" class="img-team img-fluid rounded-circle"/>
+                        <h5>Stefanie Kloss</h5>
+                        <p>Informatiker</p>
+						</div>
+						<div class="team col-lg-4 col-sm-6 text-center">
+						<img src="img/avatar5.png" class="img-team img-fluid rounded-circle"/>
+                        <h5>Daniel Panangian</h5>
+                        <p>Informatiker</p>
+						</div>
+						<div class="team col-lg-4 col-sm-6 text-center">
+						<img src="img/avatar6.png" class="img-team img-fluid rounded-circle"/>
+                        <h5>Samantha Meindl</h5>
+                        <p>Medieninformatiker</p>
+						</div>
+						</div>
+						<hr><!-- /.container -->
+            </div>
+        </section>
+
+        <!--blog-->
+        <section class="bg-faded" id="blog">
+                <div class="row">
+                    <div class="col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-xs-12 text-center">
+                        <h2 class="text-primary">Milestones</h2>
+                        <p class="lead pt-3">
+                            The latest update from Abwesende Inseln.
+                        </p>
+                        <a href="https://trello.com/b/9y2m511S/siedler">Our Trello Board</a>
+                        <br/><br/><br/><br/>
+                    </div>
+                      <div class="col-sm-6 p-0 wow fadeInLeft">
+                        <img class="img-fluid" src="img/screenshot1.jpg" alt="Gallery">
+                    </div>
+                    <div class="col-sm-6 pl-5 pr-5 pt-5 pb-4 wow fadeInRight">
+                        <h3 class="text-primary">Week 1</h3>
+                        <p class="lead pt-4">On the first week we have accomplished to build the representation of Catan's island while making concepts for JSON-based protocols   </p>
+                </div>
+                 <div class="col-sm-6 p-4 wow fadeInRight">
+                        <img class="img-fluid" src="img/screenshot2.png" alt="Gallery">
+                    </div>
+                    <div class="col-sm-6 pl-5 pr-5 pt-5 pb-4 wow fadeInLeft">
+                    <br/><br/>
+                        <h3 class="text-primary">Week 2</h3>
+                        <p class="lead pt-4">The gameplay is already implemented but without the ability of trading and multiplayer features. all input being handled by one controller while the JSON-Objects are already constructed to support the Client-Server structure     </p>
+                </div>
+                
+            </div>
+        </section>
+        
+        <!--userdoc-->
+        <section class="bg-faded" id="userdoc">
+                <div class="col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-xs-12 text-center">
+                    <h2 class="text-primary">Userdocumentation</h2>
+                    <p class= "lead pt-3">
+                    The userdoc gives an overview of all features our game implements.
+                    </p>
+                    <a href="Benutzerdokumentation für Siedler von Catan.pdf">Our Userdocumentation</a>
+                </div>
+        </section>
+        <br/><br/>
+
+
+        <!--Test protocol-->
+        <section class="bg-faded" id="testprotocol">
+                <div class="col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-xs-12 text-center">
+                    <h2 class="text-primary">Test protocol</h2>
+                    <p class="lead pt-3">
+                    Here you can see our test protocol for the group "Rauchlose Lobbies".
+                    </p>
+                    <a href="Rauchlose Lobbies Testprotokoll.pdf">Rauchlose Lobbies test protocol</a>
+                    <p class="lead pt-3">
+                    Liebe IntensiveZelter, leider konnten wir euer Spiel nicht testen, da wir es
+                    nicht zum Laufen bringen konnten - tut uns leid. Die Bedinungsanleitung sieht aber sehr vielversprechend aus! :)
+                    Ihr schafft das noch!
+                    </p>
+                </div>
+        </section>
+        <br/><br/>
+
+        <!--contact-->
+        <section class="bg-texture-collage p-0" id="contact">
+            <div class="container">
+                <div class="row d-md-flex text-white text-center wow fadeIn">
+                    <div class="col-sm-4 p-5">
+                        
+                    </div>
+                    <div class="col-sm-4 p-5">
+                      <p><em class="ion-ios-location-outline icon-md"></em></p>
+                        <p class="lead">München, Germany</p>
+                    </div>
+                    <div class="col-sm-4 p-5">
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!--footer-->
+        <section class="bg-footer" id="connect">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-xs-12 text-center wow fadeIn">
+                        <h1>Abwesende Inseln</h1>
+                        <p class="mt-4">
+                            
+                        </p>
+                        <p class="pt-2 text-muted">
+                         
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.js"></script>
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

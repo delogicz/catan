@@ -1,0 +1,68 @@
+package jsonstructures;
+
+
+/**
+ * This class is for the client for a demand
+ * @author Felixi
+ *
+ */
+public class ClientHandelAngebot {
+	
+	RohstoffDaten Angebot;
+	RohstoffDaten Nachfrage;
+	
+	/**
+	 * Initializes the Angebot and Nachfrage
+	 * @param angebot
+	 * @param nachfrage
+	 */
+	
+	public ClientHandelAngebot(int[] angebot, int[] nachfrage) {
+		int holzAngebot = angebot[0];
+		int holzNachfrage = nachfrage[0];
+		int lehmAngebot = angebot[1];
+		int lehmNachfrage = nachfrage[1];
+		int wolleAngebot = angebot[2];
+		int wolleNachfrage = nachfrage[2];
+		int weizenAngebot = angebot[3];
+		int weizenNachfrage = nachfrage[3];
+		int erzAngebot = angebot[4];
+		int erzNachfrage = nachfrage[4];
+		
+		Angebot = new RohstoffDaten(holzAngebot,lehmAngebot,wolleAngebot,weizenAngebot,erzAngebot);
+		
+		Nachfrage = new RohstoffDaten(holzNachfrage,lehmNachfrage,wolleNachfrage,weizenNachfrage,erzNachfrage);
+	}
+	
+	/**
+	 * Getter for Angebot
+	 * @return
+	 */
+	public RohstoffDaten getAngebot() {
+		return Angebot;
+	}
+	
+	/**
+	 * Setter for Angebot
+	 * @param angebot
+	 */
+	public void setAngebot(RohstoffDaten angebot) {
+		Angebot = angebot;
+	}
+	
+	/**
+	 * Getter for Nachfrage
+	 * @return
+	 */
+	public RohstoffDaten getNachfrage() {
+		return Nachfrage;
+	}
+	
+	/**
+	 * Setter for Nachfrage
+	 * @param nachfrage
+	 */
+	public void setNachfrage(RohstoffDaten nachfrage) {
+		Nachfrage = nachfrage;
+	}
+}

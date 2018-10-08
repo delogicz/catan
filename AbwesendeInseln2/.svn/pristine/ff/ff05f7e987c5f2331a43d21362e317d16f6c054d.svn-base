@@ -1,0 +1,49 @@
+package model;
+
+import java.util.List;
+
+import view.IslandSkin;
+import view.SettlementSkin;
+
+/**
+ * A settlement. Defined by associated vertex and player.
+ *
+ */
+public class Settlement extends Building {
+	
+	private Vertex vertex;
+	private List<Tile> neighboringTiles;
+	
+	private SettlementSkin settlementSkin;
+	private ResourceType resourceType;
+	protected BuildingType buildingType;
+	
+	public Settlement(Vertex vertex, Player player, IslandSkin islandSkin){
+		this.vertex = vertex;
+		this.owner = player;
+		this.neighboringTiles = vertex.getHexes();
+		this.settlementSkin = new SettlementSkin(this, islandSkin);
+		this.buildingType = BuildingType.Settlement;
+	}
+	
+	public Player getOwner(){
+		return this.owner;
+	}
+	
+	public Vertex getVertex(){
+		return this.vertex;
+	}
+	
+	/**
+	 * @return the neighboringTiles
+	 */
+	public List<Tile> getNeighboringTiles() {
+		return neighboringTiles;
+	}
+	
+	public void ressourcesProduction(ResourceType resourceType){
+		//TODO
+	}
+	
+	
+}

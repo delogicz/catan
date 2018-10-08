@@ -1,0 +1,22 @@
+package jsonstructures;
+
+public class SpielerNewZustandsUnbekanntDatenDaten {
+	SpielerNewZustandsUnbekanntDaten Spieler;
+	
+
+	/**
+	 * Creates a SpielerZustandsDaten object
+	 * @param spieler		SpielerZustandsDaten
+	 */
+	public SpielerNewZustandsUnbekanntDatenDaten(SpielerNewZustandsUnbekanntDaten spieler) {
+		Spieler = spieler;
+	}
+	
+	/**
+	 * Getter for SpielerZustandsDaten
+	 * @return
+	 */
+	public SpielerNewZustandsUnbekanntDaten getSpieler() {
+		return Spieler;
+	}
+}

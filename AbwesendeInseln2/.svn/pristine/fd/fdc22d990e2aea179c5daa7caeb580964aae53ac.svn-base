@@ -1,0 +1,20 @@
+package jsonstructures;
+
+public class HandelBestätigungDaten {
+
+	int Spieler;
+	int Mitspieler;
+	
+	public HandelBestätigungDaten(int spieler, int mitspieler) {
+		Spieler = spieler;
+		Mitspieler = mitspieler;
+	}
+	public int getSpieler() {
+		return Spieler;
+	}
+	public int getMitspieler() {
+		return Mitspieler;
+	}
+	
+	
+}

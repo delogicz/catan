@@ -1,0 +1,45 @@
+package view;
+
+import game.Settings;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
+import model.Settlement;
+
+/**
+ * View of a road.
+ *
+ */
+public class SettlementSkin {
+	private Shape shape;
+	private Settlement building;
+	private IslandSkin islandSkin;
+	
+	public SettlementSkin(Settlement building, IslandSkin islandSkin){
+		this.building = building;
+		this.islandSkin = islandSkin;
+		shape = new Circle(0.1);
+		Color color = building.getOwner().getPlayerColor().getColor();
+		shape.setFill(color);
+		shape.setScaleX(Settings.SCALE);
+		shape.setScaleY(Settings.SCALE);
+		shape.setTranslateX(building.getVertex().getSkin().getShape().getTranslateX());
+		shape.setTranslateY(building.getVertex().getSkin().getShape().getTranslateY());	
+		
+		shape.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent mouseEvent) {
+				building.pressed();
+			}
+		});
+		
+		islandSkin.getChildren().add(shape);
+	}
+
+	public void upgradetoCity() {
+		shape = new CitySkin(building,islandSkin);
+		
+	}
+}

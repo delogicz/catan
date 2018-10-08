@@ -1,0 +1,19 @@
+package view;
+
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+
+public class ChatSkin extends VBox {
+	private TextArea messages;
+	private TextField input;
+	public ChatSkin(){
+		
+		messages = new TextArea();
+	    messages.setEditable(false);
+	    input = new TextField();
+	    setMaxSize(190, 320);
+		getChildren().addAll(messages,input);
+	}
+	    
+}

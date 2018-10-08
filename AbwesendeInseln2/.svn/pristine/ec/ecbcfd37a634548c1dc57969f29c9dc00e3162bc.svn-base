@@ -1,0 +1,18 @@
+package network;
+
+import game.GameManager;
+import jsonstructures.SpielerInitNachricht;
+
+public class BotClient extends Client {
+
+	public BotClient(String host, int port, GameManager gameManager) {
+		super(host, port, gameManager);
+		super.version = "JavaFXClient 0.2 (KI)";
+	}
+	
+	public boolean isBotClient(){
+		return false;
+	}
+	
+	
+}

@@ -1,0 +1,189 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+import view.GameSkin;
+
+/**
+ * Describes a participant in the game. Stores his current state (victoryPoints, cards, etc.).
+ *
+ */
+public class Player {
+	private int victoryPoints;
+	private PlayerColor playerColor;
+	private int knightCount;
+	private boolean hasLargestArmy;
+	private ArrayList<ResourceType> cards;
+	private ArrayList<Harbour> harbours;
+	private ArrayList<Road> roads;
+	private int longestRoad;
+	private ArrayList<Settlement> settlements;
+	private ArrayList<City> cities;
+	
+	
+	
+	
+	private int roadsLeft;
+	private int settlementsLeft;
+	private int citiesLeft;
+	
+	private ArrayList<ResourceType> resCards;
+	private ArrayList<DevelopmentCard> devCards;
+	
+	public Player(PlayerColor playerColor){
+		
+		this.victoryPoints = 0;
+		this.playerColor = playerColor;
+		this.knightCount = 0;
+		cards = new ArrayList<ResourceType>();
+		harbours = new ArrayList<Harbour>();
+		roads = new ArrayList<Road>();
+		longestRoad = 0;
+		settlements = new ArrayList<Settlement>();
+		cities = new ArrayList<City>();
+		
+		roadsLeft = 15;
+		settlementsLeft = 5;
+		citiesLeft = 4;
+		
+	}
+	
+	public PlayerColor getPlayerColor(){
+		return this.playerColor;
+	}
+
+	public int getVictoryPoints() {
+		return victoryPoints;
+	}
+	
+	
+	public void setVictoryPoints(int newVictoryPoints) {
+		victoryPoints = newVictoryPoints;		
+	}
+	
+	public int getKnightCount(){
+		return knightCount;
+	}
+	
+	public void setHasLargestArmy(Boolean b) {
+		if (hasLargestArmy == true && b == false)
+			victoryPoints--;
+		else if (hasLargestArmy == false && b == true)
+			victoryPoints++;
+		hasLargestArmy = b;
+	}
+	
+	private boolean hasLargestArmy(){
+		return hasLargestArmy;
+	}
+	
+	/**
+	 * Try to build a new road
+	 * @param edge where road is tried to be build on
+	 * @param gameSkin 
+	 */
+	public void buildRoad(Edge edge, GameSkin gameSkin){
+		if(roadsLeft > 0 && edge.getRoad() == null){
+			
+			Road newRoad = new Road(edge, this, gameSkin);
+			roads.add(newRoad);
+			roadsLeft--;
+			
+			edge.setRoad(newRoad);
+			// TODO: UPDATE longestRoad of this player
+			
+			
+			// TODO: UPDATE: longestRoad of all players
+		}
+		else{
+			System.out.println("building road failed");
+		}
+		
+	}
+	
+	
+	/**
+	 * Try to build a new settlement
+	 * @param vertex where settlement is tried to be build on
+	 * @param gameSkin
+	 */
+	public void buildSettlement(Vertex vertex, GameSkin gameSkin) {
+		if(settlementsLeft > 0 && vertex.getSettlement() == null){
+			
+			Settlement newSettlement = new Settlement(vertex, this, gameSkin);
+			settlements.add(newSettlement);
+			settlementsLeft--;
+			
+			vertex.setSettlement(newSettlement);
+		}
+		else{
+			System.out.println("building settlement failed");
+		}
+		
+	}
+	
+	
+<<<<<<< .mine
+//	public int longestRoad(){
+//		Stack stack = new Stack();
+//		 longestRoad = 0;
+//		 Edge edge;
+//		 /**settlements = new ArrayList<Settlement>();*/
+//		//geht die ganze Settlements Liste durch
+//		 for(Settlement settlement:settlements){
+//			 //geht jede Kante durch
+//			 for(int i = 0; i<3; i++){
+//				 edge = settlement.getVertex().getEdges().get(i);
+//				 if(!(edge.getRoad() == null) && edge.getRoad().getPlayer() == player){
+//					 longestRoad++;
+//				 }
+//			 }
+//		 }
+//		
+//	}
+||||||| .r8491
+=======
+	public int longestRoad(){
+		Stack stack = new Stack();
+		 longestRoad = 0;
+		 Edge edge;
+		 /**settlements = new ArrayList<Settlement>();*/
+		//geht die ganze Settlements Liste durch
+		 for(Settlement settlement:settlements){
+			 //geht jede Kante durch
+			 for(int i = 0; i<2; i++){
+				 edge = settlement.getVertex().getEdges().get(i);
+				 if(!(edge.getRoad() == null) && edge.getRoad().getPlayer() == this){
+					 longestRoad++;
+				 }
+			 }
+		 }
+		 System.out.println("Player " + this.playerColor + " longestRoad = " + longestRoad);
+		 return longestRoad;
+	}
+>>>>>>> .r8536
+	/**
+	 * Try to build a new city
+	 * @param vertex where city is tried to be build on
+	 * @param gameSkin
+	 */
+	public void buildCity(Vertex vertex, GameSkin gameSkin){
+		if(citiesLeft > 0 && vertex.getCity() == null) {
+			City newCity = new City(vertex, this, gameSkin);
+			cities.add(newCity);
+			citiesLeft--;
+			
+			vertex.setCity(newCity);
+		}
+		else{
+			System.out.println("building city failed");
+			
+		}
+		
+	}
+	
+	public void trade() {
+		
+	}
+}

@@ -1,0 +1,28 @@
+package view;
+
+import game.Settings;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import model.Settlement;
+
+public class CitySkin extends Rectangle {
+	
+	public CitySkin(Settlement building, IslandSkin islandSkin){
+
+		super(0.4, 0.25);
+		Color color = building.getOwner().getPlayerColor().getColor();
+		setFill(color);
+		if(color != Color.WHITE){
+			setStroke(Color.ANTIQUEWHITE);
+		}
+		else setStroke(Color.BLACK);
+		setStrokeWidth(0.03);
+		setScaleX(Settings.SCALE);
+		setScaleY(Settings.SCALE);
+		setTranslateX(building.getVertex().getSkin().getShape().getTranslateX());
+		setTranslateY(building.getVertex().getSkin().getShape().getTranslateY());
+		
+		
+		islandSkin.getChildren().add(this);
+	}
+}

@@ -1,0 +1,123 @@
+package model;
+
+import game.Settings;
+import view.DevelopmentCardSkin;
+/**
+ * Determines all different types of development cards
+ * @author Stefanie Kloss, Samantha Meindl, Lena Sonnleitner
+ */
+public enum DevelopmentCard {
+	
+	/** Knight Cards */
+	KNIGHT,
+	
+	/** Victory Point Cards */
+	CHAPEL,
+	GREATHALL,
+	LIBRARY,
+	MARKET,
+	UNIVERSITY,
+	
+	/** Progress Cards */
+	MONOPOLY,
+	ROADBUILDING,
+	YEAROFPLENTY;
+	
+	private static int knightCards = Settings.KNIGHT_CARDS;
+	private static int chapelCard = Settings.CHAPEL_CHARD;
+	private static int greathallCard = Settings.GREATHALL_CARD;
+	private static int libraryCard = Settings.LIBRARY_CARD;
+	private static int marketCard = Settings.MARKET_CARD;
+	private static int universityCard = Settings.UNIVERSITY_CARD;
+	private static int monopolyCards = Settings.MONOPOLY_CARDS;
+	private static int roadbuildingCards = Settings.ROADBUILDING_CARDS;
+	private static int yearofplentyCards = Settings.YEAROFPLENTY_CARDS;
+	/**
+	 * Returns a random Deveopment Card
+	 * @return the random Development Card
+	 */
+	public static DevelopmentCard devCards(){
+		int random = (int)(Math.random()* 5);
+		switch(random){
+		case 0: 
+			if(knightCards > 0){
+				knightCards--;
+				return KNIGHT;
+			}else{
+				return devCards();
+			}
+			
+		case 1: 
+			if(chapelCard > 0){
+				chapelCard--;
+				return CHAPEL;
+			}else{
+				return devCards();
+			}
+			
+		case 2: 
+			if(greathallCard > 0){
+				greathallCard--;
+				return GREATHALL;
+			}else{
+				return devCards();
+			}
+			
+		case 3: 
+			if(libraryCard > 0){
+				libraryCard--;
+				return LIBRARY;
+			}else{
+				return devCards();
+			}
+			
+		case 4: 
+			if(marketCard > 0){
+				marketCard--;
+				return MARKET;
+			}else{
+				return devCards();
+			}
+			
+		case 5: 
+			if(universityCard > 0){
+				universityCard--;
+				return UNIVERSITY;
+			}else{
+				return devCards();
+			}
+			
+		case 6: 
+			if(monopolyCards > 0){
+				monopolyCards--;
+				return MONOPOLY;
+			}else{
+				return devCards();
+			}
+			
+		case 7: 
+			if(roadbuildingCards > 0){
+				roadbuildingCards--;
+				return ROADBUILDING;
+			}else{
+				return devCards();
+			}
+			
+		case 8: 
+			if(yearofplentyCards > 0){
+				yearofplentyCards--;
+				return YEAROFPLENTY;
+			}else{
+				return devCards();
+			}
+			
+		default: return KNIGHT;
+		}
+	}
+	
+	public void playDevCard(){
+		//TODO
+	}
+	
+
+}

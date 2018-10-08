@@ -1,0 +1,71 @@
+package jsonstructures;
+
+/**
+ * This class contains all the development cards beeing send by the server in the StatusUpdate
+ * @author Felixi
+ *
+ */
+public class EntwicklungKarteDatenDaten {
+	private int Ritter;
+	private int Strassenbau;
+	private int Monopol;
+	private int Erfindung;
+	private int Siegpunkt;
+	
+	/**
+	 * Constructor
+	 * @param ritter
+	 * @param strassenbau
+	 * @param monopol
+	 * @param erfindung
+	 * @param siegpunkt
+	 */
+	public EntwicklungKarteDatenDaten(int ritter, int strassenbau, int monopol, int erfindung, int siegpunkt) {
+		Ritter = ritter;
+		Strassenbau = strassenbau;
+		Monopol = monopol;
+		Erfindung = erfindung;
+		Siegpunkt = siegpunkt;
+	}
+	
+	/**
+	 * Getter for Ritter
+	 * @return
+	 */
+	public int getRitter() {
+		return Ritter;
+	}
+	
+	/**
+	 * Getter for Strassenbau
+	 * @return
+	 */
+	public int getStrassenbau() {
+		return Strassenbau;
+	}
+	
+	/**
+	 * Getter for Monopol
+	 * @return
+	 */
+	public int getMonopol() {
+		return Monopol;
+	}
+	/**
+	 * Getter for Erfindung
+	 * @return
+	 */
+	public int getErfindung() {
+		return Erfindung;
+	}
+	
+	/**
+	 * Getter for Siegpunkt
+	 * @return
+	 */
+	public int getSiegpunkt() {
+		return Siegpunkt;
+	}
+	
+	
+}

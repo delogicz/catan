@@ -1,0 +1,9 @@
+package model;
+
+public class Vertex {
+	private Edge up;
+	private Edge left;
+	private Edge right;
+	private Settlement settlement;
+	private Harbour harbour;
+}

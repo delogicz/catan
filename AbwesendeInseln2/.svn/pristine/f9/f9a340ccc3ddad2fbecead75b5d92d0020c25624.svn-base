@@ -1,0 +1,291 @@
+package controller;
+
+import game.GameManager;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import model.*;
+import view.PlayerControlSkin;
+
+/**
+ * Controller class to handle user's input on the game
+ * 
+ * @author Daniel Panangian
+ */
+public class PlayerControl {
+	private Catan catan;
+	private PlayerControlSkin skin;
+	private Player player;
+	
+	/**
+	 * Constructor
+	 */
+	public PlayerControl(Player player){
+		this.player = player;
+		this.catan = null;
+		skin = new PlayerControlSkin(this);
+		enableBuildSetButton();
+		enableBuildRoadButton();
+		enableEndTurnButton();
+		disableRollDiceButton();
+		skin.getBuildCityButton().setDisable(true);
+		disableBuyDevCardButton();
+			
+		
+
+	}
+
+	/**
+	 * Update View of user's Hand
+	 */
+	public void updateHand() {
+		skin.getRoad().setText("Roads: " + player.countRoads());
+		skin.getCity().setText("Cities: " + player.countCity());
+		skin.getSettlement().setText("Settlements: " + player.countSettlements());
+		skin.getLumber().setText("Lumber: " + player.getPlayerCards().getLumberCount());
+		skin.getBrick().setText("Brick: " + player.getPlayerCards().getBrickCount());
+		skin.getWool().setText("Wool: " + player.getPlayerCards().getWoolCount());
+		skin.getGrain().setText("Grain: " + player.getPlayerCards().getGrainCount());
+		skin.getOre().setText("Ore: " + player.getPlayerCards().getOreCount());
+
+	}
+	/**
+	 * React to buildSettlement Button 
+	 * set BuildSetttlemenPressed to true
+	 */
+	public final EventHandler<MouseEvent> buildSettlementHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			
+			player.setBuildSettlementPressed(true);
+			
+		}
+	};
+	/**
+	 * React to buildRoad Button 
+	 * set BuildRoadPressed to true
+	 */
+	public final EventHandler<MouseEvent> buildRoadHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			
+			player.setBuildRoadPressed(true);
+			
+		}
+	};
+	/**
+	 * React to buildCity Button 
+	 * set BuildCityPressed to true
+	 */
+	public final EventHandler<MouseEvent> buildCityHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			
+			player.setBuildCityPressed(true);
+			
+		}
+	};
+	/**
+	 * React to buyDevCard Button 
+	 * Try to buy a Development Card
+	 */
+	public final EventHandler<MouseEvent> buyDevCardHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			
+			player.buyDevCard();
+			
+		}
+	};
+	/**
+	 * React to endTurn Button 
+	 * Ending turn , change the player and upddate the hand's View
+	 */
+	public final EventHandler<MouseEvent> endTurnHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			
+			player.endingTurn(); //TODO: nur ohne Server
+			catan.changeTurn(); //TODO: nur ohne Server
+			updateHand(); //TODO: nur ohne Server
+			catan.getGameManager().getClient().sendEndTurn();
+			
+		}
+	};
+	/**
+	 * React to rollDice Button 
+	 * roll the dice, if 7 disable the button until the player moves the robber
+	 */
+	public final EventHandler<MouseEvent> rollDiceHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			dice(); // TODO: nur ohne Server
+			catan.getGameManager().getClient().sendRollDice();
+		}
+	};
+		
+	public void dice(){
+		catan.dice(player);
+		updateHand();
+		disableRollDiceButton();
+		if (catan.getDiceResult() == 7){
+			disableAllButtons();
+		}
+		else{
+			enableBuildRoadButton();
+			enableBuildSetButton();
+			enableBuildCityButton();
+			enableBuyDevCardButton();
+			enableEndTurnButton();	
+		}
+	}
+	
+
+	/**
+	 * Enable endTurn button
+	 */
+	private void enableEndTurnButton() {
+		Button endTurnButton = skin.getEndTurnButton();
+		endTurnButton.setDisable(false);
+		endTurnButton.addEventHandler(MouseEvent.MOUSE_CLICKED, endTurnHandler);
+		
+	}
+	/**
+	 * Enable buildSet button
+	 */
+	public void enableBuildSetButton() {
+		Button buildSetButton = skin.getBuildSetButton();
+		buildSetButton.setDisable(false);
+		buildSetButton.addEventHandler(MouseEvent.MOUSE_CLICKED, buildSettlementHandler);
+		
+	}
+	/**
+	 * Disable buildSet button
+	 */
+	public void disableBuildSetButton() {
+		Button buildSetButton = skin.getBuildSetButton();
+		player.setBuildSettlementPressed(false);
+		buildSetButton.setDisable(true);
+		
+		
+	}
+	/**
+	 * Enable buildRoad button
+	 */
+	public void enableBuildRoadButton() {
+		Button buildRoadButton = skin.getBuildRoadButton();
+		buildRoadButton.setDisable(false);
+		buildRoadButton.addEventHandler(MouseEvent.MOUSE_CLICKED, buildRoadHandler);
+		
+	}
+	/**
+	 * Disable buildRoad button
+	 */
+	public void disableBuildRoadButton() {
+		Button buildRoadButton = skin.getBuildRoadButton();
+		player.setBuildRoadPressed(false);
+		buildRoadButton.setDisable(true);
+		
+	}
+	/**
+	 * Enable buildCity button
+	 */
+	public void enableBuildCityButton() {
+		Button buildCityButton = skin.getBuildCityButton();
+		buildCityButton.setDisable(false);
+		buildCityButton.addEventHandler(MouseEvent.MOUSE_CLICKED, buildCityHandler);
+		
+	}
+	/**
+	 * Disable buildCity button
+	 */
+	public void disableBuildCityButton() {
+		Button buildCityButton = skin.getBuildCityButton();
+		player.setBuildCityPressed(false);
+		buildCityButton.setDisable(true);
+		
+	}
+	/**
+	 * Enable buyDevCard button
+	 */
+	public void enableBuyDevCardButton() {
+		Button buyDevCardButton = skin.getBuyDevCardButton();
+		buyDevCardButton.setDisable(false);
+		buyDevCardButton.addEventHandler(MouseEvent.MOUSE_CLICKED, buyDevCardHandler);
+		
+	}
+	/**
+	 * Disable buyDevCard button
+	 */
+	public void disableBuyDevCardButton() {
+		Button buyDevCardButton = skin.getBuyDevCardButton();
+		buyDevCardButton.setDisable(true);
+		
+	}
+	/**
+	 * Enable rollDice button
+	 */
+	public void enableRollDiceButton() {
+		Button RollDiceButton = skin.getRollDiceButton();
+		RollDiceButton.setDisable(false);
+		RollDiceButton.addEventHandler(MouseEvent.MOUSE_CLICKED, rollDiceHandler);
+		
+	}
+	/**
+	 * Disable rollDice button
+	 */
+	public void disableRollDiceButton() {
+		Button RollDiceButton = skin.getRollDiceButton();
+		RollDiceButton.setDisable(true);
+		
+	}
+	/**
+	 * Disable endTurn button
+	 */
+	public void disableEndTurnButton() {
+		Button EndTurnButton = skin.getEndTurnButton();
+		EndTurnButton.setDisable(true);
+	}
+	/**
+	 * Disable all controller button
+	 */
+	public void disableAllButtons() {
+		disableEndTurnButton();
+		disableBuildCityButton();
+		disableBuildRoadButton();
+		disableBuildSetButton();
+		disableBuyDevCardButton();
+	}
+	/**
+	 * Enable all controller button
+	 */
+	public void enableAllButtons() {
+		enableEndTurnButton();
+		enableBuildCityButton();
+		enableBuildRoadButton();
+		enableBuildSetButton();
+		enableBuyDevCardButton();
+	}
+	/**
+	 * @return skin
+	 */
+	public PlayerControlSkin getSkin() {
+		return skin;
+	}
+
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+
+	public void setCatan(Catan catan) {
+		this.catan = catan;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+}

@@ -1,0 +1,26 @@
+package model;
+
+/**
+ * Determines all different types of resources.
+ *
+ */
+public enum ResourceType {
+	BRICK,GRAIN,WOOL,LUMBER,ORE;
+	
+	/**
+	 * Converts the ResourceType to a string
+	 */
+	public String toString(){
+		switch(this){
+		case BRICK : 	return "brick";
+		case GRAIN : 	return "grain";
+		case WOOL : 	return "wool";
+		case LUMBER : 	return "lumber";
+		case ORE : 		return "ore";
+		default:		return "";
+		}
+	}
+	
+}
+
+

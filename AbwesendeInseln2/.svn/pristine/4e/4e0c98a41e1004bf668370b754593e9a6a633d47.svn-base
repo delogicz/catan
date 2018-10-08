@@ -1,0 +1,56 @@
+package controller;
+
+import javafx.event.EventHandler;
+import javafx.scene.Cursor;
+import javafx.scene.input.MouseEvent;
+import model.Catan;
+import model.Island;
+import model.Tile;
+import view.IslandSkin;
+
+/**
+ * Controls changes in the Island
+ * @author Stefanie Kloss
+ *
+ */
+public class IslandControl {
+	
+	private Island island;
+	private IslandSkin islandSkin;
+	
+	/**
+	 * Constructor
+	 * @param island that is to be controlled 
+	 */
+	public IslandControl(Island island){
+		this.island = island;
+		this.islandSkin = island.getSkin();
+		listener();
+	}
+	
+	/**
+	 * listener (to realize relocation of robber)
+	 */
+	private void listener(){
+		
+		for(Tile tile: island.getHexes()){
+			tile.getSkin().getShape().setOnMouseClicked(new EventHandler<MouseEvent>(){
+
+				@Override
+				public void handle(MouseEvent event) {
+					if(island.getCatan().getCurrentTurnTaker().getRelocateRobber()){
+						setRobber(tile);
+					}
+				}
+				
+			});
+		}
+		
+	}
+	public void setRobber(Tile tile){
+		island.getCatan().getCurrentTurnTaker().setRelocateRobber(false);
+		island.changeRobberPosition(tile);
+		island.getCatan().getGameManager().relocateRobber(false);
+		System.out.println("robber: row: " + tile.getRow()+ " and pos: " + tile.getPos());
+	}
+}

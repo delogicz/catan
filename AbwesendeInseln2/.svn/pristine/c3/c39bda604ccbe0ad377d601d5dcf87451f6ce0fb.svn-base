@@ -1,0 +1,22 @@
+package jsonstructures;
+
+/**
+ * This class containes the message that the client sends to the server
+ * @author Felixi
+ */
+public class ClientChatDaten {
+	private String Nachricht;
+
+	
+	/**
+	 * Creates a ClientChatDaten object
+	 * @param nachricht		message to be send in the chat
+	 */
+	public ClientChatDaten(String nachricht) {
+		Nachricht = nachricht;
+	}
+	
+	public String getNachricht(){
+		return Nachricht;
+	}
+}

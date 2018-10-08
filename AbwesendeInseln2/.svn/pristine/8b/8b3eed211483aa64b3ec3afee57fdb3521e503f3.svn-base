@@ -1,0 +1,28 @@
+package view;
+
+
+
+import game.Settings;
+
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
+import model.Vertex;
+
+
+public class VertexSkin {
+
+	private Circle shape;
+
+	public VertexSkin(Vertex vertex) {
+
+		shape = new Circle(0.155 * Settings.SCALE);
+		shape.setFill(Settings.VERTEX_SKIN_COLOR);
+
+	}
+
+
+	public Shape getShape() {
+		return shape;
+	}
+
+}

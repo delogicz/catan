@@ -1,0 +1,388 @@
+package network;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Random;
+
+import com.google.gson.Gson;
+
+import controller.ServerControl;
+import jsonstructures.BauNachricht;
+import jsonstructures.BauvorgangNachricht;
+import jsonstructures.ClientChatDaten;
+import jsonstructures.ErtragNachricht;
+import jsonstructures.FehlerNachricht;
+import jsonstructures.HalloNachricht;
+import jsonstructures.HalloServerNachricht;
+import jsonstructures.KartenDaten;
+import jsonstructures.KostenNachricht;
+import jsonstructures.RohstoffDaten;
+import jsonstructures.ServerChatNachricht;
+import jsonstructures.ServerantwortNachricht;
+import jsonstructures.SpielerDaten;
+import jsonstructures.SpielerInitNachricht;
+import jsonstructures.SpielerZustandsDaten;
+import jsonstructures.StatusUpdateNachricht;
+import jsonstructures.StatusUpdateUnbekanntNachricht;
+import jsonstructures.WillkommenNachricht;
+import jsonstructures.WuerfelNachricht;
+import model.Building;
+import model.City;
+import model.Island;
+import model.PlayerColor;
+import model.ResourceType;
+import model.Road;
+import model.Settlement;
+public class Server extends Thread{
+	private static final String VERSION = "AbwesendeInselServer 0.1";
+	private static final String PROTOCOL = "0.1";
+	private static final String SERVER_OK = "{\"Serverantwort\": \"OK\"}";
+	private Gson gson;
+	private ServerSocket server;
+	private ArrayList<Handler> clientHandlers;
+	private ServerControl control;
+	private ArrayList<Integer> idList;
+	
+	
+/**
+ * Creates Server with Port number
+ * @param port
+ */
+	public Server(ServerControl c, int port) {
+		System.out.println("Created Server on Port " + port);
+		gson = new Gson();
+		control = c;
+		try {
+			server = new ServerSocket(port);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		clientHandlers = new ArrayList<Handler>();
+		idList = new ArrayList<Integer>();
+	}
+	
+
+	/**
+	 * Run method of the Server Thread
+	 * checks for clients
+	 */
+	@Override
+	public void run() {
+		while(true){
+			Socket client = null;
+			try
+			{
+				client = server.accept();
+				Handler clientHandler = new Handler(client, this);
+				clientHandlers.add(clientHandler);
+				clientHandler.start();
+			}
+			catch ( IOException e ) {
+				e.printStackTrace();
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Handles all the messages the server gets from the clients
+	 * @param text			message	
+	 * @param source		which client
+	 */
+	public void handleInput(String text, Handler source) {
+		System.out.println("Server received: " + text);
+		String head = text.substring(0,10);
+		String head2 = text.substring(0,19);
+		switch(head){
+		case "{\"Hallo\":{": handleHello(source,text);break;
+		case "{\"Bauen\":{": handleBuild(text,source);break;
+		case "{\"Zug been": handleEndTurn(source);break;
+		case "{\"Wuerfeln": handleRollDice(source);break;
+		case "{\"Spiel st": handleStartGame(source);break;
+		case "{\"Spieler\"": handlePlayerInit(text, source);break;
+		case "{\"Chatnach": handleChatMessage(text,source);break;
+		default: sendUnknownMessageError(source, text);break;
+		}
+	}
+	
+	
+	/**
+	 * Handles the configuration of the player
+	 * @param text			message
+	 * @param source		client
+	 */
+	private void handlePlayerInit(String text, Handler source) {
+		SpielerInitNachricht sin = gson.fromJson(text, SpielerInitNachricht.class);
+		SpielerDaten sd = sin.getSpielerDaten();
+		String name = sd.getName();
+		PlayerColor color = sd.getFarbe();
+		int playerID = source.getClientId();
+		control.handlePlayerInit(name, color, playerID);
+	}
+	
+	
+	/**
+	 * Sends an error message when the Server receives a message that he doesn't know
+	 * @param source		client
+	 * @param text			message
+	 */
+	private void sendUnknownMessageError(Handler source,String text) {
+		FehlerNachricht fl = new FehlerNachricht("Unknown Message: \"" + text + "\" is not supported");
+		String txt = gson.toJson(fl);
+		sendToOne(source,txt);
+	}
+
+	
+	/**
+	 * Handles the chat messages, the client sends
+	 * @param text			messages
+	 * @param source		client
+	 */
+	private void handleChatMessage(String text, Handler source) {
+		int start = text.indexOf(":")+1;
+		int end = text.length()-1;
+		String sub = text.substring(start, end);
+		ClientChatDaten ccd = gson.fromJson(sub, ClientChatDaten.class);
+		String message = ccd.getNachricht();
+		int id = source.getClientId();
+		sendChatMessage(id,message);
+	}
+
+	/**
+	 * Handles the message, when a client is ready to play
+	 * @param source
+	 */
+	private void handleStartGame(Handler source) {
+		control.handleStartGame(source.getClientId());
+	}
+
+	
+	/**
+	 * Handles the message, when a client wants to roll the dice
+	 * @param source
+	 */
+	private void handleRollDice(Handler source) {
+		control.handleDiceRoll(source.getClientId());
+	}
+
+	private void handleEndTurn(Handler source) {
+		control.handleEndTurn(source.getClientId());
+	}
+
+	/**
+	 * Handles the event of a building from the client
+	 * @param text			message
+	 * @param source		client
+	 */
+	private void handleBuild(String text,Handler source) {
+		BauNachricht bn = gson.fromJson(text, BauNachricht.class);
+		String type = bn.getTyp();
+		switch(type){
+		case "Strasse": control.handleBuildRoad(bn.getKante(), source.getClientId());break;
+		case "Dorf": control.handleBuildSettlement(bn.getEcke(),source.getClientId());break;
+		case "Stadt": control.handleBuildCity(bn.getEcke(),source.getClientId());break;
+		}
+	}
+
+	/**
+	 * Handles the Hello Message from the client and sends welcome message
+	 * @param source		client
+	 * @param text			text
+	 */
+	private void handleHello(Handler source,String text) {
+		HalloNachricht hn = gson.fromJson(text, HalloNachricht.class);
+		String ver = hn.getDaten().getVersion();
+		//check for our version to enable cheats
+		sendWelcome(source);
+	}
+	
+	
+	/**
+	 * Sends Server ok after valid message
+	 * @param id
+	 */
+	public void sendOk(int id){
+		sendServerMessage(id,SERVER_OK);
+	}
+	
+	/**
+	 * Sends the hello message to client
+	 * @param target		client
+	 */
+	public void sendHello(Handler target){
+		HalloServerNachricht hn = new HalloServerNachricht(VERSION, PROTOCOL);
+		String text = gson.toJson(hn);
+		sendToOne(target,text);
+	}
+	
+	/**
+	 * Sends welcome message
+	 * @param source		client
+	 */
+	public void sendWelcome(Handler source){
+		Random rand = new Random();
+		int id = rand.nextInt(100);
+		while(idList.contains(id)){
+			id = rand.nextInt(100);
+		}
+		idList.add(id);
+		source.setId(id);
+		WillkommenNachricht wn = new WillkommenNachricht(id);
+		String text = gson.toJson(wn);
+		sendToOne(source,text);
+	}
+	
+	/**
+	 * Sends ServerMessage
+	 * @param id		client
+	 * @param text		message
+	 */
+	public void sendServerMessage(int id, String text){
+		ServerantwortNachricht san = new ServerantwortNachricht(text);
+		String message = gson.toJson(san);
+		sendToOne(id,message);
+	}
+	
+	/**
+	 * sends chat messages to clients
+	 * @param id		client
+	 * @param text		chat message
+	 */
+	public void sendChatMessage(int id, String text){
+		ServerChatNachricht scn = new ServerChatNachricht(id, text);
+		String chat = gson.toJson(scn);
+		sendToAll(chat);
+	}
+	
+	/**
+	 * Sends error message  to client
+	 * @param id			client
+	 * @param error			error message
+	 */
+	public void sendError(int id, String error){
+		FehlerNachricht fl = new FehlerNachricht(error);
+		String txt = gson.toJson(fl);
+		sendToOne(id,txt);
+	}
+	
+	/**
+	 * Sends start match message to clients
+	 * @param i			island for map
+	 */
+	public void sendStartMatch(Island i){
+		KartenDaten kd = new KartenDaten(i);
+		String text = gson.toJson(kd);
+		sendToAll("{\"Spiel gestartet\":"+text+"}");
+	}
+	
+	/**
+	 * Sends a status update to clients, depending on who it is getting send to
+	 * @param id				client id who's status got updated
+	 * @param color				color of client
+	 * @param name				name of client
+	 * @param status			new status of client
+	 * @param victoryPoints		victory Points of client
+	 * @param resources			resources of player
+	 */
+	public void sendStatusUpdate(int id,String color, String name, String status, int victoryPoints, ArrayList<ResourceType> resources){
+		StatusUpdateNachricht sun = new StatusUpdateNachricht(id,color,name,status,victoryPoints,resources);
+		StatusUpdateUnbekanntNachricht suun = new StatusUpdateUnbekanntNachricht(id,color,name,status,victoryPoints,resources);
+		String secret = gson.toJson(sun);
+		String notSecret = gson.toJson(suun);
+		sendToOne(id,secret);
+		sendToAllButOne(id,notSecret);
+	}
+	
+	/**
+	 * Sends dice roll
+	 * @param id
+	 * @param roll
+	 */
+	public void sendDice(int id, int roll){
+		WuerfelNachricht wn = new WuerfelNachricht(id,roll);
+		String text = gson.toJson(wn);
+		sendToAll(text);
+	}
+	
+	/**
+	 * Sends the resources to a client
+	 * @param id			client
+	 * @param resources		resources client got
+	 */
+	public void sendProduce(int id, ArrayList<ResourceType> resources){
+		ErtragNachricht en = new ErtragNachricht(id,resources);
+		String text = gson.toJson(en);
+		sendToAll(text);
+	}
+	
+	/**
+	 * Sends when a client build something 
+	 * @param b			building the client build
+	 */
+	public void sendConstruction(Building b){
+		BauvorgangNachricht bn = new BauvorgangNachricht(b);
+		String text = gson.toJson(bn);
+		sendToAll(text);
+	}
+	
+	/**
+	 * Sends message to signalise that someone won the game and it is over
+	 */
+	public void sendEndMatch(){
+		
+	}
+	
+	/**
+	 * Sends the message to one client
+	 * @param target			target client
+	 * @param message			message
+	 */
+	public void sendToOne(Handler target,String message){
+		target.sendMessage(message);
+	}
+	
+	/**
+	 * Sends the message to one client
+	 * @param id				target client
+	 * @param message
+	 */
+	public void sendToOne(int id,String message){
+		for(Handler handler : clientHandlers){
+			handler.sendIf(id,message);
+			
+		}
+		
+	}
+	
+	/**
+	 * Sends the message to all clients but one
+	 * @param id			id of client not included
+	 * @param message		
+	 */
+	
+	public void sendToAllButOne(int id, String message){
+		for(Handler handler : clientHandlers){
+			handler.sendIfNot(id,message);
+		}
+	}
+	
+	/**
+	 * Sends message to all clients
+	 * @param message
+	 */
+	public void sendToAll(String message){
+		for(Handler handler : clientHandlers){
+			handler.sendMessage(message);
+		}
+	}
+}
+
+
+
+

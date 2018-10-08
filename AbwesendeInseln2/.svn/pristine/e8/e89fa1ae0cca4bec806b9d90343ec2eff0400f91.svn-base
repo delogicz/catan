@@ -1,0 +1,135 @@
+package game;
+
+
+import controller.PlayerControl;
+import javafx.scene.Scene;
+import model.Catan;
+import model.SetUp;
+import network.Client;
+import view.ClientLogin;
+import view.GameSkin;
+
+/**
+ * The game manager initializes a new game.
+ * @author Daniel Panangian, Stefanie Kloss
+ */
+public class GameManager {
+	
+	private App app;
+	private Client client;
+	
+	private SetUp setUp;
+	/**
+	 * @return the setUp
+	 */
+	public SetUp getSetUp() {
+		return setUp;
+	}
+
+	private Scene clientLoginScene;
+	
+	private Scene gameScene;
+	private Catan catan;
+	private GameSkin gameSkin; 
+	private PlayerControl gameControl;
+	
+	/**
+	 * Constructor
+	 * @param app 
+	 */
+	public GameManager(App app) {
+		this.app = app;
+		this.clientLoginScene = new Scene(new ClientLogin(this));
+	}
+	
+	/**
+	 * Starts the set up of the game
+	 */
+	private void setGameUp() {
+		this.setUp = new SetUp(this);
+		Scene setUpScene = new Scene(setUp.getSetUpSkin());
+		app.changeScene(setUpScene);
+//		TradeSkin ts = new TradeSkin(this); //Testen von Handel Feld
+	}
+
+	/**
+	 *  Establishes new Game after all players joined (setUp)
+	 *  Creates a new instance of GameSkin
+	 */
+	public void newGame(Catan catan) {
+		
+		this.catan = catan;
+		this.gameSkin = new GameSkin(catan, this);
+		catan.setGameSkin(gameSkin);
+		this.gameScene = new Scene(gameSkin);
+		app.changeScene(gameScene);
+		
+	}
+	
+	/**
+	 * Initializes the Client
+	 * @param host
+	 * @param port
+	 */
+	public void initializeClient(String host, int port) {
+		this.client = new Client(host, port, this);
+		this.client.start();
+		setGameUp();
+	}
+	
+	public void quit() {
+		gameScene.getWindow().hide();
+	}
+	
+	/**
+	 * @return the gameScene
+	 */
+	public Scene getGameScene() {
+		return gameScene;
+	}
+	
+	/**
+	 * @return the gameControl
+	 */
+	public PlayerControl getGameControl() {
+		return gameControl;
+	}
+	
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+	
+	/**
+	 * @return the clientLoginScene
+	 */
+	public Scene getClientLoginScene() {
+		return this.clientLoginScene;
+	}
+	
+	/**
+	 * @return the app
+	 */
+	public App getApp() {
+		return this.app;
+	}
+
+	/**
+	 * @return the client
+	 */
+	public Client getClient() {
+		return client;
+	}
+
+	/**
+	 * @return the gameSkin
+	 */
+	public GameSkin getGameSkin() {
+		return gameSkin;
+	}
+	
+}
+
+				

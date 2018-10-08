@@ -1,0 +1,11 @@
+package jsonstructures;
+
+public class VersionProtokollDaten extends VersionDaten{
+	
+	private String Protokoll;
+	
+	public VersionProtokollDaten(String version, String protocol){
+		super(version);
+		this.Protokoll=protocol;
+	}
+}

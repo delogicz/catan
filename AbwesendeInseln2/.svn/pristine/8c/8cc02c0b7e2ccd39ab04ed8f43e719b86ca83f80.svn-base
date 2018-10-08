@@ -1,0 +1,36 @@
+package jsonstructures;
+
+/**
+ * This class is the wrapper for the StatusZustandsDaten class send to update the state of a player
+ * @author Felixi
+ *
+ */
+public class StatusUpdateNachricht {
+	private SpielerZustandsDatenDaten Statusupdate;
+
+	/**
+	 * Creates a SpielerZustandsDatenDaten object
+	 * @param statusupdate		SpielerZustandsDaten
+	 */
+	public StatusUpdateNachricht(SpielerZustandsDaten statusupdate) {
+		Statusupdate = new SpielerZustandsDatenDaten(statusupdate);
+	}
+
+	/**
+	 * Getter for SpielerZustandsDatenDaten
+	 * @return
+	 */
+	public SpielerZustandsDatenDaten getStatusupdate() {
+		return Statusupdate;
+	}
+	
+	/**
+	 * Setter for SpielerZustandsDatenDaten
+	 * @param statusupdate
+	 */
+	public void setStatusupdate(SpielerZustandsDatenDaten statusupdate) {
+		Statusupdate = statusupdate;
+	}
+
+	
+}

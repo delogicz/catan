@@ -1,0 +1,64 @@
+package jsonstructures;
+
+import java.util.ArrayList;
+
+import model.ResourceType;
+
+public class HandelsangebotDaten {
+	int Spieler;
+	int Handel;   // not correct name yet ?!?!?!
+	RohstoffDaten Angebot;
+	RohstoffDaten Nachfrage;
+	
+	
+	
+	
+	
+	public HandelsangebotDaten(int spieler, int handel, ArrayList<ResourceType> angebot, ArrayList<ResourceType> nachfrage) {
+		Spieler = spieler;
+		Handel = handel;
+		
+		int lumber = 0,grain = 0,brick = 0,wool = 0,ore = 0;
+		
+		for(ResourceType type : angebot){
+			switch(type){
+			case LUMBER: ++lumber;break;
+			case GRAIN: ++grain;break;
+			case BRICK: ++brick;break;
+			case WOOL: ++wool;break;
+			case ORE: ++ore;break;
+			}
+		}
+		Angebot = new RohstoffDaten(lumber,brick,wool,grain,ore);
+		
+		int lumber2 = 0,grain2 = 0,brick2 = 0,wool2 = 0,ore2 = 0;
+		
+		for(ResourceType type : nachfrage){
+			switch(type){
+			case LUMBER: ++lumber2;break;
+			case GRAIN: ++grain2;break;
+			case BRICK: ++brick2;break;
+			case WOOL: ++wool2;break;
+			case ORE: ++ore2;break;
+			}
+		}
+		Nachfrage = new RohstoffDaten(lumber2,brick2,wool2,grain2,ore2);
+		
+		
+		
+	}
+	public int getSpieler() {
+		return Spieler;
+	}
+	public int getHandel() {
+		return Handel;
+	}
+	public RohstoffDaten getAngebot() {
+		return Angebot;
+	}
+	public RohstoffDaten getNachfrage() {
+		return Nachfrage;
+	}
+	
+	
+}

@@ -1,0 +1,82 @@
+package view;
+
+import game.Settings;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
+import model.Settlement;
+
+/**
+ * View of a road.
+ * @author Stefanie Kloss
+ */
+public class SettlementSkin extends Circle{
+
+	private Settlement building;
+	private IslandSkin islandSkin;
+	
+	/**
+	 * Constructor
+	 * @param building
+	 * @param islandSkin
+	 */
+	public SettlementSkin(Settlement building, IslandSkin islandSkin) {
+		
+		super(0.1);
+		this.building = building;
+		this.islandSkin = islandSkin;
+		Color color = building.getOwner().getPlayerColor().getColor();
+		setFill(color);
+		if(color != Color.WHITE){
+			setStroke(Color.ANTIQUEWHITE);
+		}
+		else setStroke(Color.BLACK);
+		setStrokeWidth(0.03);
+		setScaleX(Settings.SCALE);
+		setScaleY(Settings.SCALE);
+		setTranslateX(building.getVertex().getSkin().getShape().getTranslateX());
+		setTranslateY(building.getVertex().getSkin().getShape().getTranslateY());	
+		
+		addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+		public void handle(MouseEvent mouseEvent) {
+			System.out.println("handle mousevent");
+			if(building.getOwner().getCatan().getPlayerClient().isBuildCityPressed()){
+				System.out.println("build city send ");
+				building.getOwner().getCatan().getGameManager().getClient().sendConstructCity(building.getVertex());
+			}
+		}
+	});
+
+//		addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//			
+//			public void handle(MouseEvent mouseEvent) {
+//				building.pressed();
+//			}
+//		});
+		
+		SettlementSkin settlementSkin = this;
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				islandSkin.getChildren().add(settlementSkin);
+				System.out.println("Siedlung auf IslandSkin");
+			}
+		});
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void upgradetoCity() {
+		Shape settlementSkin = this;
+		settlementSkin = new CitySkin(building,islandSkin);
+		
+	}
+}

@@ -1,0 +1,316 @@
+package model;
+
+import java.util.ArrayList;
+
+/**
+ * Describes a participant in the game. Stores information the playerclient has to know about
+ * @author Daniel Panangian, Stefanie Kloss, Lena Sonnleitner
+ */
+public class Player {
+	protected int victoryPoints;
+	protected PlayerColor playerColor;
+	protected int playerID;
+	protected String name;
+	protected String status;
+	
+	protected Catan catan;
+	
+	private boolean hasLargestArmy; 
+	private boolean hasLongestRoad;
+	
+	protected ArrayList<DevelopmentCard> devCards;
+	protected ArrayList<DevelopmentCardType> devCardType;
+	protected ArrayList<Harbour> harbours;
+	protected int connectedRoads;
+	protected int resCardsCount;
+	
+	protected boolean active;
+
+
+	
+	/**
+	 * Constructor
+	 */
+	public Player(PlayerColor playerColor, int playerId, String name){
+		this.harbours = new ArrayList<Harbour>();
+		this.catan = null;
+		this.playerID = playerId;
+		this.name = name;
+		this.status = "";
+		this.victoryPoints = 0;
+		this.playerColor = playerColor;
+		this.resCardsCount = 0;
+		this.devCards = new ArrayList<DevelopmentCard>();
+		this.devCardType = new ArrayList<DevelopmentCardType>();
+		
+		this.connectedRoads= 0;
+
+		hasLongestRoad = false;
+		hasLargestArmy = false;
+
+	}
+	
+
+	/**
+	 * get player's color
+	 *@return playerColor
+	 */
+	public PlayerColor getPlayerColor(){
+		return this.playerColor;
+	}
+	/**
+	 * get victory point
+	 *@return victoryPoints
+	 */
+	public int getVictoryPoints() {
+		return victoryPoints;
+	}
+	
+	/**
+	 * set victory point
+	 *@param newVictoryPoints
+	 */
+	public void setVictoryPoints(int newVictoryPoints) {
+		victoryPoints = newVictoryPoints;		
+	}
+
+	public void setHasLargestArmy(Boolean b) {
+		if (hasLargestArmy == true && b == false)
+			victoryPoints--;
+		else if (hasLargestArmy == false && b == true)
+			victoryPoints++;
+		hasLargestArmy = b;
+	}
+	
+	private boolean hasLargestArmy(){
+		return hasLargestArmy;
+	}
+
+//	
+//	/**
+//	 * Try to buy a development card
+//	 */
+//	public void buyDevCard() {
+//		if(playerCards.canBuyDevCard()){
+//			DevelopmentCard newDevCard = DevelopmentCard.random();
+//			devCards.add(newDevCard);
+//			if(newDevCard == DevelopmentCard.VICTORYPOINT){
+//				victoryPoints++;
+//				checkVictoryPoints();
+//			}
+//			else if(newDevCard == DevelopmentCard.KNIGHT){
+//				knightCount++;
+//				//TODO: catan.chackLargestArmy();
+//			}
+//		}
+//		else { catan.getGameManager().getApp().popUpMessage("You haven't got enought "
+//				     + "resourcecs to buy a Development Card.");
+//		}
+//	}
+	
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
+	/**
+	 * Gets the playerID
+	 * @return the playerID
+	 */
+	public int getPlayerID() {
+		return this.playerID;
+	}
+	
+	/**
+	 * @param playerColor the playerColor to set
+	 */
+	public void setPlayerColor(PlayerColor playerColor) {
+		this.playerColor = playerColor;
+	}
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+	/**
+	 * @param catan the catan to set
+	 */
+	public void setCatan(Catan catan) {
+		this.catan = catan;
+	}
+	
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+
+	/**
+	 * @return the resCardsCount
+	 */
+	public int getResCardsCount() {
+		return resCardsCount;
+	}
+	
+	/**
+	 * Builds a new settlement or city (handleConstruction)
+	 * @param typ type of the new building
+	 * @param vertex vertex on which the building is located
+	 */
+	public Building build(String typ, Vertex vertex, boolean server) {
+		if(typ.equals("Dorf")){
+			Settlement newSettlement = new Settlement(vertex, this, catan.getIsland().getSkin());
+			vertex.setOccupyingBuilding(newSettlement);
+			vertex.setOccupied(true);
+			if(vertex.getHarbour()!=null){
+				addHarbour(vertex.getHarbour());
+			}
+			return newSettlement;
+		}
+		else if(typ.equals("Stadt")){
+			System.out.println("Bauen einer stadt wäre jetzt richtig");
+			City newCity = new City(vertex, this, catan.getIsland().getSkin());
+			vertex.setOccupyingBuilding(newCity);
+			vertex.setOccupied(true);
+			if(vertex.getHarbour()!=null){
+				addHarbour(vertex.getHarbour());
+			}
+			vertex.getOccupyingBuilding().getSettlementSkin().upgradetoCity();
+			return newCity;
+		}
+		return null;
+	}
+	
+	/**
+	 * Builds a new road (handleConstruction)
+	 * @param edge edge on which the road is located
+	 */
+	public Road build(Edge edge, boolean server) {
+		Road newRoad = new Road(edge, this, catan.getIsland().getSkin());
+		edge.setOccupyingBuilding(newRoad);
+		edge.setOccupied(true);
+		return newRoad;
+	}
+	
+	/**
+	 * Adds a Harbour to the List if its not already on it
+	 * @param h Harbour, to wich the Player has access to
+	 */
+	protected void addHarbour(Harbour h){
+		if(!harbours.contains(h)){
+			harbours.add(h);
+		}
+	}
+	/**
+	 * Returns weather the player controls a harbour from wich he can trade the desired resource 2:1
+	 * @param r desired Resource
+	 * @return true, if player has the right harbour, otherwise false
+	 */
+	private boolean hasTwoToOneHarbour(ResourceType r){
+		switch(r){
+		case LUMBER: return(harbours.contains(Harbour.TWOTOONELUMBER));
+		case BRICK: return(harbours.contains(Harbour.TWOTOONEBRICK));
+		case WOOL: return(harbours.contains(Harbour.TWOTOONEWOOL));
+		case GRAIN: return(harbours.contains(Harbour.TWOTOONEGRAIN));
+		case ORE: return(harbours.contains(Harbour.TWOTOONEORE));
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the amount of each ResourceType needed to trade 1 of the requested ResourceType
+	 * @param request Type the prices are for
+	 * @return int Array with prices in following order: Lumber,Brick,Wool,Grain,Ore
+	 */
+	public int[] getMaritimePrices(ResourceType request){
+		ResourceType[] res = {ResourceType.LUMBER,ResourceType.BRICK,ResourceType.WOOL,
+				ResourceType.GRAIN,ResourceType.ORE};
+		int[] prices = new int[5];
+		for(int i = 0; i < 5; i++){
+			if(request.equals(res[i])){
+				prices[i] = 1;//Trade 1:1 of the same resource (basically no trade)
+			}else if(hasTwoToOneHarbour(res[i])){
+				prices[i] = 2;//Trade 2:1 with offer Harbour
+			}else if(hasTwoToOneHarbour(request)){
+				prices[i] = 2;//Trade 2:1 with request Harbour
+			}else if(harbours.contains(Harbour.THREETOONE)){
+				prices[i] = 3;//Trade with 3:1 Harbour
+			}else{
+				prices[i] = 4;//Trade 4:1 without Harbour 
+			}
+		}
+		return prices;
+	}
+	
+	/**
+	 * Updates the information of the player
+	 * @param victoryPoints
+	 * @param name
+	 * @param status
+	 * @param color
+	 * @param unknownResources
+	 */
+	public void update(int victoryPoints, String name, String status, PlayerColor color,
+			int unknownResources) {
+		this.victoryPoints = victoryPoints;
+		this.name = name;
+		this.status = status;
+		this.playerColor = color;
+		this.resCardsCount = unknownResources;
+		
+	}
+	
+	public boolean isBot(){
+		return false;
+	}
+	public void activateBot() {
+		
+	}
+	
+	/**
+	 * Use when player has costs in form of resource cards
+	 */
+	public void resCardsCosts(int costs){
+		this.resCardsCount -= costs;
+	}
+	
+	/**
+	 * Use when player receives resource cards
+	 * @param resources
+	 */
+	public void resCardsCountProduce(int resources) {
+		this.resCardsCount += resources;
+	}
+
+
+	public int getConnectedRoads() {
+		return connectedRoads;
+	}
+
+
+	public void setConnectedRoads(int connectedRoads) {
+		this.connectedRoads = connectedRoads;
+	}
+
+}

@@ -1,0 +1,83 @@
+package model;
+
+import java.util.ArrayList;
+
+import controller.SetUpControl;
+import game.GameManager;
+import view.SetUpSkin;
+
+public class SetUp {
+	
+	private GameManager gameManager;
+	
+	private SetUpControl setUpControl;
+	private SetUpSkin setUpSkin;
+	private ArrayList<Player> players;
+	
+	/**
+	 * Constructor
+	 * @param gameManager the gameManager of the game
+	 */
+	public SetUp(GameManager gameManager){
+		this.gameManager = gameManager;
+		this.setUpControl = new SetUpControl(this);
+		this.players = new ArrayList<Player>();
+		
+		addPlayer(PlayerColor.BLUE, "player0");
+
+		this.setUpSkin = new SetUpSkin(this, setUpControl);
+		
+
+
+	}
+	
+	/**
+	 * Adds a new player to the game
+	 * @param playerColor The color of the new player
+	 */
+	public void addPlayer(PlayerColor playerColor, String name) {
+		int playerID = 1;
+		if(players.size() < 4){
+			Player player = new Player(playerColor, playerID, name);
+			players.add(player);
+			playerID++;
+		}
+		else{
+			System.out.println("There are already four players");
+		}
+	}
+	
+	/**
+	 * Starts the game when all players were added
+	 * @return new initialized catan
+	 */
+	public void startPlaying(){
+		Catan catan = new Catan(gameManager, players);
+		for(Player player: players){
+			player.setCatan(catan);
+		}
+		gameManager.newGame(catan);
+	}
+
+	/**
+	 * @return the setUpSkin
+	 */
+	public SetUpSkin getSetUpSkin() {
+
+		return setUpSkin;
+	}
+	
+	/**
+	 * @return the players
+	 */
+	public ArrayList<Player> getPlayers(){
+		return this.players;
+	}
+	
+	/**
+	 * @return the gameManager
+	 */
+	public GameManager getGameManager() {
+		return this.gameManager;
+	}
+}

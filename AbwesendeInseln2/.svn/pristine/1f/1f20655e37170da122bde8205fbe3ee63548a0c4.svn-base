@@ -1,0 +1,84 @@
+package view;
+
+import game.Settings;
+import javafx.application.Platform;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import model.Edge;
+import model.Road;
+
+/**
+ * View of a road.
+ * @author Stefanie Kloss
+ */
+public class RoadSkin extends Rectangle {
+	
+	private final Edge edge;
+
+	/**
+	 * Constructor
+	 * @param road
+	 * @param islandSkin
+	 */
+	public RoadSkin(Road road, IslandSkin islandSkin){
+		
+		super(Settings.EDGE_LENGTH, Settings.EDGE_WIDTH*1.5);
+		this.edge = road.getEdge();
+		Color color = road.getOwner().getPlayerColor().getColor();
+		setFill(color);
+		if(color != Color.WHITE){
+			setStroke(Color.ANTIQUEWHITE);
+		}
+		else setStroke(Color.BLACK);
+		setStrokeWidth(0.03);
+		setScaleX(Settings.SCALE);
+		setScaleY(Settings.SCALE);
+		setTranslateX(edge.getSkin().getShape().getTranslateX());
+		setTranslateY(edge.getSkin().getShape().getTranslateY());
+		setRotate(edge.getSkin().getShape().getRotate());
+		
+		RoadSkin roadSkin = this;
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				islandSkin.getChildren().add(roadSkin);
+			}
+		});
+	}
+	
+	/**
+	 * Constructor for DevelopmentCard RoadBuilding
+	 * @param edge
+	 * @param islandSkin
+	 */
+	public RoadSkin(Edge edge, IslandSkin islandSkin){
+		
+		super(Settings.EDGE_LENGTH, Settings.EDGE_WIDTH*1.5);
+		this.edge = edge;
+		Color color = Color.BLACK;
+		setFill(color);
+		setStroke(Color.ANTIQUEWHITE);
+		setStrokeWidth(0.03);
+		setScaleX(Settings.SCALE);
+		setScaleY(Settings.SCALE);
+		setTranslateX(edge.getSkin().getShape().getTranslateX());
+		setTranslateY(edge.getSkin().getShape().getTranslateY());
+		setRotate(edge.getSkin().getShape().getRotate());
+		
+		RoadSkin roadSkin = this;
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				islandSkin.getChildren().add(roadSkin);
+			}
+		});
+	}
+	
+	
+	/**
+	 * @return the edge
+	 */
+	public Edge getEdge() {
+		return edge;
+	}
+}

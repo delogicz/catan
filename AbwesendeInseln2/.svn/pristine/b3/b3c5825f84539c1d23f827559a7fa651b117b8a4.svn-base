@@ -1,0 +1,35 @@
+package model;
+
+import view.GameSkin;
+import view.SettlementSkin;
+
+/**
+ * A settlement. Defined by associated vertex and player.
+ *
+ */
+public class Settlement {
+	private Vertex vertex;
+	private Player player;
+	private SettlementSkin settlementSkin;
+	private ResourceType resourceType;
+	
+	public Settlement(Vertex vertex, Player player, GameSkin gameSkin){
+		this.vertex = vertex;
+		this.player = player;
+		this.settlementSkin = new SettlementSkin(this, gameSkin);
+	}
+	
+	public Player getPlayer(){
+		return this.player;
+	}
+	
+	public Vertex getVertex(){
+		return this.vertex;
+	}
+	
+	public void ressourcesProduction(ResourceType resourceType){
+		//TODO
+	}
+	
+	
+}

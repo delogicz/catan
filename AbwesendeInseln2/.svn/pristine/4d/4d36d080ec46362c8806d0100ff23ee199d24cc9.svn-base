@@ -1,0 +1,214 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+
+import view.VertexSkin;
+
+/**
+ * Contains a vertex defined by it's position in the island.
+ *@author Daniel Panangian
+ */
+public class Vertex{
+
+	private Harbour harbour;
+	
+	private List<Vertex> connectedVertices;
+	
+	private List<Edge> edges; 
+	
+	private List<Tile> hexes;
+	
+	private int row;
+	/**
+	 * Position in row.
+	 */
+	private int pos;
+	
+	private VertexSkin skin;
+	private Catan catan;
+	
+	private boolean isOccupied;
+	private Building occupyingBuilding;
+	
+	/**
+	 * Constructor
+	 * @param row
+	 * @param pos
+	 * @param catan
+	 */
+	public Vertex(int row, int pos,Catan catan) {
+		this.row = row;
+		this.pos = pos;
+		this.catan = catan;
+		setHarbour();
+		skin = new VertexSkin(this);
+		connectedVertices = new ArrayList<Vertex>();
+		edges = new ArrayList<Edge>();
+		hexes = new ArrayList<Tile>();
+	}
+	
+	/**
+	 * Checks whether the vertex is connected to a harbour.
+	 * Adjusts attribute "harbour".
+	 */
+	private void setHarbour() {
+		if(row == 0 && pos == 0 || row == 0 && pos == 1 
+				|| row == 5 && pos == 0 || row == 5 && pos == 1 
+				|| row == 2 && pos == 10 || row == 3 && pos == 10 
+				|| row == 1 && pos == 7 || row == 1 && pos == 8){
+			this.harbour = Harbour.THREETOONE;
+		}
+		else if (row == 0 && pos == 3 || row == 0 && pos == 4 ) {
+			this.harbour = Harbour.TWOTOONEWOOL;
+		}
+		else if (row == 1 && pos == 0 || row == 2 && pos == 1 ) {
+			this.harbour = Harbour.TWOTOONEORE;
+		}
+		else if (row == 3 && pos == 1 || row == 4 && pos == 0 ) {
+			this.harbour = Harbour.TWOTOONEGRAIN;
+		}
+		else if (row == 5 && pos == 3|| row == 5 && pos == 4 ) {
+			this.harbour = Harbour.TWOTOONELUMBER;
+		}
+		else if (row == 4 && pos == 7|| row == 4 && pos == 8 ) {
+			this.harbour = Harbour.TWOTOONEBRICK;
+		}
+		
+	}
+	
+	/**
+	 * @return the position in the row
+	 */
+	public int getPos() {
+		return pos;
+	}
+	
+	/**
+	 * @return the row
+	 */
+	public int getRow() {
+		return row;
+	}
+
+	/**
+	 * @return the skin
+	 */
+	public VertexSkin getSkin() {
+		return skin;
+	}
+
+	/**
+	 * @return the connectedVertices
+	 */
+	public List<Vertex> getConnectedVertices() {
+		return connectedVertices;
+	}
+	
+	/**
+	 * add a connected Vertex
+	 * @param vertex
+	 */
+	public void addConnectedVertex(Vertex vertex) {
+		connectedVertices.add(vertex);
+	}
+	
+	/**
+	 * @return the edges
+	 */
+	public List<Edge> getEdges() {
+		return edges;
+	}
+	
+	/**
+	 * add instances of Edge to edges
+	 * @param edges
+	 */
+	public void addEdge(Edge... edges) {
+		this.edges.addAll(Arrays.asList(edges));
+	}
+	
+	/**
+	 * Gives out information about the vertex when clicked on with the mouse
+	 *  .....................................................................
+	 * Build Settlement when pressed
+	 * for the first building phase :
+	 * Build Road if the rules for building Settlement fulfilled and the BuildRoad button pressed
+	 * for the next turn :
+	 * Build Road if the rules for building Settlement fulfilled ,the BuildSettlement button pressed and enough resources
+	 */
+	 
+	public void pressed() {
+		System.out.format("Vertex pressed [{%d}, {%d}].%n",row,pos);
+		System.out.println("Harbour : " + harbour);
+		System.out.println("Vertices connected : ");
+		for (int i =0 ; i< connectedVertices.size() ; i++){
+			System.out.format("[{%d},{%d}] ",connectedVertices.get(i).getRow() ,connectedVertices.get(i).getPos());
+			System.out.println("");
+		}
+		System.out.println("Hexes : ");
+		for (int i =0 ; i< hexes.size() ; i++){
+			System.out.format("[{%s}] ",hexes.get(i).getTerrainType() );
+			System.out.println("");
+		}
+		System.out.println("Is occupied : " + isOccupied);
+		if (catan.getRounds() == 1 | catan.getRounds() ==2 ){
+			if (catan.getCurrentTurnTaker().canBuildSettlement(this) == true 
+				&& catan.getCurrentTurnTaker().isBuildSettlementPressed()){
+				catan.getCurrentTurnTaker().buildSettlement(this);
+				isOccupied = true;
+				catan.getGameControl().updateHand();
+			}
+		}
+		else{
+			if (catan.getCurrentTurnTaker().canBuildSettlement(this) == true 
+					&& catan.getCurrentTurnTaker().isBuildSettlementPressed() 
+					&& catan.getCurrentTurnTaker().getPlayerCards().canBuySettlement()){
+					catan.getCurrentTurnTaker().buildSettlement(this);
+					isOccupied = true;
+					catan.getCurrentTurnTaker().getPlayerCards().buySettlement();
+					catan.getGameControl().updateHand();
+			}
+			catan.getGameSkin().warning("You haven't got enough resources to build a settlement!");
+			System.out.println("not enough resources");
+		}
+	}
+	/**
+	 * Get Occupying building on this vertex
+	 * @return occupyingBuilding
+	 */
+	public Building getOccupyingBuilding() {
+		return occupyingBuilding;
+	}
+	
+	public void setOccupyingBuilding(Building building){
+		this.occupyingBuilding = building;
+	}
+
+	public void addHex(Tile hex) {
+		this.hexes.add(hex);
+		
+	}
+	
+	/**
+	 * getter method for hexes
+	 * @return hexes
+	 */
+	public List<Tile> getHexes() {
+		return hexes;
+	}
+
+	public boolean isOccupied() {
+		return isOccupied;
+	}
+
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+
+}

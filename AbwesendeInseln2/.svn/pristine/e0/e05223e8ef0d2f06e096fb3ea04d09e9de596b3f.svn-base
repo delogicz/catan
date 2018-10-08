@@ -1,0 +1,14 @@
+package jsonstructures;
+
+public class RohstoffUnbekanntDaten {
+
+	int Unbekannt;
+	
+	public RohstoffUnbekanntDaten(int anzahl){
+		Unbekannt = anzahl;
+	}
+	
+	public int getAnzahl(){
+		return Unbekannt;
+	}
+}

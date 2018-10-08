@@ -1,0 +1,105 @@
+package model;
+
+
+import view.EdgeSkin;
+
+/**
+ * Contains an edge defined by two vertices.
+ * @author Daniel Panangian
+ */
+public class Edge{
+	private Vertex from;
+	private Vertex to;
+	private Catan catan;
+	private EdgeSkin skin;
+	private Building occupyingBuilding;
+	private boolean isOccupied;
+	
+	public Edge(Vertex from, Vertex to,Catan catan) {
+		this.from = from;
+		this.to = to;
+		this.catan = catan;
+		skin = new EdgeSkin(this);
+	}
+	
+	public Vertex getVertexFrom() {
+		return this.from;
+	}
+
+	public Vertex getVertexTo() {
+		return this.to;
+	}
+
+	public EdgeSkin getSkin() {
+		return this.skin;
+	}
+	
+	
+	/**
+	 * Sets rotation of the skin (view) of the edge
+	 * @param degrees 
+	 */
+	public void setRotation(double degrees) {
+		skin.getShape().setRotate(degrees);
+	}
+	
+	public Building getOccupyingBuilding() {
+		return occupyingBuilding;
+	}
+	
+	public void setOccupyingBuilding(Building building){
+		this.occupyingBuilding = building;
+	}
+
+	/**
+	 * Gives out position of the edge when clicked on with the mouse
+	 * .............................................................
+	 * Build Road
+	 * for the first building phase :
+	 * Build Road if the rules for building road fulfilled and the BuildRoad button pressed
+	 * for the next turn :
+	 * Build Road if the rules for building road fulfilled ,the BuildRoad button pressed and enough resources
+	 */
+	public void pressed() {
+		System.out.format("Edge pressed [{%d}, {%d}] to [{%d}, {%d}].%n", from.getRow(), from.getPos(), to.getRow(),
+				to.getPos());
+		System.out.println("Is occupied by : " + this.occupyingBuilding);
+		if (catan.getRounds() == 1 | catan.getRounds() ==2 ){
+			if (catan.getCurrentTurnTaker().canBuildRoad(this) 
+				&& catan.getCurrentTurnTaker().isBuildRoadPressed()){
+				catan.getCurrentTurnTaker().buildRoad(this);
+				catan.getGameControl().updateHand();
+			}
+		}
+		else{
+			if (catan.getCurrentTurnTaker().canBuildRoad(this) 
+					&& catan.getCurrentTurnTaker().isBuildRoadPressed()
+					&& catan.getCurrentTurnTaker().getPlayerCards().canBuyRoad()){
+				catan.getCurrentTurnTaker().buildRoad(this);
+				catan.getCurrentTurnTaker().getPlayerCards().buyRoad();
+				catan.getGameControl().updateHand();
+				}
+			else catan.getGameManager().getApp().popUpMessage("You haven't got enough resources to build a road!");
+			System.out.println("not enough resources");
+		}
+	}
+
+	public boolean isOccupied() {
+		// TODO Auto-generated method stub
+		return isOccupied;
+	}
+
+	public void setOccupied(boolean isOccupied) {
+		this.isOccupied = isOccupied;
+		
+	}
+
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+
+
+}

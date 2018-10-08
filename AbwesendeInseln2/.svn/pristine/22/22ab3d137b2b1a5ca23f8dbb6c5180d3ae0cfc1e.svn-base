@@ -1,0 +1,62 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+import game.Settings;
+import view.DevelopmentCardSkin;
+/**
+ * Determines all different types of development cards
+ * @author Stefanie Kloss, Samantha Meindl, Lena Sonnleitner
+ */
+public class DevelopmentCard {
+	
+	ArrayList <DevelopmentCardType> devCards;
+	/**
+	 * Returns a random Development Card
+	 * @return the random Development Card
+	 */
+	
+	private void riffleCards() {
+		devCards = new ArrayList<DevelopmentCardType>();
+		for (int i = 0; i < 1; i++) {
+			devCards.add(DevelopmentCardType.CHAPEL);
+		}
+		for(int i = 0; i < 1; i++) {
+			devCards.add(DevelopmentCardType.GREATHALL);
+		}
+		for (int i = 0; i < 14; i++) {
+			devCards.add(DevelopmentCardType.KNIGHT);
+		}
+		for (int i = 0; i < 1; i++) {
+			devCards.add(DevelopmentCardType.LIBRARY);
+		}
+		for (int i = 0; i < 1; i++) {
+			devCards.add(DevelopmentCardType.MARKET);
+		}
+		for (int i = 0; i < 2; i++) {
+			devCards.add(DevelopmentCardType.MONOPOLY);
+		}
+		for (int i = 0; i < 2; i++) {
+			devCards.add(DevelopmentCardType.ROADBUILDING);
+		}
+		for (int i = 0; i < 1; i++) {
+			devCards.add(DevelopmentCardType.UNIVERSITY);
+		}
+		for (int i = 0; i < 2; i++) {
+			devCards.add(DevelopmentCardType.YEAROFPLENTY);
+		}
+		Collections.shuffle(devCards);
+	}
+	
+	
+	
+	private DevelopmentCardType getRandomDevCards() {
+		DevelopmentCardType card = devCards.get(0);
+		devCards.remove(0);
+		return card;
+	}
+	
+	
+
+}

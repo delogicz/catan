@@ -1,0 +1,17 @@
+package jsonstructures;
+
+public class RohstoffDaten {
+	private int Holz;
+	private int Lehm;
+	private int Wolle;
+	private int Getreide;
+	private int Erz;
+	
+	public RohstoffDaten(int holz, int lehm, int wolle, int getreide) {
+		Holz = holz;
+		Lehm = lehm;
+		Wolle = wolle;
+		Getreide = getreide;
+	}
+	
+}

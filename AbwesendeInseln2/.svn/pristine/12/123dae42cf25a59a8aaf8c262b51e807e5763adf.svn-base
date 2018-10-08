@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class ServerantwortNachricht {
+	private String Serverantwort;
+
+	public ServerantwortNachricht(String serverantwort) {
+		Serverantwort = serverantwort;
+	}
+}

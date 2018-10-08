@@ -1,0 +1,17 @@
+package model;
+
+import java.util.ArrayList;
+
+/**
+ * Contains all units needed for a game of "The Settlers of Catan" (players included)
+ * 
+ */
+public class Catan {
+	
+	private Island island;
+	private ArrayList<Player> players;
+	private ArrayList<DevelopmentCard> devCards;
+	
+	private Player hasLongestRoad;
+	private Player hasLargestArmy;
+}

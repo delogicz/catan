@@ -1,0 +1,36 @@
+package model;
+
+
+public abstract class Building {
+	public enum BuildingType {
+		Road,City,Settlement;
+	}
+	
+		protected Player owner;
+		protected BuildingType buildingType;
+		
+
+		public BuildingType getBuildingType() {
+			return buildingType;
+		}
+
+		public Player getOwner() {
+			return owner;
+		}
+
+		public boolean isOwner(Player player) {
+			return owner == player;
+		}
+
+		public static boolean isOwner(Player player, Building building) {
+			return building != null && building.isOwner(player);
+		}
+
+		public PlayerColor getColor() {
+
+			return owner.getPlayerColor();
+		}
+
+		
+	}
+

@@ -1,0 +1,81 @@
+package model;
+
+import java.util.ArrayList;
+
+public class Hand {
+	private ArrayList<ResourceType> resources;
+	private int lumberCount;
+	private int brickCount;
+	private int woolCount;
+	private int grainCount;
+	private int oreCount;
+	
+	private ArrayList<Building> buildings;
+	private ArrayList<Harbour> harbours;
+	private char robberLocation;
+	
+	public Hand(){
+		resources = new ArrayList<ResourceType>();
+		buildings = new ArrayList<Building>();
+		harbours = new ArrayList<Harbour>();
+	}
+	
+	
+	
+	
+	
+	public ArrayList<ResourceType> getResources() {
+		return resources;
+	}
+	public void addResources(ResourceType resource) {
+		this.resources.add(resource);
+		switch(resource){
+			case LUMBER	: lumberCount++;
+				break;
+			case BRICK	: lumberCount++;
+				break;
+			case WOOL	: lumberCount++;
+				break;
+			case GRAIN	: lumberCount++;
+				break;
+			case ORE	: lumberCount++;
+				break;
+		}
+	}
+	
+	public ArrayList<Building> getBuildings() {
+		return buildings;
+	}
+	public void addBuilding(Building building) {
+		this.buildings.add(building);
+	}
+	public ArrayList<Harbour> getHarbours() {
+		return harbours;
+	}
+	public void addHarbour(Harbour harbour) {
+		this.harbours.add(harbour);
+	}
+	public char getRobberLocation() {
+		return robberLocation;
+	}
+	public void setRobberLocation(char robberLocation) {
+		this.robberLocation = robberLocation;
+	}
+
+	public int getLumberCount() {
+		return lumberCount;
+	}
+	public int getBrickCount() {
+		return brickCount;
+	}
+	public int getWoolCount() {
+		return woolCount;
+	}
+	public int getGrainCount() {
+		return grainCount;
+	}
+	public int getOreCount() {
+		return oreCount;
+	}
+	
+}

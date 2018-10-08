@@ -1,0 +1,127 @@
+package model;
+
+import java.util.ArrayList;
+
+import controller.LogMaster;
+import view.TradeOfferSkin;
+
+/**
+ * Creates a TradeOffer object that contains the IDs of the trade and player who placed the trade 
+ * as well as Lists of offered and demanded resources and accepted and declined Traders
+ */
+public class TradeOffer {
+	
+	private int tradeId;
+	private int playerId;
+	private ArrayList<ResourceType> offer;
+	private ArrayList<ResourceType> demand;
+	private ArrayList<Integer> acceptedTraders;
+	private ArrayList<Integer> declinedTraders;
+	private TradeOfferSkin skin;
+	
+	/**
+	 * The constructor
+	 * @param tradeId ID of the new Trade
+	 * @param player Player who placed the trade
+	 * @param offer Resources the player offers
+	 * @param demand Resources the player demands
+	 * @param server True if server creates the object, false if Client creates the object
+	 */
+	public TradeOffer(int tradeId, Player player, ArrayList<ResourceType> offer, ArrayList<ResourceType> demand, boolean server){
+		
+		this.acceptedTraders = new ArrayList<Integer>();
+		this.declinedTraders = new ArrayList<Integer>();
+		this.tradeId = tradeId;
+		this.playerId = player.getPlayerID();
+		this.offer = offer;
+		this.demand = demand;
+		
+		if(!server) this.skin = new TradeOfferSkin(player, this);
+		
+		LogMaster.log("[Mod]Neuer TradeOffer erstellt"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+	}
+	
+	/**
+	 * Call whenever a player accepts the trade to add him to "acceptedTraders"
+	 * @param playerID ID of the player who accepted the trade
+	 */
+	public void accept(int playerID) {
+		if(declinedTraders.contains(playerID))declinedTraders.remove(playerID);
+		if(!acceptedTraders.contains(playerID))acceptedTraders.add(playerID);
+	}
+
+	/**
+	 * Call whenever a player declined the trade to add him to "declinedTraders"
+	 * @param playerID ID of the player who declined the trade
+	 */
+	public void decline(int playerID) {
+		if(acceptedTraders.contains(playerID))acceptedTraders.remove(playerID);
+		if(!declinedTraders.contains(playerID))declinedTraders.add(playerID);
+	}
+
+	/**
+	 * Getter of the declinedTraders
+	 * @return List containing IDs of all players who declined the trade
+	 */
+	public ArrayList<Integer> getDeclinedTraders(){
+		return declinedTraders;
+	}
+
+	/**
+	 * Getter of the acceptedTraders
+	 * @return List containing IDs of all players who accepted the trade
+	 */
+	public ArrayList<Integer> getAcceptedTraders(){
+		return acceptedTraders;
+	}
+
+	/**
+	 * Getter for the tradeId
+	 * @return the tradeId
+	 */
+	public int getTradeId() {
+		return tradeId;
+	}
+
+	/**
+	 * Getter for the playerId
+	 * @return the playerId
+	 */
+	public int getPlayerId() {
+		return playerId;
+	}
+	
+	/**
+	 * Getter for the offered resources
+	 * @return the offer
+	 */
+	public ArrayList<ResourceType> getOffer() {
+		return offer;
+	}
+	
+	/**
+	 * Getter for the demanded resources
+	 * @return the demand
+	 */
+	public ArrayList<ResourceType> getDemand() {
+		return demand;
+	}
+	
+	/**
+	 * Getter for the skin of the TradeOffer
+	 * @return the skin
+	 */
+	public TradeOfferSkin getSkin() {
+		return skin;
+	}
+
+	/**
+	 * Call  whenever you want to know if a player has accepted the trade
+	 * @param playerID ID of the player you want to know of whether he accepted the trade or not
+	 * @return true if player accepted the trade
+	 */
+	public boolean hasAccepted(int playerID){
+		return acceptedTraders.contains(playerID);
+	}
+	
+}

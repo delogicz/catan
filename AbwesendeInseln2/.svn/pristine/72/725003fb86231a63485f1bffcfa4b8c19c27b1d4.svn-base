@@ -1,0 +1,83 @@
+package jsonstructures;
+
+import model.Edge;
+import model.Island;
+import model.Tile;
+import model.Vertex;
+
+public class ConvertMaster {
+	private static Island island;
+	
+	private static String[] EDGE_NAMES = {"aA","eA","bA","bB","AB","cB","cC","BC","dC","fC","eL",
+			"gl","AL","AM","LM","BM","BN","MN","CN","CD","ND","Df","Dh","gK","jK","LK","LR","KR",
+			"MR","MS","RS","NS","NO","SO","DO","DE","OE","nE","EJ","kK","KJ","kJ","RJ","RQ","JQ",
+			"SQ","SP","QP","OP","OF","PF","EF","El","Fl","Jm","JI","mI","QI","QH","IH","PH","PG",
+			"HG","FG","Fn","Gn","Io","Ip","Hp","Hq","Gq","Gr"};
+	
+	private static String[] VERTEX_NAMES = {"aeA","abA","bAB","bcB","cBC","cdC","dCf","egL","eAL",
+			"ALM","ABM","BMN","BCN","CND","CfD","fDh","giK","gLK","LKR","LMR","MRS","MNS","NSO",
+			"NDO","DOE","DhE","hEj","jKk","KkJ","KRJ","RJQ","RSQ","SQP","SOP","OPF","OEF","EFl",
+			"Ejl","kJm","Jml","JQI","QIH","QPH","PHG","PFG","FGn","Fln","mIo","Iop","IHp","Hpq",
+			"HGq","Gqr","Gnr"};
+
+	private static String[] TILE_NAMES = {"A","B","C","L","M","N","D","K","R","S","O","E","J","Q",
+			"P","F","I","H","G"};
+	
+	public static void setIsland(Island newIsland){
+		island = newIsland;
+	}
+
+	public static Edge convertToEdge(String edge){
+		for(int i = 0;i < EDGE_NAMES.length; i++){
+			if(EDGE_NAMES[i].equals(edge)){
+				return island.getEdges().get(i);
+			}
+		}
+		return null;
+	}
+	
+	public static Vertex convertToVertex(String vertex){
+		for(int i = 0;i < VERTEX_NAMES.length; i++){
+			if(VERTEX_NAMES[i].equals(vertex)){
+				return island.getVertex(i);
+			}
+		}
+		return null;
+	}
+	
+	public static Tile convertToTile(String tile){
+		for(int i = 0;i < TILE_NAMES.length; i++){
+			if(TILE_NAMES[i].equals(tile)){
+				return island.getHexagon(i);
+			}
+		}
+		return null;
+	}
+	
+	public static String convertEdge(Edge edge){
+		for(int i = 0; i<island.getEdges().size();i++){
+			if(edge.equals(island.getEdges().get(i))){
+				return EDGE_NAMES[i];
+			}
+		}
+		return null;
+	}
+	
+	public static String convertVertex(Vertex vertex){
+		for(int i = 0; i<island.getVertices().size();i++){
+			if(vertex.equals(island.getVertices().get(i))){
+				return VERTEX_NAMES[i];
+			}
+		}
+		return null;
+	}
+	
+	public static String convertTile(Tile tile){
+		for(int i = 0; i<island.getHexes().size();i++){
+			if(tile.equals(island.getHexes().get(i))){
+				return TILE_NAMES[i];
+			}
+		}
+		return null;
+	}
+}

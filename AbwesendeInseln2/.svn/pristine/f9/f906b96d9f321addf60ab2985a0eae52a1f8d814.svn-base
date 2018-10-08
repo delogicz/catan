@@ -1,0 +1,32 @@
+package jsonstructures;
+
+import java.util.ArrayList;
+
+import model.ResourceType;
+/**
+ * Wrapper for The ErfindungServerDaten from Server
+ * @author Felixi
+ *
+ */
+public class ErfindungServerNachricht {
+	private ErfindungServerDaten Erfindung;
+
+	/**
+	 * Constructor
+	 * @param spieler
+	 * @param erfindung
+	 */
+	public ErfindungServerNachricht(int spieler, ArrayList<ResourceType> erfindung) {
+		Erfindung = new ErfindungServerDaten(spieler,erfindung);
+	}
+
+	/**
+	 * Getter for Erfindung
+	 * @return
+	 */
+	public ErfindungServerDaten getErfindung() {
+		return Erfindung;
+	}
+	
+	
+}

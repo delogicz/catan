@@ -1,0 +1,48 @@
+package model;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+/**
+ * Determines all different types of resources.
+ *
+ */
+public enum ResourceType {
+	BRICK("brick.png"),
+	GRAIN("grain.png"),
+	WOOL("wool.png"),
+	LUMBER("lumber.png"),
+	ORE("ore.png");
+	
+	
+	private ImageView skin;
+	
+	private ResourceType(String skinFileName){
+		try{
+			skin = new ImageView(new Image(ResourceType.class.getResourceAsStream("/img/resourcetypes/"+ skinFileName), 100, 100, true, true));
+			}
+		catch (Exception e){
+			System.out.println("Problem loading skin of ResourceType" + e.getStackTrace());
+		}
+	}
+	/**
+	 * Converts the ResourceType to a string
+	 */
+	public String toString(){
+		switch(this){
+		case BRICK : 	return "brick";
+		case GRAIN : 	return "grain";
+		case WOOL : 	return "wool";
+		case LUMBER : 	return "lumber";
+		case ORE : 		return "ore";
+		default:		return "";
+		}
+	}
+
+	public ImageView getSkin() {
+		return skin;
+	}
+	
+}
+
+

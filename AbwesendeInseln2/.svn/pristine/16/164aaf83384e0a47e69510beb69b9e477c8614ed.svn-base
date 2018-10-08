@@ -1,0 +1,341 @@
+package controller;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import jsonstructures.RohstoffDaten;
+import model.Catan;
+import model.Edge;
+import model.Player;
+import model.PlayerClient;
+import model.PlayerColor;
+import model.ResourceType;
+import model.TradeOffer;
+import model.Vertex;
+import network.Server;
+
+/**
+ * This class is the controller of the server that manages the model of the server
+ * @author Stefanie Kloss
+ *
+ */
+
+public class ServerControl {
+	
+	private Server server;
+	
+	private Catan catan;
+	private ArrayList<Player> players;
+	private ArrayList<Integer> tradeIdList;
+	
+	public ServerControl(int port) {
+		server = new Server(this,port);
+		server.start();
+		players = new ArrayList<Player>();
+		tradeIdList = new ArrayList<Integer>();
+	}
+
+	/**
+	 * Handles the start game message from the client
+	 * @param clientId
+	 */
+	public void handleStartGame(int clientId) {
+		
+		PlayerClient p = (PlayerClient)getPlayerWithID(clientId);
+		boolean allPlayersReady = true;
+		p.setReadyToStartGame(true);
+		server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(), "Wartet auf Spielbeginn", p.getVictoryPoints(), p.getResCards());
+		for(Player player: players){
+			if(!((PlayerClient)player).isReadyToStartGame()){
+				allPlayersReady = false;
+			}
+		}
+		if(allPlayersReady && (players.size() == 3 || players.size() == 4)){
+			this.catan = new Catan(players);
+			server.sendStartMatch(catan.getIsland());
+			PlayerClient turnTaker = (PlayerClient)catan.getCurrentTurnTaker();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			server.sendStatusUpdate(turnTaker.getPlayerID(), turnTaker.getPlayerColor().toServerString(), 
+				turnTaker.getName(), "Dorf bauen", turnTaker.getVictoryPoints(), turnTaker.getResCards());
+			for(Player c : players){
+				if(!turnTaker.equals(c)){
+					server.sendStatusUpdate(c.getPlayerID(), c.getPlayerColor().toServerString(), c.getName(), "Warten", c.getVictoryPoints(), ((PlayerClient)c).getResCards());
+				}
+			}
+		}
+	}
+
+	
+	/**
+	 * Rolls the dice and sends the number to the clients
+	 * Distributes resources
+	 * @param clientId
+	 */
+	public void handleDiceRoll(int clientId) {
+		int diceResult = catan.getDice().diceResult();
+		server.sendOk(clientId);
+		server.sendDice(clientId, diceResult);
+		Player p = this.getPlayerWithID(clientId);
+		if(diceResult == 7){
+			server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(), "Raeuber versetzen", p.getVictoryPoints(), ((PlayerClient)p).getResCards());
+		}
+		else { 
+			for(Player pl : players){
+				int id = ((PlayerClient)pl).getPlayerID();
+				server.sendProduce(id, catan.distributeResources(diceResult, (PlayerClient)pl));
+			}
+			server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(), "Handeln oder Bauen", p.getVictoryPoints(), ((PlayerClient)p).getResCards());
+		}
+	}
+	
+	/**
+	 * Handels the ClientRäuberDaten message from a Client 
+	 * @param clientID
+	 * @param aimedPlayerID
+	 */
+	public void handleRelocateRobber(int clientID, int aimedPlayerID){
+		PlayerClient robber = (PlayerClient)catan.getPlayerWithID(clientID);
+		if(aimedPlayerID >= 0){
+			PlayerClient aim = (PlayerClient)catan.getPlayerWithID(aimedPlayerID);
+			ResourceType robbedRes = aim.getHand().getRandomResource();
+			aim.getHand().spend(robbedRes);
+			server.sendCosts(aimedPlayerID, robbedRes);
+			server.sendError(aimedPlayerID, robber.getName() + " just stole you a " + robbedRes + "!");
+			robber.getHand().addResource(robbedRes);
+			server.sendProduce(clientID, robbedRes);
+			server.sendError(clientID, "You just stole " + aim.getName() +  " a " + robbedRes + "!");
+		}
+		server.sendStatusUpdate(clientID, robber.getPlayerColor().toServerString(), robber.getName(), "Handeln oder Bauen", robber.getVictoryPoints(), robber.getResCards());
+	}
+
+	
+	/**
+	 * Handles the end turn event of a client
+	 * @param clientId
+	 */
+	public void handleEndTurn(int clientId) {
+		//TODO falls Spieler den Spielzug beenden kann		
+		Player p = this.getPlayerWithID(clientId);
+		server.sendOk(clientId);
+		server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(), "Warten", p.getVictoryPoints(), ((PlayerClient)p).getResCards());
+		catan.changeTurnTaker(); 
+		Player turn  = catan.getCurrentTurnTaker();
+		if(catan.getRound() > 2){
+			server.sendStatusUpdate(turn.getPlayerID(), turn.getPlayerColor().toServerString(), turn.getName(), "Wuerfeln", turn.getVictoryPoints(), ((PlayerClient)turn).getResCards());
+		}else{
+			server.sendStatusUpdate(turn.getPlayerID(), turn.getPlayerColor().toServerString(), turn.getName(), "Dorf bauen", turn.getVictoryPoints(), ((PlayerClient)turn).getResCards());
+		}
+	}
+
+	/**
+	 * Handles the build road event of a client
+	 * @param kante			edge where to build the road
+	 * @param clientId		client
+	 */
+	public void handleBuildRoad(Edge kante, int clientId) {
+		
+		PlayerClient p = (PlayerClient)getPlayerWithID(clientId);
+		boolean allowedLocation = p.canBuildRoad(kante);
+		if(!allowedLocation){
+			server.sendError(clientId, "You cannot build a road on this edge!");
+			return;
+		}
+		
+		if((catan.getRound() == 1 && p.countRoads() == 0) || (catan.getRound() == 2 && p.countRoads() == 1)){
+			server.sendOk(clientId);
+			server.sendConstruction(p.build(kante, true));
+			server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(),"Warten", p.getVictoryPoints(), p.getResCards());
+			catan.changeTurnTaker();
+			PlayerClient turn = (PlayerClient)catan.getCurrentTurnTaker();
+			if(catan.getRound() < 3) server.sendStatusUpdate(turn.getPlayerID(), turn.getPlayerColor().toServerString(), turn.getName(), "Dorf bauen", turn.getVictoryPoints(), turn.getResCards());
+			else{
+				catan.distributeResources();
+//				TODO: Statusupdate an alle mit Ressourcen
+				server.sendStatusUpdate(turn.getPlayerID(), turn.getPlayerColor().toServerString(), turn.getName(), "Wuerfeln", turn.getVictoryPoints(), turn.getResCards());
+			}
+		}
+		else{
+			if(p.getHand().canBuyRoad() && (p.getRoadsLeft() > 0)){ 
+				p.getHand().buyRoad();
+				server.sendOk(clientId);
+				server.sendConstruction(p.build(kante, true));
+			}else{
+				if(p.getRoadsLeft() <= 0) server.sendError(clientId, "You don't have any roads left!");
+				else server.sendError(clientId, "You don't have enough resources!");
+			}
+		}
+	}
+
+	
+	/**
+	 * Handles the build settlement event
+	 * @param ecke				vertex where to build settlement
+	 * @param clientId			client
+	 */
+	public void handleBuildSettlement(Vertex ecke, int clientId) {
+
+		PlayerClient p = (PlayerClient)getPlayerWithID(clientId);
+		boolean allowedLocation = p.canBuildSettlement(ecke);
+		if(!allowedLocation){
+			server.sendError(clientId, "You cannot build a settlement on this vertex!");
+			return;
+		}
+		
+		if((catan.getRound() == 1 && p.countSettlements() == 0) || (catan.getRound() == 2 && p.countSettlements() == 1)){
+			server.sendOk(clientId);
+			server.sendConstruction(p.build("Dorf", ecke, true));
+			server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(),"Strasse bauen", p.getVictoryPoints(), p.getResCards());
+		}
+		else{
+			if(p.getHand().canBuySettlement() && (p.getSettlementsLeft() > 0)){ 
+				boolean gameWon = p.addAndCheckVictoryPoints(1);
+				if(gameWon) server.sendEndMatch(p);
+				p.getHand().buySettlement();
+				server.sendOk(clientId);
+				server.sendConstruction(p.build("Dorf", ecke, true));
+			}else{
+				if(p.getSettlementsLeft() <= 0) server.sendError(clientId, "You don't have any settlements left!");
+				else server.sendError(clientId, "You don't have enough resources!");
+			}
+		}
+	}
+
+	/**
+	 * Handles the build city event
+	 * @param ecke			vertex where tu build city
+	 * @param clientId		client
+	 */
+	public void handleBuildCity(Vertex ecke, int clientId) {
+		
+		PlayerClient p = (PlayerClient)getPlayerWithID(clientId);
+		boolean allowedLocation = p.canBuildSettlement(ecke);
+		if(!allowedLocation){
+			server.sendError(clientId, "You cannot build a city on this vertex!");
+			return;
+		}
+		
+		if(p.getHand().canBuyCity() && (p.getCitiesLeft() > 0)){ 
+			boolean gameWon = p.addAndCheckVictoryPoints(2);
+			if(gameWon) server.sendEndMatch(p);
+			p.getHand().buyCity();
+			server.sendOk(clientId);
+			server.sendConstruction(p.build("Stadt", ecke, true));
+		}else{
+			if(p.getCitiesLeft() <= 0) server.sendError(clientId, "You don't have any cities left!");
+			else server.sendError(clientId, "You don't have enough resources!");
+		}
+			
+	}
+	
+	/**
+	 * Handles the SpielerInitNachricht
+	 * @param name
+	 * @param color
+	 * @param clientID
+	 */
+	public void handlePlayerInit(String name, PlayerColor color, int clientID){
+		
+		boolean existsAlready = false;
+		for(Player player: players){
+			if(player.getPlayerColor().equals(color) && player.getPlayerID() != clientID ){
+				server.sendError(clientID, "This color is already taken!");
+				return;
+			}if(player.getName().equals(name) && player.getPlayerID() != clientID ){
+				server.sendError(clientID, "This name is already taken!");
+				return;
+			}if(clientID == player.getPlayerID()){
+				existsAlready = true;
+			}
+		}
+		if(!existsAlready){
+			PlayerClient p = new PlayerClient(color, clientID, name);
+			players.add(p);
+			server.sendStatusUpdate(clientID, p.getPlayerColor().toServerString(), p.getName(), "Spiel starten", p.getVictoryPoints(), p.getResCards());
+		}else{
+			getPlayerWithID(clientID).setName(name);
+			getPlayerWithID(clientID).setPlayerColor(color);
+		}
+		
+	}
+	
+	/**
+	 * Gets the player, the playerId belongs to
+	 * @param playerID
+	 * @return the searched player
+	 */
+	private Player getPlayerWithID(int playerID){
+		
+		for(Player player: players){
+			if(player.getPlayerID() == playerID){
+				return player;
+			}
+		}
+		return null;
+	}
+
+	public void handleTradeOffer(ArrayList<ResourceType> offer, RohstoffDaten demand, int idPlayer) {
+		//Checken ob spieler sich offer leisten kann
+		//Wenn Ja 	-> server.sendOk(id);
+		//			-> int idTrade = newTradeId();
+		//			-> catan.getTrades().add(new TradeOffer(idTrade, idPlayer, offer, demand.getResources()));
+		//			-> server.sendTradeOffer(idPlayer, offer, demand, idTrade);
+		//Wenn Nein server.sendError(clientId, "You don't have enough resources!");
+		
+	}
+
+	public void handleAcceptTrade(int tradeId, int clientId) {
+		// checken ob spieler clientId sich den Trade leisten kann
+		//Wenn Ja 	-> server.sendTradeAccepted(tradeId,clientId);
+		//			-> catan.getTrade(tradeId).accept(clientId);
+		//Wenn Nein server.sendError(clientId, "You don't have enough resources!");
+		
+	}
+	
+	private int newTradeId(){
+		Random rand = new Random();
+		int tradeId = rand.nextInt(1000);
+		while(tradeIdList.contains(tradeId)){
+			tradeId = rand.nextInt(1000);
+		}
+		tradeIdList.add(tradeId);
+		return tradeId;
+	}
+
+	public void executeTrade(int tradeId, int playerId) {
+		if(catan.getTrade(tradeId).hasAccepted(playerId)){
+			//TODO Resourcen Tauschen (mit Ertrag und Kosten)
+			server.sendSuccessfulTrade(catan.getTrade(tradeId).getPlayerId(), playerId);
+			catan.getTrades().remove(catan.getTrade(tradeId));
+		}else{
+			server.sendError(catan.getTrade(tradeId).getPlayerId(), "This Player doesent want to trade!");
+		}
+	}
+
+	public void handleCancelTrade(int tradeId, int clientId) {
+		if(catan.getTrade(tradeId).getPlayerId()==clientId){
+			catan.getTrades().remove(catan.getTrade(tradeId));
+		}else{
+			catan.getTrade(tradeId).decline(clientId);
+			if(catan.getTrade(tradeId).getDeclinedTraders().size()==catan.getPlayerCount()-1){
+				catan.getTrades().remove(catan.getTrade(tradeId));
+			}
+		}
+		server.sendCancelledTrade(tradeId,clientId);
+	}
+
+	public void handleMaritimeTrade(int clientId, ArrayList<ResourceType> offer, ArrayList<ResourceType> demand) {
+		//Checken ob Client sich tausch leisten kann und ob er das darf (wegen 2:1 wechsel oder ob nur 4:1 wechsel möglich ist)
+		//Wenn ja -> 
+		//			server.sendCosts(clientId, offer);
+		//			server.sendProduce(clientId, demand);
+		//Wenn Nein -> server.sendError(clientId, "You don't have enough resources!");
+		// View entscheidung, wie Handel mit Bank visualisiert ist, ob es direkt einen Button gibt, mit dem Handel oder erst wenn man das Handelfenster öffnet Option zum Seehandel
+		
+		
+	}
+
+}

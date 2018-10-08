@@ -1,0 +1,11 @@
+package view;
+
+import javafx.scene.layout.BorderPane;
+
+public abstract class StatsControlSkin extends BorderPane {
+	
+	
+	public void update(){
+		
+	}
+}

@@ -1,0 +1,40 @@
+package jsonstructures;
+
+/**
+ * This class contains the data for the harbor 
+ * @author Felixi
+ *
+ */
+public class HafenDaten {
+	private String Ort;
+	private String Typ;
+	
+	
+	/**
+	 * creates a HafenDaten object
+	 * @param ort		location of the harbor
+	 * @param typ		type of the harbor
+	 */
+	public HafenDaten(String ort, String typ) {
+		Ort = ort;
+		Typ = typ;
+	}
+
+
+	/**
+	 * @return the ort
+	 */
+	public String getOrt() {
+		return Ort;
+	}
+
+
+	/**
+	 * @return the typ
+	 */
+	public String getTyp() {
+		return Typ;
+	}
+	
+	
+}

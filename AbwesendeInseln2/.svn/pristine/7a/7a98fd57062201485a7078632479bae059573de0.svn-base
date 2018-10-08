@@ -1,0 +1,221 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import view.HandSkin;
+
+/**
+ * Represent the hand of a player 
+ * @author Daniel Panangian
+ */
+public class Hand {
+	
+	private PlayerClient owner;
+	
+	private ArrayList<ResourceType> resources;
+	private int lumberCount;
+	private int brickCount;
+	private int woolCount;
+	private int grainCount;
+	private int oreCount;
+	private HandSkin handSkin;
+	
+	/**
+	 * Contructor
+	 *
+	 */
+	public Hand(PlayerClient owner){
+		this.owner = owner;
+		resources = new ArrayList<ResourceType>();
+	}
+	
+	/**
+	 * Get the player's resources 
+	 *@return resources
+	 */
+	public ArrayList<ResourceType> getResources() {
+		return resources;
+	}
+	/**
+	 *Add resource to the player's hand and increase resource count
+	 *@param resource
+	 */
+	public void addResources(ResourceType resource,Player player,Tile hex) {
+		this.resources.add(resource);
+		switch(resource){
+			case LUMBER	: lumberCount++;
+				break;
+			case BRICK	: brickCount++;
+				break;
+			case WOOL	: woolCount++;
+				break;
+			case GRAIN	: grainCount++;
+				break;
+			case ORE	: oreCount++;
+				break;
+		}
+		System.out.println( "resource " + resource + " added to player "+ player.getName() + " from hex row " +hex.getRow() + " pos " + hex.getPos());
+		
+	}
+	/**
+	 *decrease resource count
+	 *@param resource
+	 */
+	private void decreaseCount(ResourceType resource) {
+		switch(resource){
+		case LUMBER	: lumberCount--;
+			break;
+		case BRICK	: brickCount--;
+			break;
+		case WOOL	: woolCount--;
+			break;
+		case GRAIN	: grainCount--;
+			break;
+		case ORE	: oreCount--;
+			break;
+		}	
+	}
+	
+	/**
+	 *if resource requirements of buying a Road fulfilled
+	 *@return True if fulfilled, otherwise false
+	 */
+	public boolean canBuyRoad() {
+		return resources.contains(ResourceType.BRICK) && resources.contains(ResourceType.LUMBER);
+	}
+	
+	/**
+	 *if resource requirements of buying a Settlement fulfilled
+	 *@return True if fulfilled, otherwise false
+	 */
+	public boolean canBuySettlement() {
+		return resources.contains(ResourceType.BRICK) && resources.contains(ResourceType.WOOL)
+				&& resources.contains(ResourceType.GRAIN) && resources.contains(ResourceType.LUMBER);
+	}
+	
+	/**
+	 *if resource requirements of buying a City fulfilled
+	 *@return True if fulfilled, otherwise false
+	 */
+	public boolean canBuyCity() {
+		return Collections.frequency(resources, ResourceType.GRAIN) >= 2
+				&& Collections.frequency(resources, ResourceType.ORE) >= 3;
+	}
+	
+	/**
+	 *if resource requirements of buying a dev card fulfilled
+	 *@return True if fulfilled, otherwise false
+	 */
+	public boolean canBuyDevCard() {
+		return resources.contains(ResourceType.ORE) && resources.contains(ResourceType.GRAIN)
+				&& resources.contains(ResourceType.WOOL);
+	}
+	
+	/**
+	 *decrease player's resources in Hand when building or buying something
+	 *@return True if resources is enough, otherwise false
+	 */
+	public boolean spend(ResourceType... resources) {
+		for (ResourceType resource : resources) {
+			int index = this.resources.indexOf(resource);
+			if (index != -1) {
+				this.resources.remove(index);
+				this.decreaseCount(resource);
+				owner.getResCards().remove(resource);
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Updates the hand
+	 * @param resources
+	 */
+	public void updateHand(ArrayList<ResourceType> updatedResources){
+		this.resources = updatedResources;	
+		this.lumberCount = 0;
+		this.brickCount = 0;
+		this.woolCount = 0;
+		this.grainCount = 0;
+		this.oreCount = 0;
+		for(ResourceType nextRes: resources){
+			updatedResources.add(nextRes);
+			switch(nextRes){
+				case LUMBER	: lumberCount++;
+					break;
+				case BRICK	: brickCount++;
+					break;
+				case WOOL	: woolCount++;
+					break;
+				case GRAIN	: grainCount++;
+					break;
+				case ORE	: oreCount++;
+					break;
+			}
+		}
+	};
+	
+	/**
+	 *buy a Road
+	 */
+	public void buyRoad() {
+		spend(ResourceType.LUMBER, ResourceType.BRICK);
+	}
+	/**
+	 *buy a Settlement
+	 */
+	public void buySettlement() {
+		spend(ResourceType.LUMBER, ResourceType.BRICK, ResourceType.WOOL, ResourceType.GRAIN);
+	}
+	/**
+	 *buy a City
+	 */
+	public void buyCity() {
+		spend(ResourceType.ORE, ResourceType.ORE, ResourceType.ORE, ResourceType.GRAIN, ResourceType.GRAIN);
+	}
+	/**
+	 *buy a dev card
+	 */
+	public void buyDevCard() {
+		spend(ResourceType.ORE, ResourceType.GRAIN, ResourceType.WOOL);
+	}
+	/**
+	 *get lumber count
+	 */
+	public int getLumberCount() {
+		return lumberCount;
+	}
+	/**
+	 *get brick count
+	 */
+	public int getBrickCount() {
+		return brickCount;
+	}
+	/**
+	 *get wool count
+	 */
+	public int getWoolCount() {
+		return woolCount;
+	}
+	/**
+	 *get grain count
+	 */
+	public int getGrainCount() {
+		return grainCount;
+	}
+	/**
+	 *get ore count
+	 */
+	public int getOreCount() {
+		return oreCount;
+	}
+	
+	public HandSkin getHandSkin(){
+		return handSkin;
+	}
+	
+}

@@ -1,0 +1,82 @@
+package jsonstructures;
+
+import model.Tile;
+
+/**
+ * This class handles the event that the robber has been set to another tile
+ * @author Felixi
+ *
+ */
+public class RaeuberDaten {
+	int Spieler;
+	String Ort;
+	int Ziel;
+	
+	/**
+	 * Constructor
+	 * @param Spieler
+	 * @param Ort
+	 * @param Ziel
+	 */
+	public RaeuberDaten(int Spieler, String Ort, int Ziel){
+		this.Spieler = Spieler;
+		this.Ort = Ort;
+		this.Ziel = Ziel;
+	}
+	
+	/**
+	 * Getter for Spieler who set the robber
+	 * @return
+	 */
+	public int getSpieler() {
+		return Spieler;
+	}
+	
+	/**
+	 * Setter for Spieler
+	 * @param spieler
+	 */
+	public void setSpieler(int spieler) {
+		Spieler = spieler;
+	}
+	
+	/**
+	 * Getter for Ort to Tile converted
+	 * @return
+	 */
+	public Tile getOrt() {
+		return ConvertMaster.convertToTile(Ort);
+	}
+	
+	/**
+	 * Setter for Ort
+	 * @param ort
+	 */
+	public void setOrt(String ort) {
+		Ort = ort;
+	}
+	/**
+	 * Getter for Ziel, the player that has been robbed
+	 * @return
+	 */
+	public int getZiel() {
+		return Ziel;
+	}
+	
+	/**
+	 * Setter for Ziel
+	 * @param ziel
+	 */
+	public void setZiel(int ziel) {
+		Ziel = ziel;
+	}
+	
+	/**
+	 * Getter for Ort String
+	 * @return
+	 */
+	public String getStringOrt(){
+		return Ort;
+	}
+	
+}

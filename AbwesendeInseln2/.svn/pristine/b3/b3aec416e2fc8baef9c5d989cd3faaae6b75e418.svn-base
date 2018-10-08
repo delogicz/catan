@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class ClientChatDaten {
+	private String Nachricht;
+
+	public ClientChatDaten(String nachricht) {
+		Nachricht = nachricht;
+	}
+}

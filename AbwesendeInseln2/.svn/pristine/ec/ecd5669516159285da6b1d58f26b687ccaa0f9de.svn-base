@@ -1,0 +1,75 @@
+package controller;
+
+import model.Player;
+import model.PlayerColor;
+import model.SetUp;
+
+public class SetUpControl {
+	
+	private SetUp setUp;
+	
+	/**
+	 * Constructor
+	 * @param setUp 
+	 */
+	public SetUpControl(SetUp setUp){
+		this.setUp = setUp;
+	}
+	
+	/**
+	 * Checks whether name is already taken or not
+	 * @param name the name the new player entered
+	 * @return true if name is valid
+	 */
+	public boolean validName(String name){
+		if(name.length() == 0){
+			return false;
+		}
+		for(Player player: setUp.getPlayers()){
+			if(player.getName() == name){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Lets user join the game as a new player
+	 * @param redSelect isSelected() of red RadioButton
+	 * @param orangeSelect isSelected() of orange RadioButton
+	 * @param blueSelect isSelected() of blue RadioButton 
+	 * @param enteredName String user entered as name
+	 */
+	public void joinAsNewPlayer(boolean redSelect, boolean orangeSelect, boolean blueSelect, String enteredName){
+		
+		PlayerColor chosenColor;
+		if(redSelect) chosenColor = PlayerColor.RED;
+		else if(orangeSelect) chosenColor = PlayerColor.ORANGE;
+		else if(blueSelect) chosenColor = PlayerColor.BLUE;
+		else chosenColor = PlayerColor.WHITE;
+		if(setUp.getPlayers().size()< 4){
+			setUp.addPlayer(chosenColor, enteredName);
+			setUp.addPlayer(PlayerColor.ORANGE, "a");
+			setUp.addPlayer(PlayerColor.BLUE, "b");
+			setUp.addPlayer(PlayerColor.WHITE, "d");
+			setUp.startPlaying();
+		}
+		else {
+			//TODO: Show Message: There are already four players.
+		}
+	}
+	
+	/**
+	 * Checks whether color was already chosen by another player
+	 * @param chosenColor color new player wants to choose
+	 * @return true if color is not taken yet
+	 */
+	public boolean validColor(PlayerColor chosenColor) {
+		for(Player player: setUp.getPlayers()){
+			if(player.getPlayerColor() == chosenColor){
+				return false;
+			}
+		}
+		return true;
+	}
+}

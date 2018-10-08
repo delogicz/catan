@@ -1,0 +1,41 @@
+package game;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+/**
+ * Application. Run to start a new game of "The Settlers of Catan".
+ *
+ */
+public class App extends Application {
+		
+	private Stage stage;
+
+	@Override
+	public void start(Stage stage) throws Exception {
+		this.stage = stage;
+		GameManager gameManager = new GameManager(this);
+		Scene scene = gameManager.getSetUpScene();
+		stage.setTitle("Settlers of Catan");
+		stage.setScene(scene);
+		stage.setResizable(true);
+		stage.show();
+	}
+
+	public static void main(String[] args) {
+		Application.launch(args);
+	}
+	
+	public void changeScene(Scene scene){
+		stage.setScene(scene);
+		stage.centerOnScreen();
+	}
+	
+	/**
+	 * @return the stage
+	 */
+	public Stage getStage(){
+		return this.stage;
+	}
+}

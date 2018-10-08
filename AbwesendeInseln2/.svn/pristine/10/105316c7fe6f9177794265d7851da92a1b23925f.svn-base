@@ -1,0 +1,439 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+import controller.PlayerControl;
+import javafx.application.Platform;
+import javafx.scene.Cursor;
+
+public class PlayerClient extends Player {
+	
+	private boolean readyToStartGame;  //for Server
+	
+	private int knightCount;
+	private boolean hasLargestArmy; 
+	private boolean hasLongestRoad;
+	
+	private ArrayList<Harbour> harbours;
+
+	private int longestRoad;
+	
+	
+	private Hand playerCards;
+	
+	private int roadsLeft;
+	private int settlementsLeft;
+	private int citiesLeft;
+	
+	protected int resCardsCount;
+	protected ArrayList<ResourceType> resCards;
+	private ArrayList<DevelopmentCard> devCards;
+	
+	private boolean buildSettlementPressed;
+	private boolean buildRoadPressed;
+	private boolean buildCityPressed;
+
+	protected boolean relocateRobber;
+	protected Player currentTurnTaker;
+	protected boolean active;
+	private PlayerControl playerControl;
+	
+	
+	/**
+	 * Constructor
+	 */
+	public PlayerClient(PlayerColor playerColor, int playerId, String name){
+		
+		super(playerColor, playerId, name);
+		
+		
+		this.playerCards = new Hand(this);
+
+		this.knightCount = 0;
+
+		this.resCards = new ArrayList<ResourceType>();
+		this.longestRoad = 0;
+
+		roadsLeft = 15;
+		settlementsLeft = 5;
+		citiesLeft = 4;
+		
+		this.relocateRobber = false;
+		
+		this.playerControl = new PlayerControl(this);
+	}
+	
+	/**
+	 * Updates the information of the player
+	 * @param victoryPoints
+	 * @param name
+	 * @param status
+	 * @param color
+	 * @param resources
+	 */
+	public void update(int victoryPoints, String name, String status, PlayerColor color,
+			ArrayList<ResourceType> resources) {
+		this.victoryPoints = victoryPoints;
+		this.name = name;
+		this.status = status;
+		this.playerColor = color;
+		this.resCards = resources;
+		this.resCardsCount = resources.size();
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				playerControl.disableAllButtons();
+				switch(status){
+					case "Dorf bauen": playerControl.enableBuildSetButton(); break;
+					case "Strasse bauen": playerControl.enableBuildRoadButton(); break;
+					case "Wuerfeln": playerControl.enableRollDiceButton(); break;
+					case "Karten wegen Raeuber abgeben": //TODO break;
+					case "Raeuber versetzen": setRelocateRobber(true); break;
+					case "Handeln oder bauen": playerControl.enableAllButtons(); break;
+				}
+			}
+		});
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Builds a new settlement or city (handleConstruction)
+	 * @param typ type of the new building
+	 * @param vertex vertex on which the building is located
+	 */
+	public Building build(String typ, Vertex vertex, boolean server) {
+		if(typ.equals("Dorf")){
+			Settlement newSettlement;
+			if(server) newSettlement = new Settlement(vertex, this);
+			else newSettlement = new Settlement(vertex, this, catan.getIsland().getSkin());
+			settlements.add(newSettlement);
+			vertex.setOccupyingBuilding(newSettlement);
+			for (Tile hex : vertex.getHexes()){
+				hex.getSettlements().add(newSettlement);
+			}
+			settlementsLeft--;
+			vertex.setOccupied(true);
+			return newSettlement;
+		}
+		else if(typ.equals("Stadt")){
+			City newCity;
+			if(server) newCity = new City(vertex, this);
+			else newCity = new City(vertex, this, catan.getIsland().getSkin());
+			vertex.setOccupyingBuilding(newCity);
+			this.cities.add(newCity);
+			this.settlementsLeft++;
+			this.citiesLeft--;
+			vertex.setOccupied(true);
+			return newCity;
+		}
+		return null;
+	}
+	
+	/**
+	 * Builds a new road (handleConstruction)
+	 * @param edge edge on which the road is located
+	 */
+	public Road build(Edge edge, boolean server) {
+		Road newRoad;
+		if(server) newRoad = new Road(edge, this);
+		else newRoad = new Road(edge, this, catan.getIsland().getSkin());
+		edge.setOccupyingBuilding(newRoad);
+		edge.setOccupied(true);
+		this.roads.add(newRoad);
+		this.roadsLeft--;
+		return newRoad;
+	}
+
+	
+	/**
+	 * Use when PlayerClient has costs in form of resource cards 
+	 */
+	public void resCardsCosts(ArrayList<ResourceType> costs){
+		this.resCards.removeAll(costs);
+		resCardsCosts(costs.size());
+	}
+	
+	/**
+	 * Use when PlayerClient receives resource cards 
+	 */
+	public void resCardsProduce(ArrayList<ResourceType> resources) {
+		this.resCards.addAll(resources);
+		resCardsProduce(resources.size());
+	}
+	
+	/**
+	 * method for trading resources with the harbour
+	 */
+	public void harbourTrade() {
+		
+	}
+	
+	/**
+	 * method for trading resources with other players
+	 */
+	public void internalTrade(int[] resourcesOffer, int[] resourcesRequest){
+		int brickOffer = resourcesOffer[0];
+		int grainOffer = resourcesOffer[1];
+		int lumberOffer = resourcesOffer[2];
+		int oreOffer = resourcesOffer[3];
+		int woolOffer = resourcesOffer[4];
+		
+		for(ResourceType resourceCard : resCards) {
+			switch(resourceCard) {
+			case BRICK : brickOffer--; break;
+			case GRAIN : grainOffer--; break; 
+			case LUMBER : lumberOffer--; break;
+			case ORE : oreOffer--; break;
+			case WOOL : woolOffer--; break;
+			}
+			if(brickOffer <= 0 && grainOffer <= 0 && lumberOffer <= 0 && oreOffer <= 0 && woolOffer <= 0) {
+//				startTrade();
+				//TODO: startTrade()
+			}		
+		}
+		
+//		tradeFailed(); // TODO	
+		
+	}
+
+
+	
+	/**
+	 * Adds a certain amount of victoryPoints
+	 * @param pointsToBeAdded
+	 */
+	public void addVictoryPoints(int pointsToBeAdded){
+		this.victoryPoints += pointsToBeAdded;
+	}
+	
+	/**
+	 * Checks whether player won the game or not
+	 * Calls catan.gameWon(Player winner)
+	 */
+	private void checkVictoryPoints(){
+		if(victoryPoints >= 10){
+			catan.gameWon(this);
+		}
+	}
+	
+	/**
+	 * check if the rules for building a settlement is fulfilled
+	 * Rules:
+	 * First building phase:
+	 * a settlement must built within two space of another city or settlement
+	 * Next turn: 
+	 * a settlement must be built within two space of another city or settlement and must be built on an 
+	 * end of a player's road 
+	 * @param edge
+	 */
+	public boolean canBuildSettlement(Vertex vertex) {
+		if (catan.getRound() == 1 ||catan.getRound() == 2){
+			for (Vertex connected : vertex.getConnectedVertices()) {
+				if (connected.isOccupied()) {
+					System.out.println("Cannot build within one space of another city or settlement");
+					return false;
+				}
+			}
+			return true;
+		}
+		else{
+			for (Vertex connected : vertex.getConnectedVertices()) {
+				if (connected.isOccupied()) {
+					System.out.println("Cannot build within one space of another city or settlement");
+					return false;
+				}
+			}
+			for (Edge connected : vertex.getEdges()) {
+				if (Building.isOwner(this, connected.getOccupyingBuilding())) {
+					return true;
+				}
+			}
+			System.out.println("Cannot build without your own road");
+			return false;
+		}
+	}
+	
+	/**
+	 * check if the rules for building a road is fulfilled
+	 * Rules:
+	 * One of two vertices of the edge must consist a building (road or settlement or city) and 
+	 * the building must belong to the player
+	 * 
+	 *@param edge
+	 */
+	public boolean canBuildRoad(Edge edge) {
+		Building fromPiece = edge.getVertexFrom().getOccupyingBuilding();
+		Building toPiece = edge.getVertexTo().getOccupyingBuilding();
+		boolean fromPieceIsOwned = Building.isOwner(this, fromPiece);
+		boolean toPieceIsOwned = Building.isOwner(this, toPiece);
+		if (fromPieceIsOwned || toPieceIsOwned) {
+			return true;
+		}
+
+		for (Edge fromVertexEdge : edge.getVertexFrom().getEdges()) {
+			if (Building.isOwner(this, fromVertexEdge.getOccupyingBuilding())) {
+				return true;
+			}
+		}
+		for (Edge fromVertexEdge : edge.getVertexTo().getEdges()) {
+			if (Building.isOwner(this, fromVertexEdge.getOccupyingBuilding())) {
+				return true;
+			}
+		}
+		System.out.println("Only build on your building !");
+		return false;
+	}
+	
+	
+	public int longestRoad(){
+		Stack stack = new Stack();
+		 longestRoad = 0;
+		 Edge edge;
+		 /**settlements = new ArrayList<Settlement>();*/
+		//geht die ganze Settlements Liste durch
+		 for(Settlement settlement:settlements){
+			 //geht jede Kante durch
+			 for(int i = 0; i<2; i++){
+				 edge = settlement.getVertex().getEdges().get(i);
+				 if(!(edge.getOccupyingBuilding() == null) && edge.getOccupyingBuilding().getOwner() == this){
+					 longestRoad++;
+				 }
+			 }
+		 }
+		 System.out.println("Player " + this.playerColor + " longestRoad = " + longestRoad);
+		 return longestRoad;
+	}
+	
+	/**
+	 * @return the roadsLeft
+	 */
+	public int getRoadsLeft() {
+		return roadsLeft;
+	}
+
+	/**
+	 * @return the settlementsLeft
+	 */
+	public int getSettlementsLeft() {
+		return settlementsLeft;
+	}
+
+	/**
+	 * @return the citiesLeft
+	 */
+	public int getCitiesLeft() {
+		return citiesLeft;
+	}
+
+	public void endingTurn() {
+		this.buildSettlementPressed = false;
+		this.setBuildRoadPressed(false);
+		
+	}
+	
+	/**
+	 * @param relocateRobber the boolean relocateRobber to be set
+	 */
+	public void setRelocateRobber(boolean relocateRobber) {
+		this.relocateRobber = relocateRobber;
+		if(relocateRobber){
+			catan.getGameSkin().setCursor(Cursor.OPEN_HAND);
+		}
+		else catan.getGameSkin().setCursor(Cursor.DEFAULT);
+	}
+	
+	public void setCurrentTurnTaker(Player player) {
+		this.currentTurnTaker = player;
+		this.active = (currentTurnTaker == this);
+		
+	}
+	
+	/**
+	 * @return the relocateRobber
+	 */
+	public boolean getRelocateRobber() {
+		return relocateRobber;
+	}
+
+	public boolean isBuildSettlementPressed() {
+		return buildSettlementPressed;
+	}
+
+	public void setBuildSettlementPressed(boolean bool) {
+		buildSettlementPressed = bool;
+	}
+	public boolean isBuildRoadPressed() {
+		return buildRoadPressed;
+	}
+
+	public void setBuildRoadPressed(boolean buildRoadPressed) {
+		this.buildRoadPressed = buildRoadPressed;
+	}
+
+	public boolean isBuildCityPressed() {
+		return buildCityPressed;
+	}
+
+	public void setBuildCityPressed(boolean buildCityPressed) {
+		this.buildCityPressed = buildCityPressed;
+	}
+	
+	/**
+	 * @return the resCards
+	 */
+	public ArrayList<ResourceType> getResCards() {
+		return resCards;
+	}
+	
+	/**
+	 * @return the readyToStartGame
+	 */
+	public boolean isReadyToStartGame() {
+		return readyToStartGame;
+	}
+
+	/**
+	 * @param readyToStartGame the readyToStartGame to set
+	 */
+	public void setReadyToStartGame(boolean readyToStartGame) {
+		this.readyToStartGame = readyToStartGame;
+	}
+	
+	/**
+	 * @param resCards the resCards to set
+	 */
+	public void setResCards(ArrayList<ResourceType> resCards) {
+		this.resCards = resCards;
+		playerCards.updateHand(resCards);
+	}
+	
+	/**
+	 * get player's Hand
+	 *@return playerCards
+	 */
+	public Hand getPlayerCards() {
+		return playerCards;
+	}
+	
+	/**
+	 * @return the playerControl
+	 */
+	public PlayerControl getPlayerControl() {
+		return playerControl;
+	}
+	
+	/**
+	 * get knight count
+	 *@return knightCount
+	 */
+	public int getKnightCount(){
+		return knightCount;
+	}
+}

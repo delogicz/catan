@@ -1,0 +1,71 @@
+package view;
+
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+
+import game.Settings;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import model.Player;
+import model.PlayerClient;
+
+public class StatsControlSkin3p extends StatsControlSkin {
+	
+
+	private PlayerClient player;
+	private ArrayList<Player> players;
+	private Player player1,player2,player3;
+	private PlayerBox player1box,player2box,player3box;
+	private HBox list;
+	private String path;
+	
+	public StatsControlSkin3p(PlayerClient player,ArrayList<Player> players){
+	setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+	setPickOnBounds(false);
+	
+	this.players = players;
+	this.player = player;
+	
+	
+	for(Player p:players){
+		if (player.getPlayerColor() == p.getPlayerColor()){
+			p = player;
+			break;
+		}
+	}
+	
+	player1 = players.get(0);
+	player2 = players.get(1);
+	player3 = players.get(2);
+	
+	player1box= new PlayerBox(player1,1);
+	player2box= new PlayerBox(player2,2);
+	player3box= new PlayerBox(player3,3);
+
+	
+	list = new HBox();
+	
+	list.getChildren().addAll(player1box,player2box,player3box);
+	this.setTop(list);
+	BorderPane.setAlignment(list, Pos.TOP_CENTER);
+	
+	
+	
+	}
+	public void update(){
+		player1box.update();
+		player2box.update();
+		player3box.update();
+	}
+	
+}

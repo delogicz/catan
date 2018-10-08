@@ -1,0 +1,129 @@
+package controller;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
+
+public class LogMaster {
+	
+	 static private LogFilter filter = null;
+	 private static final Logger log = Logger.getLogger(LogMaster.class.getName());
+	 private static final CustomLevel thr = new CustomLevel("THREAD",Level.FINE.intValue());
+	 private static final CustomLevel bot = new CustomLevel("BOT",Level.FINE.intValue());
+	 private static final CustomLevel mod = new CustomLevel("MODEL",Level.FINE.intValue());
+	 private static final CustomLevel net = new CustomLevel("NETWORK",Level.FINE.intValue());
+	 private static final CustomLevel ui = new CustomLevel("USER_INPUT",Level.FINE.intValue());
+	 private static final CustomLevel exc = new CustomLevel("EXCEPTION",Level.WARNING.intValue());
+	
+	 
+	public static void initialize(){
+		log.setLevel(Level.ALL);
+		FileHandler fh = null;
+		filter = new LogFilter();
+		String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new Date());
+		try {
+			fh = new FileHandler("log/log" +timeStamp+ ".log");
+			fh.setFilter(filter);
+		} catch (SecurityException | IOException e1) {
+			//mimi
+			//ordner erstellen wo mans reinspeichenr will
+			// wenn er keinen ordner findet, eigenen ordner finden
+		}
+		SimpleFormatter sf = new SimpleFormatter();
+		fh.setFormatter(sf);
+		log.addHandler(fh);
+	}
+	
+	public static void logBot(String msg){
+		log.log(bot,msg);
+	}
+	
+	public static void logMod(String msg){
+		log.log(mod,msg);
+	}
+	
+	public static void logNet(String msg){
+		log.log(net,msg);
+	}
+	
+	public static void logUI(String msg){
+		log.log(ui,msg);
+	}
+	
+	public static void logThr(String msg){
+		log.log(thr,msg);
+	}
+	
+	public static void logExc(String msg){
+		log.log(exc,msg);
+	}
+	
+	public static void log(String msg){
+		String sub = msg.substring(0, 3);
+		switch(sub){
+		case "[Bo":logBot(msg);break;
+		case "[Th":logThr(msg);break;
+		case "[Mo":logMod(msg);break;
+		case "[Ne":logNet(msg);break;
+		case "[UI":logUI(msg);break;
+		case "[Ex":logExc(msg);break;
+		default: logExc("[Exc]Unknown Log: " + msg);
+		}
+	}
+	
+
+	public static void setFilter( boolean thr, boolean bot, boolean mod, boolean net, boolean exc, boolean ui) {
+		filter.setThread(thr);
+		filter.setBotLog(bot);
+		filter.setModel(mod);
+		filter.setNetwork(net);
+		filter.setExcept(exc);
+		filter.setGui(ui);
+	}
+	
+	public static void setFilter(boolean allLog) {
+			if (allLog){
+				filter.setThread(true);
+				filter.setBotLog(true);
+				filter.setModel(true);
+				filter.setNetwork(true);
+				filter.setExcept(true);
+				filter.setGui(true);
+			}
+	}
+
+
+	public static Logger getLog() {
+		return log;
+	}
+
+	public static CustomLevel getThr() {
+		return thr;
+	}
+
+	public static CustomLevel getBot() {
+		return bot;
+	}
+
+	public static CustomLevel getMod() {
+		return mod;
+	}
+
+	public static CustomLevel getNet() {
+		return net;
+	}
+
+	public static CustomLevel getUi() {
+		return ui;
+	}
+
+	public static CustomLevel getExc() {
+		return exc;
+	}
+	
+}

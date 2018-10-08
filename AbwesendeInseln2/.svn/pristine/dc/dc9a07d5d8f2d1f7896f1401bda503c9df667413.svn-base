@@ -1,0 +1,55 @@
+package view;
+
+
+
+import java.net.URISyntaxException;
+
+
+
+import game.Settings;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
+import model.Tile;
+import model.TokenNumber;
+
+public class NumberTokenSkin {
+
+	private Shape shape;
+	private TokenNumber token;
+	
+	public NumberTokenSkin(Tile hex) {
+		shape = new Circle(0.4 * Settings.SCALE);
+		token = hex.getNumberToken();
+		if (token != TokenNumber.SEVEN ){
+	
+		try {
+			String path = NumberTokenSkin.class.getResource("/" +  token.getImgUrl() ).toURI().toString();
+			Image image = new Image(path);
+			ImagePattern imagePattern = new ImagePattern(image);
+			shape.setFill(imagePattern);
+			Shape hexShape = hex.getSkin().getShape();
+			shape.setTranslateX(hexShape.getTranslateX());
+			shape.setTranslateY(hexShape.getTranslateY());
+			shape.setMouseTransparent(true);
+		} catch (URISyntaxException| NullPointerException ex) {
+			System.out.println("Specified file does not exist.");
+			ex.printStackTrace();
+			}
+		}
+		else{
+			shape.setFill(Color.TRANSPARENT);
+		}
+		
+	}
+	
+	
+	
+	public Shape getShape() {
+		return shape;
+	}
+
+	
+}

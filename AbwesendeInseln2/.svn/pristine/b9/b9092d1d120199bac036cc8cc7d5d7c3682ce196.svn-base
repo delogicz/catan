@@ -1,0 +1,486 @@
+package view;
+
+import controller.PlayerControl;
+import game.Settings;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import model.Player;
+import model.PlayerColor;
+/**
+ * View of a game control
+ * @author Daniel Panangian, Stefanie Kloss
+ */
+public class PlayerControlSkin extends BorderPane {
+	
+	private VBox chatVBox, otherButtons;
+	private GridPane allInfo, buildAndBuyButtons;
+	private Button buildSetButton,buildRoadButton,buildCityButton,buyDevCardButton; 
+	private Button tradeButton, rollDiceButton,endTurnButton, showDevCardButton;
+	private Text lumber, brick, wool, grain, ore, settlement, city, road, status,turn;
+	private ImageView largestKnight,longestRoad;
+	private Player player;
+	
+	/**
+	 * Constructor
+	 */
+	public PlayerControlSkin(PlayerControl playerControl){
+		
+		this.player = playerControl.getPlayer();
+		
+		setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+		setPickOnBounds(false);
+		
+		this.buildAndBuyButtons = new GridPane();
+		this.otherButtons = new VBox();
+		
+		buildSetButton = new Button("Build Settlement");
+		buildSetButton.setMinWidth(Settings.BUTTON_NORMAL_WIDTH);
+
+	    buildRoadButton = new Button("Build Road");
+	    buildRoadButton.setMinWidth(Settings.BUTTON_SLIM_WIDTH);
+	    
+	    buildCityButton = new Button("Build City");
+	    buildCityButton.setMinWidth(Settings.BUTTON_SLIM_WIDTH);
+	    
+	    buyDevCardButton = new Button("Buy Development Card");
+
+	    tradeButton = new Button("Trading Options");
+	    tradeButton.setMinWidth(Settings.BUTTON_NORMAL_WIDTH);
+	    rollDiceButton = new Button("Roll Dice");
+	    rollDiceButton.setMinWidth(Settings.BUTTON_SLIM_WIDTH);
+	    rollDiceButton.setMinHeight(Settings.HEIGHT_IMPORTANT_BUTTON);
+	    endTurnButton = new Button("End Turn");
+	    endTurnButton.setMinWidth(Settings.BUTTON_SLIM_WIDTH);
+	    endTurnButton.setMinHeight(Settings.HEIGHT_IMPORTANT_BUTTON);
+	    showDevCardButton = new Button("Developement Cards");
+	    showDevCardButton.setMinWidth(Settings.BUTTON_WIDE_WIDTH);
+	    
+	    largestKnight = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/knight_default.png"),50,50,true,true));
+	    longestRoad = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/road_default.png"),50,50,true,true));
+	    
+	    HBox hbox = new HBox();
+	    hbox.getChildren().addAll(largestKnight,longestRoad);
+	    hbox.setSpacing(15);
+	    
+	    buildAndBuyButtons.add(buyDevCardButton, 0, 1, 3, 1);
+	    buildAndBuyButtons.add(buildSetButton, 0, 2);
+	    buildAndBuyButtons.add(buildRoadButton, 1, 2);
+	    buildAndBuyButtons.add(buildCityButton, 2, 2);
+	    buildAndBuyButtons.add(hbox,0,0);
+	    buildAndBuyButtons.setVgap(30);
+	    buildAndBuyButtons.setHgap(20);
+	    
+	    VBox tradeAndDevVBox = new VBox();
+	    tradeAndDevVBox.getChildren().addAll(tradeButton,showDevCardButton);
+	    tradeAndDevVBox.setSpacing(30);
+	    
+	    VBox diceAndEndVBox = new VBox();
+	    diceAndEndVBox.getChildren().addAll(rollDiceButton,endTurnButton);
+	    diceAndEndVBox.setSpacing(30);
+	    
+	    otherButtons.getChildren().addAll(tradeAndDevVBox,diceAndEndVBox);
+	    otherButtons.setSpacing(120);
+	    
+	    ImageView lumberImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/lumber.png"),50,50,true,true));
+		ImageView brickImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/brick.png"),50,50,true,true));
+		ImageView woolImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/wool.png"),40,40,true,true));
+		ImageView grainImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/grain.png"),35,35,true,true));
+		ImageView oreImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/ore.png"),40,40,true,true));
+		ImageView settlementImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/settlementCost.png"),200,100,true,true));
+		ImageView cityImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/cityCost.png"),200,100,true,true));
+		ImageView roadImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/roadCost.png"),120,60,true,true));
+		ImageView developmentImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/developmentCardCost.png"),150,75,true,true));
+		
+	    Tooltip settleT = new Tooltip();
+	    settleT.setGraphic(settlementImg);
+	    buildSetButton.setTooltip(settleT);
+	    
+	    Tooltip cityT = new Tooltip();
+	    cityT.setGraphic(cityImg);
+	    buildCityButton.setTooltip(cityT);
+	    
+	    Tooltip roadT = new Tooltip();
+	    roadT.setGraphic(roadImg);
+	    buildRoadButton.setTooltip(roadT);
+	    
+	    Tooltip devT = new Tooltip();
+	    devT.setGraphic(developmentImg);
+	    buyDevCardButton.setTooltip(devT);
+		
+	    allInfo = new GridPane();
+	    
+	    lumber = new Text("0");
+	    lumber.setId("infotext");
+	    brick = new Text("0");
+	    brick.setId("infotext");
+	    wool = new Text("0");
+	    wool.setId("infotext");
+	    grain = new Text("0");
+	    grain.setId("infotext");
+	    ore = new Text("0");
+	    ore.setId("infotext");
+	    
+	    status = new Text(Settings.WARTEN_BEGINN);
+	    turn = new Text();
+	    settlement = new Text("0" );
+	    city = new Text("0");
+	    road = new Text("0");
+	    
+	    changeColor(road);
+	    changeColor(city);
+	    status.setFill(Color.WHITE);
+	    turn.setFill(Color.WHITE);
+	    changeColor(settlement);
+//	    changeColor(lumber);
+//	    changeColor(brick);
+//	    changeColor(wool);
+//	    changeColor(grain);
+//	    changeColor(ore);
+	    lumber.setFill(Color.WHITE);
+	    brick.setFill(Color.WHITE);
+	    grain.setFill(Color.WHITE);
+	    ore.setFill(Color.WHITE);
+	    wool.setFill(Color.WHITE);
+	    
+		changeStroke(road);
+		changeStroke(city);
+		status.setStroke(Color.BLACK);
+		status.setStrokeWidth(1);
+		changeStroke(settlement);
+		changeStroke(lumber);
+		changeStroke(brick);
+		changeStroke(wool);
+		changeStroke(grain);
+		changeStroke(ore);
+		
+		StackPane lum = new StackPane();
+		lum.getChildren().addAll(lumberImg,lumber);
+		StackPane.setAlignment(lumber, Pos.BOTTOM_RIGHT);
+		StackPane bri = new StackPane();
+		bri.getChildren().addAll(brickImg,brick);
+		StackPane.setAlignment(brick, Pos.BOTTOM_RIGHT);
+		StackPane woo = new StackPane();
+		woo.getChildren().addAll(woolImg,wool);
+		StackPane.setAlignment(wool, Pos.BOTTOM_RIGHT);
+		StackPane gra = new StackPane();
+		gra.getChildren().addAll(grainImg,grain);
+		StackPane.setAlignment(grain, Pos.BOTTOM_RIGHT);
+		StackPane or = new StackPane();
+		or.getChildren().addAll(oreImg,ore);
+		StackPane.setAlignment(ore, Pos.BOTTOM_RIGHT);
+		
+		StackPane resBox = new StackPane();
+		Rectangle background = new Rectangle(300,40);
+		HBox res = new HBox();
+		res.setAlignment(Pos.CENTER);
+		res.setSpacing(15);
+		res.getChildren().addAll(lum,bri,woo,gra,or);
+		background.setId("resbackground");
+		resBox.getChildren().addAll(background,res);
+		
+	    allInfo.setHgap(20);
+	    allInfo.setVgap(10);
+	    allInfo.add(status, 8, 4, 3, 1);
+	    allInfo.add(settlement, 8, 5);
+	    allInfo.add(turn, 16, 4);
+	    allInfo.add(city, 10, 5);
+	    allInfo.add(road, 12, 5);
+	    allInfo.add(resBox, 0, 5);
+	    
+	    changeAllFonts();
+	    
+	    chatVBox = new ChatSkin(playerControl);
+	    chatVBox.setPickOnBounds(false);
+	    
+	    this.getChildren().addAll(buildAndBuyButtons, allInfo, otherButtons, chatVBox);
+	    this.setPickOnBounds(false);
+	    
+	    buildAndBuyButtons.setMouseTransparent(false);
+	    buildAndBuyButtons.setPickOnBounds(false);
+	    buildAndBuyButtons.setTranslateX(0);
+	    buildAndBuyButtons.setTranslateY(420);
+	    
+	    allInfo.setMouseTransparent(true);
+	    allInfo.setTranslateX(0);
+	    allInfo.setTranslateY(550);
+	    
+	    otherButtons.setMouseTransparent(false);
+	    otherButtons.setPickOnBounds(false);
+	    otherButtons.setTranslateX(900);
+	    otherButtons.setTranslateY(145);
+	    
+	    chatVBox.setTranslateX(0);
+	    chatVBox.setTranslateY(145);
+	    BorderPane.setAlignment(chatVBox,Pos.CENTER);
+
+	}
+
+	/**
+	 * changes font of a labeled object
+	 * @param labeled
+	 */
+	private void changeFont(Labeled labeled){
+		labeled.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.LITTLE_FONT_SIZE));
+	}
+	
+	/**
+	 * changes font of a text
+	 * @param text
+	 */
+	private void changeFontGiant(Text text){
+		text.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.FONT_SIZE_22));
+		text.setStyle("-fx-font-weight: 900;");
+	}
+	
+	/**
+	 * changes stroke of a text
+	 * @param text
+	 */
+	private void changeStroke(Text text){
+		if(player.getPlayerColor() == PlayerColor.WHITE){
+			text.setStroke(Color.BLACK);
+			text.setStrokeWidth(0.5);
+		}
+		if(player.getPlayerColor() == PlayerColor.RED){
+			text.setStroke(Color.BLACK);
+			text.setStrokeWidth(0.5);
+		}
+		if(player.getPlayerColor() == PlayerColor.BLUE){
+			text.setStroke(Color.BLACK);
+			text.setStrokeWidth(0.5);
+		}
+		if(player.getPlayerColor() == PlayerColor.ORANGE){
+			text.setStroke(Color.BLACK);
+			text.setStrokeWidth(0.5);
+		}
+	}
+	
+	private void changeColor(Text text){
+		text.setFill(player.getPlayerColor().getColor());
+	}
+	
+	/**
+	 * changes font of all labeled objects in class
+	 */
+	private void changeAllFonts(){
+	    changeFont(buildSetButton);
+	    changeFont(buildRoadButton);
+	    changeFont(buildCityButton);
+	    changeFont(buyDevCardButton);
+	    changeFont(tradeButton);
+	    changeFont(rollDiceButton);
+	    changeFont(endTurnButton);
+	    changeFont(showDevCardButton);
+	    turn.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.HUGE_FONT_SIZE));
+	    changeFontGiant(lumber);
+	    changeFontGiant(brick);
+	    changeFontGiant(wool);
+	    changeFontGiant(grain);
+	    changeFontGiant(ore);
+	    status.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.GIANT_FONT_SIZE));
+	    changeFontGiant(settlement);
+	    changeFontGiant(city);
+	    changeFontGiant(road);
+	    if(status.toString().length() > 10){
+	    	status.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.GIANT_FONT_SIZE)); }
+	    else {
+	    	status.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.GIANT_FONT_SIZE*1.5));
+	    }
+	}
+	
+	/**
+	 * Getter for ore
+	 * @return
+	 */
+	public Text getOre() {
+		return ore;
+	}
+	/**
+	 * Getter for grain
+	 * @return
+	 */
+	public Text getGrain() {
+		return grain;
+	}
+	
+	/**
+	 * Getter for wool
+	 * @return
+	 */
+	public Text getWool() {
+		return wool;
+	}
+	
+	/**
+	 * Getter for brick
+	 * @return
+	 */
+	public Text getBrick() {
+		return brick;
+	}
+	
+	/**
+	 * Getter for lumber
+	 * @return
+	 */
+	public Text getLumber() {
+		return lumber;
+	}
+	/**
+	 * 
+	 * @return the endTurnButton
+	 */
+	public Button getEndTurnButton() {
+		return endTurnButton;
+	}
+	/**
+	 * 
+	 * @return the rollDiceButton
+	 */
+	public Button getRollDiceButton() {
+		return rollDiceButton;
+	}
+	/**
+	 * @return the tradeButton
+	 */
+	public Button getTradeButton() {
+		return tradeButton;
+	}
+	/**
+	 * @return the BuildRoadButton
+	 */
+	public Button getBuildRoadButton() {
+		return buildRoadButton;
+	}
+	/**
+	 * 
+	 * @return the buildSetButton
+	 */
+	public Button getBuildSetButton() {
+		return buildSetButton;
+	}
+	/**
+	 * 
+	 * @return the buildCityButton
+	 */
+	public Button getBuildCityButton() {
+		return buildCityButton;
+	}
+	/**
+	 * 
+	 * @return the showDevCardButton
+	 */
+	public Button getShowDevCardButton() {
+		return showDevCardButton;
+	}
+	
+	/**
+	 * @return the status
+	 */
+	public Text getStatus() {
+		return status;
+	}
+	
+	/**
+	 * 
+	 * @return the settlement
+	 */
+	public Text getSettlement() {
+		return settlement;
+	}
+	
+	/**
+	 * Getter for city
+	 * @return
+	 */
+	public Text getCity() {
+		return city;
+	}
+	
+	/**
+	 * Setter for city
+	 * @param city
+	 */
+	public void setCity(Text city) {
+		this.city = city;
+	}
+	
+	/**
+	 * Getter for road
+	 * @return
+	 */
+	public Text getRoad() {
+		return road;
+	}
+	
+	/**
+	 * Setter for road
+	 * @param road
+	 */
+	public void setRoad(Text road) {
+		this.road = road;
+	}
+	
+	/**
+	 * @return the buyDevelopmentCard
+	 */
+	public Button getBuyDevCardButton() {
+		return buyDevCardButton;
+	}
+
+	/**
+	 * Getter for chatBox
+	 * @return
+	 */
+	public ChatSkin getChatVBox(){
+		return (ChatSkin) chatVBox;
+	}
+
+	public Text getTurn() {
+		return turn;
+	}
+	
+	public void setLargestKnight(int playerID){
+		Player p = player.getCatan().getPlayerWithID(playerID);
+		this.largestKnight.setImage(new Image(TradeSkin.class.getResourceAsStream(p.getPlayerColor().getKnightImageURL()),50,50,true,true));
+	}
+	
+	public void setLongestRoad(int playerID){
+		Player p = player.getCatan().getPlayerWithID(playerID);
+		this.longestRoad.setImage(new Image(TradeSkin.class.getResourceAsStream(p.getPlayerColor().getRoadImageURL()),50,50,true,true));
+		//System.out.println("hit");
+	}
+	
+	public void setLargestKnight(){
+		this.largestKnight.setImage(new Image(TradeSkin.class.getResourceAsStream("/img/knight_default.png"),50,50,true,true));
+	}
+	
+	public void setLongestRoad(){
+		this.longestRoad.setImage(new Image(TradeSkin.class.getResourceAsStream("/img/road_default.png"),50,50,true,true));
+	}
+	
+	/**
+	 * Changes the text of "turn"
+	 * @param name the name of the current turn taker (or "Your")
+	 */
+	public void setTurnText(String name) {
+		if(name.equals("Your")){
+			this.turn.setText("     " + name + " turn");
+		}
+		else this.turn.setText("     " + name + "'s turn");
+	}
+	
+}

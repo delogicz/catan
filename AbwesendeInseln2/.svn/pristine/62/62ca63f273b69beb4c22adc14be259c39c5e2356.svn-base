@@ -1,0 +1,176 @@
+package game;
+
+import javafx.scene.control.Labeled;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+
+/**
+ * Static variables
+ * @author Daniel Panangian, Samantha Meindl
+ */
+public class Settings {
+		
+		// Graphics
+		// Sizing & layout
+		public static final double SCALE = 63;
+		public static final double BORDER_WIDTH = 1.6 * SCALE;
+		public static final double OFFSET_X = 324 ;
+		public static final double OFFSET_Y = 150 ; 
+		public static final double HALF_SQRT_THREE = 0.866025;
+		
+		public static final double GAME_SKIN_WIDTH = 1100;
+		public static final double GAME_SKIN_HEIGHT = 700;
+		
+		public static final double ISLAND_SKIN_WIDTH = 1100;
+		public static final double ISLAND_SKIN_HEIGHT = 700;
+		
+		public static final double EDGE_LENGTH = 0.68;
+		public static final double EDGE_WIDTH = 0.07;
+		
+		public static final int[] HEXAGON_LAYOUT = new int[] { 3, 4, 5, 4, 3 };
+		public static final int[] VERTEX_LAYOUT = new int[] { 7, 9, 11, 11, 9, 7 };
+		
+		public static final double CITY_WIDTH = 0.4;
+		public static final double CITY_HEIGHT = 0.25;
+		public static final double CITY_STROKEWIDTH = 0.03;
+		
+		public static final int HANDSKIN_X = 300;
+		public static final int HANDSKIN_Y = 118;
+		
+		/**
+		 * The maximum width of the chat window
+		 */
+		public static final int CHAT_WIDTH = 150;
+		
+		/**
+		 * The maximum height of the chat window
+		 */
+		public static final int CHAT_HEIGHT = 150;
+		public static final double CHAT_INPUT_HEIGHT = 30;
+		
+		/**
+		 * The height and width of a dice
+		 */
+		public static final int DICE_SIZE = 35;
+		
+		/**		
+		 * The amount of hexes in the game
+		 */
+		public static final int AMOUNT_OF_HEXES = 19;
+		
+		/**
+		 * The amount of roads in the game
+		 */
+		public static final int AMOUNT_OF_ROADS = 15;
+		
+		/**
+		 * The amount of settlements in the game
+		 */
+		public static final int AMOUNT_OF_SETTLEMENTS = 5;
+		
+		/**
+		 * The amount of cities in the game
+		 */
+		public static final int AMOUNT_OF_CITIES = 4;
+		
+		// Colors
+
+		public static final Color EDGE_HOVER_COLOR = Color.PALEGOLDENROD;
+		public static final Color EDGE_SKIN_COLOR = Color.TRANSPARENT;
+
+
+		public static final Color VERTEX_SKIN_COLOR = Color.TRANSPARENT;
+		public static final Color VERTEX_HOVER_COLOR = Color.PALEGOLDENROD;
+		
+	
+		public static final String OSWALD_PATH      = Settings.class.getResource("/Oswald-Regular.ttf").toString();
+		public static final int STANDARD_FONT_SIZE = 14;
+		public static final int LITTLE_FONT_SIZE = 12;
+		public static final int BIG_FONT_SIZE = 16;
+		public static final int HUGE_FONT_SIZE = 18;
+		public static final int FONT_SIZE_22 = 22;
+		public static final int GIANT_FONT_SIZE = 30;
+		
+		public static final int HEIGHT_IMPORTANT_BUTTON = 35;
+		public static final int BUTTON_NORMAL_WIDTH = 100;
+		public static final int BUTTON_SLIM_WIDTH = 80;
+		public static final int BUTTON_WIDE_WIDTH = 120;
+		
+		 //Cards
+		 public static final int KNIGHT_CARDS = 14;
+		 public static final int VICTORYPOINT_CHARDS = 5;
+		 public static final int MONOPOLY_CARDS = 2;
+		 public static final int ROADBUILDING_CARDS = 2;
+		 public static final int YEAROFPLENTY_CARDS = 2;
+		 public static final int RESOURCE_CARD_COUNT = 19;
+		 
+		 //Dice Location
+		 public static final int DICE1_X = 415;
+		 public static final int DICE1_Y = 295;
+		 public static final int DICE2_X = 465;
+		 public static final int DICE2_Y = 295;
+		
+		 //Player Status
+		 public static final String SPIEL_STARTEN = "Spiel starten";
+		 public static final String WARTEN_BEGINN = "Wartet auf Spielbeginn";
+		 public static final String DORF_BAUEN = "Dorf bauen";
+		 public static final String STRASSE_BAUEN = "Strasse bauen";
+		 public static final String HANDELN_BAUEN = "Handeln oder Bauen";
+		 public static final String WUERFELN = "Wuerfeln";
+		 public static final String WARTEN = "Warten";
+		 public static final String RAEUBER_VERSETZEN = "Raeuber versetzen";
+		 public static final String KARTEN_ABGEBEN = "Karten wegen Raeuber abgeben";
+		 public static final String VERBINDUNG_VERLOREN = "Verbindung verloren";
+		 
+		 //Own status for development cards
+		 public static final String ROADBUILDING_ONE_ROAD = "RoadBuilding: Build one road";
+		 public static final String ROADBUILDING_TWO_ROADS = "RoadBuilding: Build two roads";
+		 public static final String MONOPOLY = "Monopoly: Choose the monopoly-resource";
+		 public static final String YEAR_OF_PLENTY = "Year of Plenty: Choose two resources";
+		 public static final String KNIGHT = "Knight: Relocate robber";
+		 public static final String YOU_WON = "You won";
+		 public static final String GAME_OVER = "Game over";
+		 
+		 //Types of Buildings 
+		 public static final String DORF = "Dorf";
+		 public static final String STRASSE = "Strasse";
+		 public static final String STADT = "Stadt";
+		 
+		 public static final String UNBEKANNT = "Unbekannt";
+		 
+		 //Errors
+		 public static final String TRADE_ALREADY_DONE = "This trade is already completed!";
+		 public static final String RESOURCES_ERROR = "You don't have enough resources!";
+		 public static final String ONE_DEVCARD_PER_TURN = "You can't play more than\none DevelopmentCard in a turn";
+		 
+		 //ResourceTypes
+		 public static final String HOLZ = "Holz";
+		 public static final String LEHM = "Lehm";
+		 public static final String WOLLE = "Wolle";
+		 public static final String GETREIDE = "Getreide";
+		 public static final String ERZ = "Erz";
+		 
+		 //Thread sleep durations
+		 public static final long SLEEP_SHORT = 10;
+		 public static final long SLEEP_LONG = 1000; /*Verzögerung des Sendens von Roadbuilding*/
+		 
+		/**
+		 * changes font of a labeled object									
+		 * @param labeled
+		 * @param changeColor
+		 */
+		public static void changeFont(Labeled labeled, boolean changeColor){
+			if(changeColor) labeled.setTextFill(Color.ANTIQUEWHITE);
+			labeled.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.STANDARD_FONT_SIZE));
+		}
+		
+		/**
+		 * changes font of a labeled object									
+		 * @param labeled
+		 * @param changeColor
+		 */
+		public static void changeFontBig(Labeled labeled, boolean changeColor){
+			if(changeColor) labeled.setTextFill(Color.ANTIQUEWHITE);
+			labeled.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+		}
+}

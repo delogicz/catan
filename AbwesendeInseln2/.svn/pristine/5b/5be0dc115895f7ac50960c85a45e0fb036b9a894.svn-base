@@ -1,0 +1,101 @@
+package model;
+
+import java.util.List;
+
+import view.IslandSkin;
+import view.SettlementSkin;
+
+/**
+ * A settlement. Defined by associated vertex and player.
+ * @author Daniel Panangian
+ */
+public class Settlement extends Building {
+	
+	private Vertex vertex;
+	private List<Tile> neighboringTiles;
+	
+	private SettlementSkin settlementSkin;
+	private ResourceType resourceType;
+	protected BuildingType buildingType;
+	
+	/**
+	 * Constructor for Client
+	 * @param vertex
+	 * @param player
+	 * @param islandSkin
+	 */
+	public Settlement(Vertex vertex, Player player, IslandSkin islandSkin){
+		this.vertex = vertex;
+		this.owner = player;
+		this.neighboringTiles = vertex.getHexes();
+		this.settlementSkin = new SettlementSkin(this, islandSkin);
+		this.buildingType = BuildingType.Settlement;
+	}
+	
+	public SettlementSkin getSettlementSkin() {
+		return settlementSkin;
+	}
+
+	/**
+	 * Constructor for Server
+	 * @param vertex
+	 * @param player
+	 */
+	public Settlement(Vertex vertex, PlayerClient player) {
+		this.vertex = vertex;
+		if(vertex.getHarbour() != null){
+			player.getHarbours().add(vertex.getHarbour());
+		}
+		this.owner = player;
+		this.neighboringTiles = vertex.getHexes();
+		this.buildingType = BuildingType.Settlement;
+	}
+
+	/**
+	 * Getter for Owner
+	 */
+	public Player getOwner(){
+		return this.owner;
+	}
+	/**
+	 * Getter for Vertex
+	 * @return
+	 */
+	public Vertex getVertex(){
+		return this.vertex;
+	}
+	
+	/**
+	 * @return the neighboringTiles
+	 */
+	public List<Tile> getNeighboringTiles() {
+		return neighboringTiles;
+	}
+	
+//	/**
+//	 * Build City when a settlement pressed
+//	 * Build Road if the settlement belong to the player ,the BuildCity button pressed and enough resources
+//	 */
+//	public void pressed() {
+//		if (owner == owner.getCatan().getCurrentTurnTaker()){
+//			if(owner.isBuildCityPressed()){
+//				if(owner.getPlayerCards().canBuyCity()){
+//					owner.buildCity(vertex);
+//					owner.getPlayerCards().buyCity();
+//					owner.getCatan().getGameControl().updateHand();
+//					settlementSkin.upgradetoCity();
+//				}
+//				else {
+//					vertex.getCatan().getGameManager().getApp().popUpMessage("You haven't got enough resources to build a city!");
+//					System.out.println("not enough resources");
+//				}
+//			}
+//			else System.out.println("button not pressed");
+//	
+//		}
+//		else System.out.println("not your turn man");
+//	}
+
+	
+	
+}

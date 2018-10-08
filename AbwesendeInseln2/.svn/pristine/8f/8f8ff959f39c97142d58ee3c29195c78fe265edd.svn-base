@@ -1,0 +1,43 @@
+package jsonstructures;
+
+/**
+ * This class is the inside of a ErtragNachricht object, this is beeing send from the server to the client when the client gets resources
+ * @author Felixi
+ *
+ */
+public class ErtragsDaten {
+	private int Spieler;
+	private RohstoffDaten Rohstoffe;
+	
+	
+	/**
+	 * creates an ErtragsDaten object 
+	 * @param spieler		player id
+	 * @param rohstoffe		resources the player receives
+	 */
+	public ErtragsDaten(int spieler, RohstoffDaten rohstoffe) {
+		Spieler = spieler;
+		Rohstoffe = rohstoffe;
+	}
+
+
+	public int getSpieler() {
+		return Spieler;
+	}
+
+
+	public void setSpieler(int spieler) {
+		Spieler = spieler;
+	}
+
+
+	public RohstoffDaten getRohstoffe() {
+		return Rohstoffe;
+	}
+
+
+	public void setRohstoffe(RohstoffDaten rohstoffe) {
+		Rohstoffe = rohstoffe;
+	}
+	
+}

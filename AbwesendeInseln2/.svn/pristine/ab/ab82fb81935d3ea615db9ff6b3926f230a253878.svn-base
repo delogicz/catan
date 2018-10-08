@@ -1,0 +1,235 @@
+package bot;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map.Entry;
+
+import model.Building.BuildingType;
+import model.Catan;
+import model.Hand;
+import model.Player;
+import model.ResourceType;
+import model.Settlement;
+import model.TerrainType;
+import model.Tile;
+import model.TokenNumber;
+import model.Vertex;
+/**
+ * Bot Brain to analyze the possibility to win the game
+ * @author Daniel Panangian
+ */
+public class BotBrain {
+	private ArrayList<Tile> rankedHexes;
+	@SuppressWarnings("unused")
+	private ArrayList<ResourceType> rankedBuild;
+	private Player biggestThreat;
+	private Vertex targetVertex;
+	private ArrayList<Vertex> rankedVertex;
+	protected Map<Integer, Integer> tokenProbability ;
+	private Map<Vertex, Integer> vertexProbability ;
+	private Map<Tile, Integer> hexProbability ;
+	@SuppressWarnings("unused")
+	private Catan catan;
+	private Bot bot;
+	@SuppressWarnings("unused")
+	private Hand hand;
+	
+
+	/**
+	 * Constructor
+	 * @param Bot the bot 
+	 */
+	public BotBrain(Bot bot){
+		this.bot = bot;
+		this.hand = bot.getHand();
+		
+		tokenProbability = new HashMap<Integer, Integer>(){
+			private static final long serialVersionUID = 1L;
+		{put(2, 1);put(3, 2);put(4, 3);put(5, 4);put(6, 5);
+		 put(7, 6);put(8, 5);put(9, 4);put(10, 3);put(11, 2);
+		 put(12, 1);}};
+		
+		rankedHexes = new ArrayList<Tile>();
+		rankedVertex = new ArrayList<Vertex>();
+		new ArrayList<ResourceType>();
+		
+		vertexProbability = new LinkedHashMap<Vertex, Integer>();
+		hexProbability = new LinkedHashMap<Tile, Integer>();
+		
+	
+	}
+	/**
+	 * analyze the best initial settlement placement
+	 * 
+	 */
+	public void analyzeHexes(){
+		if (this.vertexProbability != null) this.vertexProbability.clear();
+		if (rankedVertex != null) this.rankedVertex.clear();
+		bot.checkAvailableVertex();
+		for (Vertex vertex : bot.getAvailableVertices()){
+			int vertexProb = 0;
+			ArrayList <TokenNumber> tkn = new ArrayList <TokenNumber>(); 
+			ArrayList <TerrainType> rsc = new ArrayList <TerrainType>();
+			for (Tile hex : vertex.getHexes()){
+				tkn.add(hex.getToken());
+				if(hex.getToken() != TokenNumber.SEVEN){
+					//token probability
+					vertexProb += this.tokenProbability.get(hex.getToken().getNumber());
+					rsc.add(hex.getTerrainType());
+					}
+				}
+			
+			for (TokenNumber t : tkn){
+				//token diversity per hex
+				if (Collections.frequency(tkn, t) == 1) vertexProb += 2;
+				//token not owned
+				if (Collections.frequency(bot.getTokenOwned(), t) == 0) vertexProb += 4;
+			}
+			//res probability 
+			for (TerrainType ter : rsc){
+				if (Collections.frequency(rsc, ter) == 1){
+					vertexProb += 2;
+				}
+				//terrain not owned
+				if (Collections.frequency(bot.getTerrainsOwned(), ter) == 0){
+					vertexProb += 4;
+				}
+			}
+			// Brick Wood || Ore grain 
+			if (rsc.contains(TerrainType.FOREST ) && rsc.contains(TerrainType.HILLS)
+				|| rsc.contains(TerrainType.MOUNTAINS ) && rsc.contains(TerrainType.FIELDS)	) vertexProb += 3;
+			
+			// distance to nearby port
+			List <Integer> harbours= new ArrayList<Integer> (); 
+			//System.out.println(bot.getCatan().getIsland().getHarbourLocation().keySet());
+			for(Vertex vr: bot.getCatan().getIsland().getHarbourLocation().keySet()){
+				harbours.add(vertex.shortestPath(vr).size());
+			}
+			vertexProb -= Collections.min(harbours);
+			//  shortest path from owned vertices
+			if (bot.isBuildingPhaseEnd()){
+				Integer [] shortest = new Integer[2] ;
+				int c = 0;
+				for (Settlement settlement : bot.getSettlements()){
+					shortest[c] = settlement.getVertex().shortestPath(vertex).size() ;
+					c++;
+				}
+				if (Collections.min(Arrays.asList(shortest)) > 3) vertexProb = 0 ;
+				else{
+				vertexProb -= (Collections.min(Arrays.asList(shortest)));
+				}
+			}
+			
+			this.vertexProbability.put(vertex, vertexProb);
+		}
+		Set<Entry<Vertex, Integer>> set = this.vertexProbability.entrySet();
+        List<Entry<Vertex, Integer>> list = new ArrayList<Entry<Vertex, Integer>>(set);
+        Collections.sort( list, new Comparator<Map.Entry<Vertex, Integer>>()
+        {
+            public int compare( Map.Entry<Vertex, Integer> o1, Map.Entry<Vertex, Integer> o2 )
+            {
+                return (o2.getValue()).compareTo( o1.getValue() );
+            }
+        } );
+        for(Entry<Vertex, Integer> entry:list){
+            this.rankedVertex.add(entry.getKey());
+        }
+    }
+	
+	/**
+	 * Analyzes the player p with the most victoryPoints
+	 * and sets biggestThreat = p
+	 */
+	public void analyzeThreats(){
+		int largestVP = 0;
+		for (Player player : bot.getCatan().getPlayers()){
+			if(player.getVictoryPoints()>largestVP) this.biggestThreat = player;
+		}
+	}
+	
+	/**
+	 * analyzes on which Tile the robber gets set
+	 */
+	public void analyzeHexesToRob(){
+		if (this.hexProbability != null) this.hexProbability.clear();
+		if (this.rankedHexes != null) this.rankedHexes.clear();
+		analyzeThreats();
+		for(Tile hex : this.bot.getAvailableHexes()){
+			int hexprior = 0;
+			// highest token number
+			hexprior += this.tokenProbability.get(hex.getToken().getNumber());
+			// choose hex with terrain that already owned
+			if(Collections.frequency(bot.getTerrainsOwned(), hex.getTerrainType())> 0) hexprior += 4;
+			for(Vertex vertex : hex.getVertices()){
+				// choose hex with largest value of building
+				if (vertex.getOccupyingBuilding() != null) {
+					hexprior += 5;
+					// if the building is a city
+					if (vertex.getOccupyingBuilding().getBuildingType() == BuildingType.City) hexprior += 2;
+					// if biggestThreat's hex
+					if (vertex.getOccupyingBuilding().getOwner() == this.biggestThreat) hexprior += 4;
+				}	
+			}
+		
+		this.hexProbability.put(hex, hexprior);	
+		}
+		Set<Entry<Tile, Integer>> set = this.hexProbability.entrySet();
+        List<Entry<Tile, Integer>> list = new ArrayList<Entry<Tile, Integer>>(set);
+        Collections.sort( list, new Comparator<Map.Entry<Tile, Integer>>()
+        {
+            public int compare( Map.Entry<Tile, Integer> o1, Map.Entry<Tile, Integer> o2 )
+            {
+                return (o2.getValue()).compareTo( o1.getValue() );
+            }
+        } );
+        for(Entry<Tile, Integer> entry:list){
+            this.rankedHexes.add(entry.getKey());
+        }
+	}
+	
+	/**
+	 * Getter for vertexProbability
+	 * @return vertexProbability
+	 */
+	public Map<Vertex, Integer> getVertexProbability() {
+		return vertexProbability;
+	}
+
+	/**
+	 * Getter for rankedVertex
+	 * @return rankedVertex
+	 */
+	public ArrayList<Vertex> getRankedVertex() {
+		return rankedVertex;
+	}
+	/**
+	 * Getter for rankedHexes
+	 * @return rankedHexes
+	 */
+	public ArrayList<Tile> getRankedHexes() {
+		
+		return rankedHexes;
+	}
+	/**
+	 * Getter for targetVertex
+	 * @return targetVertex
+	 */
+	public Vertex getTargetVertex() {
+		return targetVertex;
+	}
+	/**
+	 * Setter for targetVertex
+	 * @param targetVertex
+	 */
+	public void setTargetVertex(Vertex targetVertex) {
+		this.targetVertex = targetVertex;
+	}
+	
+}

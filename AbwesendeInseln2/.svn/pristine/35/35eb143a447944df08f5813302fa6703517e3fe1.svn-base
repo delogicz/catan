@@ -1,0 +1,15 @@
+package jsonstructures;
+
+public class KartenDaten {
+	private FeldDaten[] Felder;
+	private GebaeudeDaten[] Gebaeude;
+	private HafenDaten[] Haefen;
+	private String Raeuber;
+	
+	public KartenDaten(FeldDaten[] felder, GebaeudeDaten[] gebaeude, HafenDaten[] haefen, String raeuber) {
+		Felder = felder;
+		Gebaeude = gebaeude;
+		Haefen = haefen;
+		Raeuber = raeuber;
+	}
+}

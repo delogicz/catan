@@ -1,0 +1,48 @@
+package controller;
+
+import game.GameManager;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import model.*;
+import view.GameControlSkin;
+import view.GameSkin;
+
+public class GameControl {
+	private Catan catan;
+	private GameControlSkin skin;
+	private GameManager gameManager;
+	public GameControl(Catan catan){
+		this.catan =catan;
+		skin = new GameControlSkin(this);
+		enableBuildSetButton();
+		
+	}
+	public void updateHand() {
+		skin.getRoad().setText("Roads: " + catan.getCurrentTurnTaker().countRoads());
+		skin.getCity().setText("Cities: " + catan.getCurrentTurnTaker().countCity());
+		skin.getSettlement().setText("Settlements: " + catan.getCurrentTurnTaker().countSettlements());
+	}
+	public final EventHandler<MouseEvent> buildSettlementHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent mouseEvent) {
+			
+			catan.getCurrentTurnTaker().setCanBuildSettlement(true);
+			
+		}
+	};
+	public void enableBuildSetButton() {
+		Button buildSetButton = skin.getBuildSetButton();
+		buildSetButton.addEventHandler(MouseEvent.MOUSE_CLICKED, buildSettlementHandler);
+
+	}
+	public GameControlSkin getSkin() {
+		return skin;
+	}
+
+	
+	
+}

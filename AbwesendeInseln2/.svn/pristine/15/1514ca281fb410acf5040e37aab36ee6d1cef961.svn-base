@@ -1,0 +1,11 @@
+package jsonstructures;
+
+public class SpielerDaten {
+	private String Name;
+	private String Farbe;
+	
+	public SpielerDaten(String name, String farbe) {
+		Name = name;
+		Farbe = farbe;
+	}
+}

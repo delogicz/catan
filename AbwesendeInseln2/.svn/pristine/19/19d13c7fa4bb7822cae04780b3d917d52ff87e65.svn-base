@@ -1,0 +1,298 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import view.HandSkin;
+
+/**
+ * Represent the hand of a player 
+ * @author Daniel Panangian
+ */
+public class Hand {
+	
+	private ArrayList<ResourceType> resCards;
+	private int lumberCount;
+	private int brickCount;
+	private int woolCount;
+	private int grainCount;
+	private int oreCount;
+	
+	private HandSkin handSkin;
+	
+	/**
+	 * Contructor
+	 *
+	 */
+	public Hand(){
+
+		resCards = new ArrayList<ResourceType>();
+	}
+	
+	/**
+	 *Adds resources to the player's hand and increases resource count
+	 *@param additionalResources
+	 */
+	public void produce(ArrayList<ResourceType> additionalResources) {
+		for(ResourceType resource: additionalResources){
+			addResource(resource);
+		}
+	}
+	
+	/**
+	 *Add resource to the player's hand and increase resource count
+	 *@param resource
+	 */
+	public void addResource(ResourceType resource) {
+		this.resCards.add(resource);
+		switch(resource){
+			case LUMBER	: lumberCount++;
+				break;
+			case BRICK	: brickCount++;
+				break;
+			case WOOL	: woolCount++;
+				break;
+			case GRAIN	: grainCount++;
+				break;
+			case ORE	: oreCount++;
+				break;
+		}	
+	}
+	
+	/**
+	 *decrease resource count
+	 *@param resource
+	 */
+	private void decreaseCount(ResourceType resource) {
+		switch(resource){
+		case LUMBER	: lumberCount--;
+			break;
+		case BRICK	: brickCount--;
+			break;
+		case WOOL	: woolCount--;
+			break;
+		case GRAIN	: grainCount--;
+			break;
+		case ORE	: oreCount--;
+			break;
+		}	
+	}
+	
+	/**
+	 * Checks if needed resources are there
+	 * @param resources
+	 * @return true if trade is possible
+	 */
+	public boolean containsRes(ArrayList<ResourceType> resources){
+		
+		int brick=0, grain=0, lumber=0, ore=0, wool=0;
+		
+		for(ResourceType res : resources){
+			switch(res){
+			case LUMBER	: lumber++; break;
+			case BRICK	: brick++;  break;
+			case WOOL	: wool++;   break;
+			case GRAIN	: grain++;  break;
+			case ORE	: ore++;    break;
+			}
+		}
+		
+		if(brick <= brickCount && grain <= grainCount && lumber <= lumberCount
+			&& ore <= oreCount && wool <= woolCount){
+			return true;
+		}
+		return false;	
+	}
+	
+	/**
+	 *if resource requirements of buying a Road fulfilled
+	 *@return True if fulfilled, otherwise false
+	 */
+	public boolean canBuyRoad() {
+		return resCards.contains(ResourceType.BRICK) && resCards.contains(ResourceType.LUMBER);
+	}
+	
+	/**
+	 *if resource requirements of buying a Settlement fulfilled
+	 *@return True if fulfilled, otherwise false
+	 */
+	public boolean canBuySettlement() {
+		return resCards.contains(ResourceType.BRICK) && resCards.contains(ResourceType.WOOL)
+				&& resCards.contains(ResourceType.GRAIN) && resCards.contains(ResourceType.LUMBER);
+	}
+	
+	/**
+	 *if resource requirements of buying a City fulfilled
+	 *@return True if fulfilled, otherwise false
+	 */
+	public boolean canBuyCity() {
+		return Collections.frequency(resCards, ResourceType.GRAIN) >= 2
+				&& Collections.frequency(resCards, ResourceType.ORE) >= 3;
+	}
+	
+	/**
+	 *if resource requirements of buying a dev card fulfilled
+	 *@return True if fulfilled, otherwise false
+	 */
+	public boolean canBuyDevCard() {
+		return resCards.contains(ResourceType.ORE) && resCards.contains(ResourceType.GRAIN)
+				&& resCards.contains(ResourceType.WOOL);
+	}
+	
+	/**
+	 * decrease player's resources in Hand when building or buying something
+	 */
+	public void spend(ResourceType... resources) {
+		for (ResourceType resource : resources) {
+			int index = this.resCards.indexOf(resource);
+			if (index != -1) {
+				this.resCards.remove(index);
+				this.decreaseCount(resource);
+			}
+		}
+	}
+	
+	/**
+	 * decrease player's resources in Hand when building or buying something
+	 */
+	public void spend(ArrayList<ResourceType> resources) {
+		for (ResourceType resource : resources) {
+			int index = this.resCards.indexOf(resource);
+			if (index != -1) {
+				this.resCards.remove(index);
+				this.decreaseCount(resource);
+			}
+		}
+	}
+	
+	/**
+	 * Updates the hand
+	 * @param resCards
+	 */
+	public void updateHand(ArrayList<ResourceType> updatedResources){
+		this.resCards = updatedResources;	
+		this.lumberCount = 0;
+		this.brickCount = 0;
+		this.woolCount = 0;
+		this.grainCount = 0;
+		this.oreCount = 0;
+		for(ResourceType nextRes: resCards){
+			switch(nextRes){
+				case LUMBER	: lumberCount++;
+					break;
+				case BRICK	: brickCount++;
+					break;
+				case WOOL	: woolCount++;
+					break;
+				case GRAIN	: grainCount++;
+					break;
+				case ORE	: oreCount++;
+					break;
+			}
+		}
+	};
+	
+	/**
+	 *buy a Road
+	 */
+	public void buyRoad() {
+		spend(ResourceType.LUMBER, ResourceType.BRICK);
+	}
+	/**
+	 *buy a Settlement
+	 */
+	public void buySettlement() {
+		spend(ResourceType.LUMBER, ResourceType.BRICK, ResourceType.WOOL, ResourceType.GRAIN);
+	}
+	/**
+	 *buy a City
+	 */
+	public void buyCity() {
+		spend(ResourceType.ORE, ResourceType.ORE, ResourceType.ORE, ResourceType.GRAIN, ResourceType.GRAIN);
+	}
+	/**
+	 *buy a dev card
+	 */
+	public void buyDevCard() {
+		spend(ResourceType.ORE, ResourceType.GRAIN, ResourceType.WOOL);
+	}
+	
+	/**
+	 * Get the player's resources 
+	 * @return resCards
+	 */
+	public ArrayList<ResourceType> getResCards() {
+		return resCards;
+	}
+	/**
+	 *get lumber count
+	 */
+	public int getLumberCount() {
+		return lumberCount;
+	}
+	/**
+	 *get brick count
+	 */
+	public int getBrickCount() {
+		return brickCount;
+	}
+	/**
+	 *get wool count
+	 */
+	public int getWoolCount() {
+		return woolCount;
+	}
+	/**
+	 *get grain count
+	 */
+	public int getGrainCount() {
+		return grainCount;
+	}
+	/**
+	 *get ore count
+	 */
+	public int getOreCount() {
+		return oreCount;
+	}
+	
+	public HandSkin getHandSkin(){
+		return handSkin;
+	}
+	
+	/**
+	 * @return a random available resource card (ResourceType)
+	 */
+	public ResourceType getRandomResource() {
+		int random = (int)(Math.random()*resCards.size());
+		return resCards.get(random);
+	}
+
+	public void setLumberCount(int lumberCount) {
+		this.lumberCount = lumberCount;
+	}
+
+	public void setBrickCount(int brickCount) {
+		this.brickCount = brickCount;
+	}
+
+	public void setWoolCount(int woolCount) {
+		this.woolCount = woolCount;
+	}
+
+	public void setGrainCount(int grainCount) {
+		this.grainCount = grainCount;
+	}
+
+	public void setOreCount(int oreCount) {
+		this.oreCount = oreCount;
+	}
+
+	public void setResCards(ArrayList<ResourceType> resCards) {
+		this.resCards = resCards;
+	}
+	
+	
+	
+	
+}

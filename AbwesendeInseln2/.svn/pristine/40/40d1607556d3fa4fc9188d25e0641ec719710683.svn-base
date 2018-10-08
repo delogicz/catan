@@ -1,0 +1,88 @@
+package jsonstructures;
+
+import model.TerrainType;
+import model.Tile;
+
+/**
+ * This class contains the data for the tiles on the island
+ * @author Felixi
+ *
+ */
+public class FeldDaten {
+	private String Ort;
+	private String Typ;
+	private int Zahl;
+	
+	/**
+	 * Creates a FeldDaten object 
+	 * @param ort		location of the tile
+	 * @param typ		type of tile
+	 * @param zahl		number on the tile
+	 */
+
+	public FeldDaten(String ort, String typ, int zahl) {
+		Ort = ort;
+		Typ = typ;
+		Zahl = zahl;
+	}
+
+	/**
+	 * Getter for the Location
+	 * @return
+	 */
+	public Tile getOrt() {
+		return ConvertMaster.convertToTile(Ort);
+	}
+	
+
+	/**
+	 * Setter for the Ort
+	 * @param ort
+	 */
+	public void setOrt(String ort) {
+		Ort = ort;
+	}
+
+	/**
+	 * Getter for the Type of the Tile
+	 * @return
+	 */
+	public TerrainType getTyp() {
+		switch(Typ){
+		case "Ackerland":	return TerrainType.FIELDS;
+		case "Huegelland":	return TerrainType.HILLS;
+		case "Weideland": 	return TerrainType.PASTURE;
+		case "Wald":		return TerrainType.FOREST;
+		case "Gebirge":		return TerrainType.MOUNTAINS;
+		case "Wueste":		return TerrainType.DESERT;
+		}
+		return null;
+	}
+
+	/**
+	 * Setter for the Type
+	 * @param typ
+	 */
+	public void setTyp(String typ) {
+		Typ = typ;
+	}
+	
+	/**
+	 * Getter for the tile number
+	 * @return
+	 */
+
+	public int getZahl() {
+		return Zahl;
+	}
+	
+	/**
+	 * Setter for the tile number
+	 * @param zahl
+	 */
+
+	public void setZahl(int zahl) {
+		Zahl = zahl;
+	}
+
+}

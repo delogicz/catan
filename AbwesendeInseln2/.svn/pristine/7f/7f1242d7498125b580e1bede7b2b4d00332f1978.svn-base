@@ -1,0 +1,15 @@
+package model;
+
+import view.GameSkin;
+
+/**
+ * A city.
+ *
+ */
+public class City extends Settlement {
+	
+	public City(Vertex vertex, Player player, GameSkin gameSkin){
+		super(vertex, player, gameSkin);
+	}
+
+}

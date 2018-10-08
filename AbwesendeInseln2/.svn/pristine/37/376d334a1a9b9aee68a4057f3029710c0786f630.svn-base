@@ -1,0 +1,36 @@
+package model;
+
+import view.RobberSkin;
+
+public class Robber {
+	
+	private Tile tile;
+	private RobberSkin skin;
+	
+	public Robber(Tile tile, RobberSkin skin){
+		this.tile = tile;
+		this.skin = skin;
+	}
+
+	/**
+	 * @return the tile
+	 */
+	public Tile getTile() {
+		return tile;
+	}
+
+	/**
+	 * @param tile the tile to set
+	 */
+	public void setTile(Tile tile) {
+		this.tile = tile;
+	}
+
+	/**
+	 * @return the skin
+	 */
+	public RobberSkin getSkin() {
+		return skin;
+	}
+
+}

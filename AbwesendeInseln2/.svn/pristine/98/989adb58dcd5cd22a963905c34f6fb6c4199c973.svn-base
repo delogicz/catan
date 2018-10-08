@@ -1,0 +1,59 @@
+package controller;
+
+import java.util.logging.Filter;
+import java.util.logging.LogRecord;
+
+public class LogFilter implements Filter{
+
+	 private static boolean thread= true;
+	 private static boolean gui = true;
+	 private static boolean model= true;
+	 private static boolean botLog= true;
+	 private static boolean network= true;
+	 private static boolean except= true;
+	 
+	 
+	@Override
+	public boolean isLoggable(LogRecord log) {
+		if(log.getLevel() == LogMaster.getThr()) return thread;
+		if(log.getLevel() == LogMaster.getBot()) return botLog;
+		if(log.getLevel() == LogMaster.getMod()) return model;
+		if(log.getLevel() == LogMaster.getUi()) return gui;
+		if(log.getLevel() == LogMaster.getExc()) return except;
+		if(log.getLevel() == LogMaster.getNet()) return network;
+		return true;
+	}
+
+
+	public void setThread(boolean thread) {
+		LogFilter.thread = thread;
+	}
+
+
+	public void setGui(boolean gui) {
+		LogFilter.gui = gui;
+	}
+
+
+	public void setModel(boolean model) {
+		LogFilter.model = model;
+	}
+
+
+	public void setBotLog(boolean botLog) {
+		LogFilter.botLog = botLog;
+	}
+
+
+	public void setNetwork(boolean network) {
+		LogFilter.network = network;
+	}
+
+
+	public void setExcept(boolean except) {
+		LogFilter.except = except;
+	}
+	
+	
+
+}

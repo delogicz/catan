@@ -1,0 +1,76 @@
+package view;
+
+import java.net.URISyntaxException;
+
+import game.Settings;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+
+public class GameControlSkin extends BorderPane {
+	
+	private VBox player;
+	private HBox list;
+	private Rectangle pic,bkg;
+	private Text stats;
+	private String path;
+	
+	public GameControlSkin(){
+	setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+	setPickOnBounds(false);
+	
+	player = new VBox();
+	list = new HBox();
+	
+	initPlayer();
+	
+	
+	
+	
+	
+	this.setTop(list);
+	
+	
+	
+	}
+
+	private void initPlayer() {
+		pic = new Rectangle(Settings.GAME_SKIN_WIDTH / 4,0.7 * Settings.SCALE);
+		try {
+			path = TokenNumberSkin.class.getResource("/img/wasser.jpg" ).toURI().toString();
+			
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Image image = new Image(path);
+		ImagePattern imagePattern = new ImagePattern(image);
+		pic.setFill(imagePattern);
+		pic.setStroke(Color.BLACK);
+		
+		StackPane stack = new StackPane();
+		
+		bkg = new Rectangle(Settings.GAME_SKIN_WIDTH / 4,0.25 * Settings.SCALE);
+		bkg.setFill(Color.BLACK);
+		bkg.setStroke(Color.BLACK);
+		bkg.setOpacity(0.3);
+		
+		stats = new Text ("SET:   RD:   VP:  KN:  ");
+		stack.getChildren().addAll(bkg,stats);
+		
+		player.getChildren().addAll(pic,stack);
+		
+		
+		
+		
+		list.getChildren().addAll(player);
+	}
+}

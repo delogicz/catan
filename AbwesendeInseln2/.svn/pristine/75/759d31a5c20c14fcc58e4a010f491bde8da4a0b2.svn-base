@@ -1,0 +1,39 @@
+package game;
+
+import javafx.scene.paint.Color;
+
+/**
+ * Static variables
+ *
+ */
+public class Settings {
+		
+		// Graphics
+		// Sizing & layout
+		public static final double SCALE = 63;
+		public static final double BORDER_WIDTH = 1.6 * SCALE;
+		public static final double OFFSET_X = 267 ;
+		public static final double OFFSET_Y = 192 ;
+		public static final double HALF_SQRT_THREE = 0.866025;
+		
+		public static final double GAME_SKIN_WIDTH = 1000;
+		public static final double GAME_SKIN_HEIGHT = 900;
+		
+		public static final double ISLAND_SKIN_WIDTH = 1000;
+		public static final double ISLAND_SKIN_HEIGHT = 900;
+		
+		public static final double EDGE_LENGTH = 0.68;
+		public static final double EDGE_WIDTH = 0.07;
+		
+		
+		// Colors
+
+		public static final Color EDGE_HOVER_COLOR = Color.PALEGOLDENROD;
+		public static final Color EDGE_SKIN_COLOR = Color.TRANSPARENT;
+
+
+		public static final Color VERTEX_SKIN_COLOR = Color.TRANSPARENT;
+		public static final Color VERTEX_HOVER_COLOR = Color.PALEGOLDENROD;
+
+
+}

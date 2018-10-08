@@ -1,0 +1,684 @@
+package view;
+
+import java.util.ArrayList;
+
+import controller.LogMaster;
+import game.Settings;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import model.Catan;
+import model.DevelopmentCardType;
+import model.PlayerClient;
+import model.ResourceType;
+
+/**
+ * Creates all views of actions concerning DevelopmentCards
+ * 
+ * @author Lena Sonnleitner, Samantha Meindl
+ */
+public class DevelopmentCardSkin {
+
+	private Stage devCardStage;
+
+	private Scene overviewScene, resMonOverviewScene, resYOPOverviewScene;
+
+	private GridPane overviewGridPane, resYOPOverviewGridPane, resMonOverviewGridPane;
+	private StackPane knightPane, monopolyPane, yearofplentyPane, roadbuildingPane, victoryPointPane;
+
+	private Button cancelButton, playButton, resCancelButton, resPlayButton;
+	
+	private Label victoryPointLabel, knightLabel, monopolyLabel, roadbuildingLabel, yearofplentyLabel;
+	
+	private RadioButton knightButton, monopolyButton, roadbuildingButton, 
+				yearofplentyButton, brick1Button, grain1Button, 
+				lumber1Button, ore1Button, wool1Button, brick2Button, grain2Button, 
+				lumber2Button, ore2Button, wool2Button;
+	
+	private ToggleGroup devCard, resCard, resButtons1, resButtons2;
+	
+	private ImageView victoryPointBW, knightBW, monopolyBW, roadbuildingBW, yearofplentyBW;
+	private ImageView victoryPoint, knight, monopoly, roadbuilding, yearofplenty;
+	
+	private PlayerClient player;
+	private int knightCardsCount;
+	private int yearofplentyCardsCount;
+	private int victoryPointsCardsCount;
+	private int monopolyCardsCount;
+	private int roadbuildingCardsCount;
+
+
+	/**
+	 * Constructor
+	 * @param catan
+	 */
+	public DevelopmentCardSkin(Catan catan){
+
+		this.player = catan.getPlayerClient();
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				try{
+				devCardStage = new Stage();
+				devCardStage.setTitle("Development Cards: ");
+				devCardStage.setResizable(false);
+				try{
+					devCardStage.initOwner(catan.getGameManager().getApp().getStage());
+				}catch(Exception e){
+					
+				}
+				createOverviewScene();
+				createMonOverviewScene();
+				createYOPOverviewScene();
+				
+				setDevelopmentCardStageScene(overviewScene);
+				}catch(Exception e){
+					LogMaster.log("[Exc]Platform run later uncaught exception:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+				}
+			}
+		});
+		try {
+			LogMaster.log("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(Settings.SLEEP_SHORT);
+		} catch (InterruptedException e) {
+			LogMaster.log("[Exc]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	/**
+	 * sets the scene of the DevelopmentCard scene
+	 * @param scene Scene
+	 */
+	private void setDevelopmentCardStageScene(Scene scene) {
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				try{
+				devCardStage.setScene(scene);
+				}catch(Exception e){
+					LogMaster.log("[Exc]Platform run later uncaught exception:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+				}
+			}
+		});
+	}
+
+	/**
+	 * Creates the scene opened for devCardsOverview
+	 */
+	private void createOverviewScene() {
+		
+		overviewGridPane = new GridPane();
+		overviewGridPane.setStyle("-fx-background-color: #dddd; -fx-padding: 10;");
+		overviewGridPane.setPadding(new Insets(5, 0, 5, 0));
+		overviewGridPane.setVgap(Settings.OVERVIEW_GRIDPANE_VGAP);
+		overviewGridPane.setHgap(Settings.OVERVIEW_GRIDPANE_HGAP);
+		overviewGridPane.setStyle("-fx-background-image: url(img/hintergrund_devcards.jpg)");
+		
+		addElements(overviewGridPane);
+		addButtonEventHandler();
+		
+		
+		this.overviewScene = new Scene(overviewGridPane);	
+		
+	}
+	/**
+	 * Adds the EventHandler to the buttons "playcard" and "cancel" of the Pane
+	 */
+	private void addButtonEventHandler() {
+		cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				devCardStage.close();
+			}
+		});
+
+		playButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				if(knightButton.isSelected() && player.getDevCards().contains(DevelopmentCardType.KNIGHT)) {
+					knightButton.setSelected(false);
+					knightButton.setDisable(true);
+					devCardStage.close();
+					player.setStatus(Settings.KNIGHT, false);
+					player.setRelocateRobber(true);
+				} 
+				else if(roadbuildingButton.isSelected() && player.getDevCards().contains(DevelopmentCardType.ROADBUILDING)) {
+					roadbuildingButton.setSelected(false);
+					roadbuildingButton.setDisable(true);
+					devCardStage.close();
+					player.playRoadBuildingDevCard(false);
+				}
+				else if(yearofplentyButton.isSelected() && player.getDevCards().contains(DevelopmentCardType.YEAROFPLENTY)) {
+					yearofplentyButton.setSelected(false);
+					yearofplentyButton.setDisable(true);
+					player.setStatus(Settings.YEAR_OF_PLENTY, false);
+					createYOPOverviewScene();
+					setDevelopmentCardStageScene(resYOPOverviewScene);
+				}
+				else if(monopolyButton.isSelected() && player.getDevCards().contains(DevelopmentCardType.MONOPOLY)) {
+					monopolyButton.setSelected(false);
+					monopolyButton.setDisable(true);
+					player.setStatus(Settings.MONOPOLY, false);
+					createMonOverviewScene();
+					setDevelopmentCardStageScene(resMonOverviewScene);
+				}
+			}
+		});
+	}
+	/**
+	 * Adds Buttons and DevCards Images in black and white to the Pane
+	 */
+	private void addElements(GridPane gridPane) {
+		
+		devCard = new ToggleGroup();
+		
+		createButtons(monopolyButton);
+		createButtons(roadbuildingButton);
+		createButtons(yearofplentyButton);
+		createButtons(knightButton);
+		
+		knightButton.setToggleGroup(devCard);
+		monopolyButton.setToggleGroup(devCard);
+		roadbuildingButton.setToggleGroup(devCard);
+		yearofplentyButton.setToggleGroup(devCard);
+		
+		victoryPointLabel = new Label("Cards: "+victoryPointsCardsCount+"");
+		knightLabel = new Label("Cards: "+knightCardsCount+"");
+		monopolyLabel = new Label("Cards: "+monopolyCardsCount+"");
+		roadbuildingLabel = new Label("Cards: "+roadbuildingCardsCount+"");
+		yearofplentyLabel = new Label("Cards: "+yearofplentyCardsCount+"");
+		victoryPointLabel.setStyle("-fx-text-fill: #ffffff;");
+		knightLabel.setStyle("-fx-text-fill: #ffffff;");
+		monopolyLabel.setStyle("-fx-text-fill: #ffffff;");
+		roadbuildingLabel.setStyle("-fx-text-fill: #ffffff;");
+		yearofplentyLabel.setStyle("-fx-text-fill: #ffffff;");
+		Settings.changeFont(victoryPointLabel, true);
+		Settings.changeFont(knightLabel, true);
+		Settings.changeFont(monopolyLabel, true);
+		Settings.changeFont(roadbuildingLabel, true);
+		Settings.changeFont(yearofplentyLabel, true);
+		
+		victoryPointBW = DevelopmentCardType.VICTORYPOINT.getBWSkin();
+		knightBW = DevelopmentCardType.KNIGHT.getBWSkin();
+		monopolyBW = DevelopmentCardType.MONOPOLY.getBWSkin();
+		roadbuildingBW = DevelopmentCardType.ROADBUILDING.getBWSkin();
+		yearofplentyBW = DevelopmentCardType.YEAROFPLENTY.getBWSkin();
+		
+		victoryPoint = DevelopmentCardType.VICTORYPOINT.getColoredSkin();
+		knight = DevelopmentCardType.KNIGHT.getColoredSkin();
+		monopoly = DevelopmentCardType.MONOPOLY.getColoredSkin();
+		roadbuilding = DevelopmentCardType.ROADBUILDING.getColoredSkin();
+		yearofplenty = DevelopmentCardType.YEAROFPLENTY.getColoredSkin();
+		
+		knightPane = new StackPane();
+		monopolyPane = new StackPane();
+		yearofplentyPane = new StackPane();
+		roadbuildingPane = new StackPane();
+		victoryPointPane = new StackPane();
+		
+		knightPane.getChildren().add(knightBW); 
+		monopolyPane.getChildren().add(monopolyBW);
+		yearofplentyPane.getChildren().add(yearofplentyBW);
+		roadbuildingPane.getChildren().add(roadbuildingBW);
+		victoryPointPane.getChildren().add(victoryPointBW);
+		
+		this.cancelButton = new Button("Cancel");
+		this.playButton = new Button("Play Card");
+		Settings.changeFontBig(cancelButton, false);
+		Settings.changeFontBig(playButton, false);
+		
+		gridPane.add(victoryPointPane, 1, 0);
+		gridPane.add(knightPane, 2, 0);
+		gridPane.add(knightButton, 2, 1);
+		gridPane.add(monopolyPane, 3, 0);
+		gridPane.add(monopolyButton, 3, 1);
+		gridPane.add(roadbuildingPane, 1, 2);
+		gridPane.add(roadbuildingButton, 1, 3);
+		gridPane.add(yearofplentyPane, 2, 2);
+		gridPane.add(yearofplentyButton, 2, 3);
+
+		gridPane.add(victoryPointLabel, 1, 1);
+		gridPane.add(knightLabel, 2, 1);
+		gridPane.add(monopolyLabel, 3, 1);
+		gridPane.add(roadbuildingLabel, 1, 3);
+		gridPane.add(yearofplentyLabel, 2, 3);
+
+		gridPane.add(cancelButton, 1, 5);
+		gridPane.add(playButton, 4, 5);
+
+		StackPane.setMargin(gridPane, new Insets(10,10,10,10));
+
+		GridPane.setHalignment(knightButton, HPos.CENTER);
+		GridPane.setHalignment(monopolyButton, HPos.CENTER);
+		GridPane.setHalignment(roadbuildingButton, HPos.CENTER);
+		GridPane.setHalignment(yearofplentyButton, HPos.CENTER);
+		
+		GridPane.setHalignment(victoryPointLabel, HPos.LEFT);
+		GridPane.setHalignment(knightLabel, HPos.LEFT);
+		GridPane.setHalignment(monopolyLabel, HPos.LEFT);
+		GridPane.setHalignment(roadbuildingLabel, HPos.LEFT);
+		GridPane.setHalignment(yearofplentyLabel, HPos.LEFT);
+
+		GridPane.setHalignment(cancelButton, HPos.CENTER);
+		GridPane.setHalignment(playButton, HPos.CENTER);
+
+		GridPane.setHalignment(victoryPointBW, HPos.CENTER);
+		GridPane.setHalignment(knightBW, HPos.CENTER);
+		GridPane.setHalignment(monopolyBW, HPos.CENTER);
+		GridPane.setHalignment(roadbuildingBW, HPos.CENTER);
+		GridPane.setHalignment(yearofplentyBW, HPos.CENTER);		
+	}
+	
+	/**
+	 * Creates the RadioButtons and sets them unselected and disabled
+	 * @param button
+	 */
+	public void createButtons(RadioButton button){
+		button = new RadioButton();
+		button.setSelected(false);
+		button.setDisable(true);
+	}
+	
+	/**
+	 * Shows the Overview over all DevelopmentCards
+	 */
+	public void showDevelopmentCardOverview(){
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				try{
+				updateDevCardOverview();
+				setDevelopmentCardStageScene(overviewScene);
+				devCardStage.centerOnScreen();
+				devCardStage.show();
+				}catch(Exception e){
+					LogMaster.log("[Exc]Platform run later uncaught exception:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+				}
+			}});
+	}
+	
+	/**
+	 * Shows a CloseUp of the chosen DevelopmentCard
+	 * @param devCard the card to be shown
+	 */
+	public void showCloseUp(DevelopmentCardType devCard){
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				try{
+				setDevelopmentCardStageScene(new Scene(new StackPane(devCard.getColoredSkin())));
+				devCardStage.centerOnScreen();
+				devCardStage.show();
+				}catch(Exception e){
+					LogMaster.log("[Exc]Platform run later uncaught exception:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+				}
+			}});
+	}
+
+	/**
+	 * DevCards are colored if a player has one
+	 */
+	public void updateDevCardOverview(){
+		knightCardsCount = Settings.DEVCARDS_COUNT;
+		yearofplentyCardsCount = Settings.DEVCARDS_COUNT;
+		victoryPointsCardsCount = Settings.DEVCARDS_COUNT;
+		monopolyCardsCount = Settings.DEVCARDS_COUNT;
+		roadbuildingCardsCount = Settings.DEVCARDS_COUNT;
+
+		overviewGridPane.getChildren().remove(victoryPoint);
+		overviewGridPane.getChildren().remove(knight);
+		overviewGridPane.getChildren().remove(monopoly);
+		overviewGridPane.getChildren().remove(roadbuilding);
+		overviewGridPane.getChildren().remove(yearofplenty);
+		
+		for(DevelopmentCardType devCard: player.getDevCards()) {
+			switch(devCard) {
+			case VICTORYPOINT : victoryPointsCardsCount++;
+						if(victoryPointsCardsCount <= 1){
+							overviewGridPane.add(victoryPoint, 1, 0);
+							}
+						break;
+			case KNIGHT : knightButton.setDisable(false); knightCardsCount++;
+						if(knightCardsCount <= 1){
+							overviewGridPane.add(knight, 2, 0);
+							}
+						break;
+			case MONOPOLY : monopolyButton.setDisable(false); monopolyCardsCount++;
+						if(monopolyCardsCount <= 1){
+							overviewGridPane.add(monopoly, 3, 0);
+							}
+						break;
+			case ROADBUILDING : roadbuildingButton.setDisable(false); roadbuildingCardsCount++;
+						if(roadbuildingCardsCount <= 1){
+							overviewGridPane.add(roadbuilding, 1, 2);
+						}
+						break;
+			case YEAROFPLENTY : yearofplentyButton.setDisable(false); yearofplentyCardsCount++;
+						if(yearofplentyCardsCount <= 1){
+							overviewGridPane.add(yearofplenty, 2, 2);
+						}
+						break;
+			}
+			victoryPointLabel.setText("Cards: "+victoryPointsCardsCount+"");
+			knightLabel.setText("Cards: "+knightCardsCount+"");
+			monopolyLabel.setText("Cards: "+monopolyCardsCount+"");
+			roadbuildingLabel.setText("Cards: "+roadbuildingCardsCount+"");
+			yearofplentyLabel.setText("Cards: "+yearofplentyCardsCount+"");
+		}
+	}
+
+	/**
+	 * Updates the GridPane overviewGridPane
+	 */
+	public void updateMonOverview(){
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				resMonOverviewGridPane = new GridPane();
+				resMonOverviewGridPane.setStyle("-fx-background-color: #dddd; -fx-padding: 10;");
+				resMonOverviewGridPane.setPadding(new Insets(5, 0, 5, 0));
+				resMonOverviewGridPane.setVgap(Settings.RESMON_OVERVIEW_GRIDPANE_VGAP);
+				resMonOverviewGridPane.setHgap(Settings.RESMON_OVERVIEW_GRIDPANE_HGAP);
+				resMonOverviewGridPane.setPrefWidth(Settings.RESMON_OVERVIEW_GRIDPANE_PREFWIDTH);
+				ArrayList<ResourceType> allResCards = new ArrayList<ResourceType>();
+				for(ResourceType resCard : allResCards){
+					resMonOverviewGridPane.getChildren().add(resCard.getSkin());
+				}
+				resMonOverviewScene = new Scene(resMonOverviewGridPane);
+				LogMaster.log("[Mod]New Overview with " + allResCards.size() + " ResourceCards"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+			}
+		});
+	}
+
+	/**
+	 * Creates the scene opened for resCardsOverview
+	 */
+	private void createMonOverviewScene() {
+
+		StackPane stackPane = new StackPane();
+		stackPane.setStyle("-fx-background-color: darkred; -fx-padding: 5;");
+		
+		resMonOverviewGridPane = new GridPane();
+		addMonElements(resMonOverviewGridPane);
+		addButtonEventHandlerMon();
+		stackPane.getChildren().add(resMonOverviewGridPane);
+		
+		this.resMonOverviewScene = new Scene(stackPane);			
+	}
+	/**
+	 * Adds the EventHandler to the buttons "resPlaycard" and "resCancel" of the Pane
+	 */
+	private void addButtonEventHandlerMon() {
+		resCancelButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent resEvent) {
+				devCardStage.close();
+			}
+		});
+
+		resPlayButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent resEvent) {
+				if(brick1Button.isSelected()){
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.BRICK);
+				}
+				else if(grain1Button.isSelected()) {
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.GRAIN);
+				} 
+				else if(lumber1Button.isSelected()) {
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.LUMBER);
+				}
+				else if(ore1Button.isSelected()) {
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.ORE);
+				}
+				else if(wool1Button.isSelected()) {
+					player.getCatan().getGameManager().getClient().sendMonopoly(ResourceType.WOOL);
+				}
+				devCardStage.close();
+			}
+		});
+	}
+	
+	/**
+	 * Adds Buttons and resCards Images to the Pane
+	 */
+	private void addMonElements(GridPane gridPane) {
+		resCard = new ToggleGroup();
+		this.brick1Button = new RadioButton("Brick");
+		Settings.changeFontBig(brick1Button, true);
+		brick1Button.setSelected(false);
+
+		this.grain1Button = new RadioButton("Grain");
+		Settings.changeFontBig(grain1Button, true);
+		grain1Button.setSelected(false);
+
+		this.lumber1Button = new RadioButton("Lumber");
+		Settings.changeFontBig(lumber1Button, true);
+		lumber1Button.setSelected(false);
+
+		this.ore1Button = new RadioButton("Ore");
+		Settings.changeFontBig(ore1Button, true);
+		ore1Button.setSelected(false);
+		
+		this.wool1Button = new RadioButton("Wool");
+		Settings.changeFontBig(wool1Button, true);
+		wool1Button.setSelected(false);
+		
+		brick1Button.setToggleGroup(resCard);
+		grain1Button.setToggleGroup(resCard);
+		lumber1Button.setToggleGroup(resCard);
+		ore1Button.setToggleGroup(resCard);
+		wool1Button.setToggleGroup(resCard);
+		
+		ImageView brick = ResourceType.BRICK.getSkin();
+		ImageView grain = ResourceType.GRAIN.getSkin();
+		ImageView lumber = ResourceType.LUMBER.getSkin();
+		ImageView ore = ResourceType.ORE.getSkin();
+		ImageView wool = ResourceType.WOOL.getSkin();
+	
+		this.resCancelButton = new Button("Cancel");
+		Settings.changeFontBig(resCancelButton, false);
+		this.resPlayButton = new Button("Play Card");
+		Settings.changeFontBig(resPlayButton, false);
+
+		gridPane.add(brick, 1, 0);
+		gridPane.add(brick1Button, 1, 1);
+		gridPane.add(grain, 2, 0);
+		gridPane.add(grain1Button, 2, 1);
+		gridPane.add(lumber, 3, 0);
+		gridPane.add(lumber1Button, 3, 1);
+		gridPane.add(ore, 4, 0);
+		gridPane.add(ore1Button, 4, 1);
+		gridPane.add(wool, 5, 0);
+		gridPane.add(wool1Button, 5, 1);
+
+		gridPane.add(resCancelButton, 1, 4);
+		gridPane.add(resPlayButton, 5, 4);
+
+		StackPane.setMargin(gridPane, new Insets(10,10,10,20));
+
+		GridPane.setHalignment(brick1Button, HPos.CENTER);
+		GridPane.setHalignment(grain1Button, HPos.CENTER);
+		GridPane.setHalignment(lumber1Button, HPos.CENTER);
+		GridPane.setHalignment(ore1Button, HPos.CENTER);
+		GridPane.setHalignment(wool1Button, HPos.CENTER);
+
+		GridPane.setHalignment(resCancelButton, HPos.CENTER);
+		GridPane.setHalignment(resPlayButton, HPos.CENTER);
+
+		GridPane.setHalignment(brick, HPos.CENTER);
+		GridPane.setHalignment(grain, HPos.CENTER);
+		GridPane.setHalignment(lumber, HPos.CENTER);
+		GridPane.setHalignment(ore, HPos.CENTER);
+		GridPane.setHalignment(wool, HPos.CENTER);			
+	}
+
+	/**
+	 * Creates the scene opened for resCardsOverview
+	 */
+	private void createYOPOverviewScene() {
+
+		StackPane stackPane = new StackPane();
+		stackPane.setStyle("-fx-background-color: darkred; -fx-padding: 5;");
+		resYOPOverviewGridPane = new GridPane();
+		addYOPElements();
+		addButtonEventHandlerYOP();
+		
+		stackPane.getChildren().add(resYOPOverviewGridPane);
+		this.resYOPOverviewScene = new Scene(stackPane);			
+	}
+	/**
+	 * Adds the EventHandler to the buttons "resPlaycard" and "resCancel" of the Pane
+	 */
+	private void addButtonEventHandlerYOP() {
+		resCancelButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent resEvent) {
+				devCardStage.close();
+			}
+		});
+
+		resPlayButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent resEvent) {
+				ArrayList<ResourceType> res = new ArrayList<ResourceType>();
+				
+				if(brick1Button.isSelected()) res.add(ResourceType.BRICK); 
+				else if(grain1Button.isSelected()) res.add(ResourceType.GRAIN); 
+				else if(lumber1Button.isSelected()) res.add(ResourceType.LUMBER); 
+				else if(ore1Button.isSelected()) res.add(ResourceType.ORE);
+				else res.add(ResourceType.WOOL);
+				
+				if(brick2Button.isSelected()) res.add(ResourceType.BRICK); 
+				else if(grain2Button.isSelected()) res.add(ResourceType.GRAIN); 
+				else if(lumber2Button.isSelected()) res.add(ResourceType.LUMBER); 
+				else if(ore2Button.isSelected()) res.add(ResourceType.ORE);
+				else res.add(ResourceType.WOOL);
+
+				player.getCatan().getGameManager().getClient().sendYearOfPlenty(res);
+				devCardStage.close();
+			}
+		});
+	}
+
+	/**
+	 * Adds Buttons and resCards Images to the Pane
+	 */
+	private void addYOPElements() {
+		
+		resButtons1 = new ToggleGroup();
+		resButtons2 = new ToggleGroup();
+
+		this.brick1Button = new RadioButton("Brick");
+		brick1Button.setSelected(true);
+		Settings.changeFontBig(brick1Button, true);
+		this.grain1Button = new RadioButton("Grain");
+		Settings.changeFontBig(grain1Button, true);
+		this.lumber1Button = new RadioButton("Lumber");
+		Settings.changeFontBig(lumber1Button, true);
+		this.ore1Button = new RadioButton("Ore");
+		Settings.changeFontBig(ore1Button, true);
+		this.wool1Button = new RadioButton("Wool");
+		Settings.changeFontBig(wool1Button, true);
+		this.brick2Button = new RadioButton("Brick");
+		brick2Button.setSelected(true);
+		Settings.changeFontBig(brick2Button, true);
+		this.grain2Button = new RadioButton("Grain");
+		Settings.changeFontBig(grain2Button, true);
+		this.lumber2Button = new RadioButton("Lumber");
+		Settings.changeFontBig(lumber2Button, true);
+		this.ore2Button = new RadioButton("Ore");
+		Settings.changeFontBig(ore2Button, true);
+		this.wool2Button = new RadioButton("Wool");
+		Settings.changeFontBig(wool2Button, true);
+
+		brick1Button.setToggleGroup(resButtons1);
+		grain1Button.setToggleGroup(resButtons1);
+		lumber1Button.setToggleGroup(resButtons1);
+		ore1Button.setToggleGroup(resButtons1);
+		wool1Button.setToggleGroup(resButtons1);
+		
+		brick2Button.setToggleGroup(resButtons2);
+		grain2Button.setToggleGroup(resButtons2);
+		lumber2Button.setToggleGroup(resButtons2);
+		ore2Button.setToggleGroup(resButtons2);
+		wool2Button.setToggleGroup(resButtons2);
+		
+		ImageView brick = ResourceType.BRICK.getSkin();
+		ImageView grain = ResourceType.GRAIN.getSkin();
+		ImageView lumber = ResourceType.LUMBER.getSkin();
+		ImageView ore = ResourceType.ORE.getSkin();
+		ImageView wool = ResourceType.WOOL.getSkin();
+	
+		this.resCancelButton = new Button("Cancel");
+		Settings.changeFontBig(resCancelButton, false);
+		this.resPlayButton = new Button("Play Card");
+		Settings.changeFontBig(resPlayButton, false);
+
+		resYOPOverviewGridPane.add(brick, 0, 0);
+		resYOPOverviewGridPane.add(brick1Button, 0, 1);
+		resYOPOverviewGridPane.add(brick2Button, 0, 2);
+		resYOPOverviewGridPane.add(grain, 1, 0);
+		resYOPOverviewGridPane.add(grain1Button, 1, 1);
+		resYOPOverviewGridPane.add(grain2Button, 1, 2);
+		resYOPOverviewGridPane.add(lumber, 2, 0);
+		resYOPOverviewGridPane.add(lumber1Button, 2, 1);
+		resYOPOverviewGridPane.add(lumber2Button, 2, 2);
+		resYOPOverviewGridPane.add(ore, 3, 0);
+		resYOPOverviewGridPane.add(ore1Button, 3, 1);
+		resYOPOverviewGridPane.add(ore2Button, 3, 2);
+		resYOPOverviewGridPane.add(wool, 4, 0);
+		resYOPOverviewGridPane.add(wool1Button, 4, 1);
+		resYOPOverviewGridPane.add(wool2Button, 4, 2);
+		
+		resYOPOverviewGridPane.add(resCancelButton, 0, 3);
+		resYOPOverviewGridPane.add(resPlayButton, 4, 3);
+
+		StackPane.setMargin(resYOPOverviewGridPane, new Insets(10,10,10,20));
+		
+		setCenter(brick1Button);
+		setCenter(grain1Button);
+		setCenter(lumber1Button);
+		setCenter(ore1Button);
+		setCenter(wool1Button);
+		setCenter(brick2Button);
+		setCenter(grain2Button);
+		setCenter(lumber2Button);
+		setCenter(ore2Button);
+		setCenter(wool2Button);
+
+		GridPane.setHalignment(resCancelButton, HPos.CENTER);
+		GridPane.setHalignment(resPlayButton, HPos.CENTER);
+		
+		setCenter(brick);
+		setCenter(grain);
+		setCenter(lumber);
+		setCenter(ore);
+		setCenter(wool);	
+	}
+	
+	public static void setCenter(RadioButton button){
+		GridPane.setHalignment(button, HPos.CENTER);
+	}
+	
+	public static void setCenter(ImageView res){
+		GridPane.setHalignment(res, HPos.CENTER);
+	}
+}

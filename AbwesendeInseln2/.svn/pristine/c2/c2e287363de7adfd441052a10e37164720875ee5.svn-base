@@ -1,0 +1,54 @@
+package jsonstructures;
+
+import model.Edge;
+import model.Vertex;
+
+/**
+ * This Class is top class of when something gets build
+ * it converts the game logic of location to the server logic
+ * @author Felixi
+ */
+public class BauNachricht {
+	private BauDaten Bauen;
+
+	/**
+	 * Creates a BauNachricht object for settlemets and cities
+	 * @param typ		type of object to build, settlement or city
+	 * @param ort		location of building
+	 */
+	public BauNachricht(String typ, Vertex ort) {
+		String ort2 = convertVertex(ort);
+		Bauen = new BauDaten(typ, ort2);
+	}
+	
+	
+	/**
+	 * Creates a BauNachricht object for roads
+	 * @param typ		road
+	 * @param ort		location of street
+	 */
+	public BauNachricht(String typ, Edge ort) {
+		String ort2 = convertEdge(ort);
+		Bauen = new BauDaten(typ, ort2);
+	}
+
+	/**
+	 * Converts the game logic of an edge logic to the server logic 
+	 * @param ort		location of the edge
+	 * @return			converted location of the street
+	 */
+	private String convertEdge(Edge ort) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	/**
+	 * Converts the game logic of a vertex location to the server logic
+	 * @param ort		location of the vertex
+	 * @return			converted location of the settlement or city
+	 */
+	private String convertVertex(Vertex ort) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

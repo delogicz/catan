@@ -1,0 +1,269 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import view.IslandSkin;
+
+/**
+ * Represents the island of Catan. Contains all tiles, edges and vertices.
+ *
+ */
+public class Island {
+	
+	private List<Vertex> vertices;
+	private List<Edge> edges;
+	
+	private final IslandSkin skin;
+	public static final int[] hexagonsPerRow = new int[] { 3, 4, 5, 4, 3 };
+	public static final int[] verticesPerRow = new int[] { 7, 9, 11, 11, 9, 7 };
+
+	private List<Tile> boardHexes;
+	
+
+	private List<TerrainType> gameHexResources;
+	private List<TokenNumber> tokens;
+
+	public Island() {
+		initializeHexResources();
+		initializeNumberTokens();
+		addHexesToBoard();
+		addVertices();
+		addVerticesToHexes();
+		addVerticesToEdges();
+		addEdgesToVertices();
+		skin = new IslandSkin(this);
+	}
+	
+	/**
+	 * Fills "List<Edge> edges" of each vertices with connected edges
+	 */
+	private void addEdgesToVertices() {
+		for(Edge edge : edges) {
+			edge.getVertexFrom().addEdge(edge);
+			edge.getVertexTo().addEdge(edge);
+		}
+	}
+	
+	/**
+	 * Adds six vertices to each tile/ hexagon.
+	 * Order:      1
+	 *          /     \
+	 *         0       2
+	 *         |       |
+	 *         3       5
+	 *          \     /
+	 *             4
+	 */
+	private void addVerticesToHexes() {
+
+		int pos = 0;
+		int topOffset = 0;
+		int bottomOffset = 0;
+		for (int i = 0; i < 5; i++) {
+			bottomOffset += verticesPerRow[i];
+			for (int j = 0; j < hexagonsPerRow[i]; j++) {
+				getHexagon(pos).addVertices(getVertex(2 * j + topOffset), getVertex(2 * j + 1 + topOffset),
+						getVertex(2 * j + 2 + topOffset));
+
+				getHexagon(pos).addVertices(getVertex(2 * j + 1 + bottomOffset), getVertex(2 * j + 2 + bottomOffset),
+						getVertex(2 * j + 3 + bottomOffset));
+				pos++;
+			}
+			topOffset += verticesPerRow[i];
+			if (i == 2) {
+				topOffset++;
+			}
+			if (i == 1) {
+				bottomOffset--;
+			}
+		}
+	}
+	
+	/**
+	 * Creates all 54 vertices and adds them to the list "vertices"
+	 */
+	private void addVertices() {
+		vertices = new ArrayList<Vertex>();
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < verticesPerRow[i]; j++) {
+				vertices.add(new Vertex(i, j));
+				
+			}
+		}
+	}
+	
+	/**
+	 * Assigns two vertices to each edge ("to" and "from" attributes of Edge)
+	 */
+	private void addVerticesToEdges() {
+		// make connections and edges
+		edges = new ArrayList<Edge>();
+		Vertex to;
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < verticesPerRow[i]; j++) {
+				Vertex from = getVertex(i, j);
+
+				if (j < verticesPerRow[i] - 1) { // not last in row 
+	
+					to = getVertex(i, j + 1);
+					edges.add(new Edge(from, to));
+					from.addConnectedVertex(to);
+				}
+				if (j > 0) { // not first in row
+					to = getVertex(i, j - 1);
+					from.addConnectedVertex(to);
+				}
+				if (i < 5) { // not last row
+					int offset = (verticesPerRow[i + 1] - verticesPerRow[i]) / 2;
+					if ((j % 2 == 0 && i < 3) || (j % 2 == 1 && i >= 3)) { // vertical
+						to = getVertex(i + 1, j + offset);
+						edges.add(new Edge(from, to));
+						from.addConnectedVertex(to);
+						to.addConnectedVertex(from);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Creates all 19 tiles and adds them to "boardHexes"
+	 */
+	private void addHexesToBoard() {
+		boardHexes = new ArrayList<Tile>();
+		char location = 'A';
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < hexagonsPerRow[i]; j++) {
+				TerrainType resource = getRandomGameHexResource();
+				TokenNumber token = null;
+				if (resource == TerrainType.DESERT) {
+					token = TokenNumber.SEVEN;
+					boardHexes.add(new Tile(i, j, resource, TokenNumber.SEVEN, false, location)); // hier noch das mit RObber einfügen
+				} else {
+					token = getRandomNumberToken();
+					boardHexes.add(new Tile(i, j, resource, token, false, location));  // hier noch das mit RObber einfügen
+				}
+				location++;
+			}
+		}
+	}
+	
+	/**
+	 * Fills list "tokens" with 18 needed instances of TokenNumber (random order)
+	 */
+	private void initializeNumberTokens() {
+		tokens = new ArrayList<TokenNumber>();
+		tokens.addAll(Arrays.asList(new TokenNumber[] { TokenNumber.TWO, TokenNumber.THREE, TokenNumber.THREE,
+				TokenNumber.FOUR, TokenNumber.FOUR, TokenNumber.FIVE, TokenNumber.FIVE, TokenNumber.SIX,
+				TokenNumber.SIX, TokenNumber.EIGHT, TokenNumber.EIGHT, TokenNumber.NINE, TokenNumber.NINE,
+				TokenNumber.TEN, TokenNumber.TEN, TokenNumber.ELEVEN, TokenNumber.ELEVEN, TokenNumber.TWELVE }));
+		Collections.shuffle(tokens);
+	}
+	
+	/**
+	 * Gets next TokenNumber in tokens and removes it from the list
+	 * @return random TokenNumber
+	 */
+	private TokenNumber getRandomNumberToken() {
+		TokenNumber token = tokens.get(0);
+		tokens.remove(0);
+		return token;
+	}
+	
+	/**
+	 * Fills list "gameHexRexources" with 19 needed instances of TerrainType (random order)
+	 */
+	private void initializeHexResources() {
+		gameHexResources = new ArrayList<TerrainType>();
+		for (int i = 0; i < 3; i++) {
+			gameHexResources.add(TerrainType.HILLS);
+		}
+		
+		gameHexResources.add(TerrainType.DESERT);
+		
+		for (int i = 0; i < 3; i++) {
+			gameHexResources.add(TerrainType.MOUNTAINS);
+		}
+		for (int i = 0; i < 4; i++) {
+			gameHexResources.add(TerrainType.PASTURE);
+		}
+		for (int i = 0; i < 4; i++) {
+			gameHexResources.add(TerrainType.FIELDS);
+		}
+		for (int i = 0; i < 4; i++) {
+			gameHexResources.add(TerrainType.FOREST);
+		}
+		Collections.shuffle(gameHexResources);
+	}
+	
+	/**
+	 * Gets next TerrainType in gameHexResources and removes it from the list
+	 * @return random TerrainType
+	 */
+	private TerrainType getRandomGameHexResource() {
+		TerrainType terrain = gameHexResources.get(0);
+		gameHexResources.remove(0);
+		return terrain;
+	}
+	
+	public Tile getHexagon(int row, int pos) {
+		if (row >= 5 || pos >= hexagonsPerRow[row]) {
+			return null;
+		}
+		int position = 0;
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < hexagonsPerRow[i]; j++) {
+				if (i == row && j == pos) {
+					return boardHexes.get(position);
+				}
+				position++;
+			}
+		}
+		return null;
+	}
+
+	public Tile getHexagon(int pos) {
+		if (pos < 19) {
+			return boardHexes.get(pos);
+		}
+		return null;
+	}
+
+	public IslandSkin getSkin() {
+		return skin;
+	}
+
+	public Vertex getVertex(int pos) {
+		return vertices.get(pos);
+	}
+
+	public Vertex getVertex(int row, int pos) {
+		int position = 0;
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < verticesPerRow[i]; j++) {
+				if (i == row && j == pos) {
+					// System.out.println("Position: " + position);
+					return vertices.get(position);
+				}
+				position++;
+			}
+		}
+		return null;
+	}
+
+	public List<Tile> getHexes() {
+		return boardHexes;
+	}
+
+	public List<Vertex> getVertices() {
+		return vertices;
+	}
+
+	public List<Edge> getEdges() {
+		return edges;
+	}
+
+}

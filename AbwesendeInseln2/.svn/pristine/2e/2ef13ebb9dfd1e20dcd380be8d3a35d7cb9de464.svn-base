@@ -1,0 +1,41 @@
+package network;
+
+import java.util.ArrayList;
+
+public class ClientQueueHandler extends Thread{
+	private ArrayList<String> messageQueue;
+	private Client c;
+	
+	public ClientQueueHandler(Client client){
+		messageQueue = new ArrayList<String>();
+		c = client;
+	}
+	
+	public void addMessage(String message){
+		System.out.println("Adding to Handler Queue: " + message);
+		messageQueue.add(message);
+	}
+	
+	private void popMessage(){
+		if(messageQueue.size() > 0){
+			String s = messageQueue.get(0);
+			messageQueue.remove(0);
+			c.handleInput(s);
+		}
+	}
+	
+	public void run(){
+		while(true){
+			if(messageQueue.size() > 0){
+					popMessage();
+			}else{
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+}
+

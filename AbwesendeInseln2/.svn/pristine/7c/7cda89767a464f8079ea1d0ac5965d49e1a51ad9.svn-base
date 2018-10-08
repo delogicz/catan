@@ -1,0 +1,10 @@
+package model;
+
+public enum Harbour {
+	THREETOONE,
+	TWOTOONEBRICK,
+	TWOTOONEGRAIN,
+	TWOTOONEWOOL,
+	TWOTOONELUMBER,
+	TWOTOONEORE;
+}

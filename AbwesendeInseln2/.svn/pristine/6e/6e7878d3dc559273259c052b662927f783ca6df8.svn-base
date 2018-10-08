@@ -1,0 +1,25 @@
+package jsonstructures;
+
+import java.util.ArrayList;
+
+import model.ResourceType;
+
+public class HandelsangebotNachricht {
+		HandelsangebotDaten Handelsangebot;
+
+		
+
+
+		public HandelsangebotNachricht(int clientId, int tradeId, ArrayList<ResourceType> offer, ArrayList<ResourceType> demand) {
+			Handelsangebot = new HandelsangebotDaten(clientId,tradeId,offer,demand);
+		}
+
+
+
+		public HandelsangebotDaten getHandelsangebot() {
+			return Handelsangebot;
+		}
+		
+		
+		
+}

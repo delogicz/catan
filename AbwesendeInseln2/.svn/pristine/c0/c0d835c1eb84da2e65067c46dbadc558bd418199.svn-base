@@ -1,0 +1,75 @@
+package model;
+
+import javafx.scene.paint.Color;
+
+/**
+ * Determines available colors for players 
+ * @author Stefanie Kloss
+ */
+public enum PlayerColor {
+	
+	RED (Color.CRIMSON, "img/building/settlement_RED.png", "img/building/city_RED.png"), 
+	ORANGE (Color.ORANGE, "img/building/settlement_YELLOW.png", "img/building/city_YELLOW.png"), 
+	WHITE (Color.WHITE, "img/building/settlement_WHITE.png", "img/building/city_WHITE.png"), 
+	BLUE (Color.MEDIUMBLUE, "img/building/settlement_BLUE.png", "img/building/city_BLUE.png");
+	
+	private Color color;
+	private String settlementImageURL;
+	private String cityImageURL;
+	
+	/**
+	 * Constructor
+	 * @param color
+	 * @param settlementImageURL
+	 * @param cityImageURL
+	 */
+	private PlayerColor(Color color, String settlementImageURL, String cityImageURL){
+		this.color = color;
+		this.settlementImageURL = settlementImageURL;
+		this.cityImageURL = cityImageURL;
+	}
+	
+	/**
+	 * @return the color
+	 */
+	public Color getColor(){
+		return this.color;
+	}
+
+	/**
+	 * @return the settlementImageURL
+	 */
+	public String getSettlementImageURL() {
+		return settlementImageURL;
+	}
+
+	/**
+	 * @return the cityImageURL
+	 */
+	public String getCityImageURL() {
+		return cityImageURL;
+	}
+	
+	/**
+	 * Returns the String needed for json objects
+	 * @return
+	 */
+	public String toServerString() {
+		switch(this){
+		case RED: 		return "Rot";
+		case BLUE: 		return "Blau";
+		case ORANGE: 	return "Orange";
+		case WHITE:  	return "Weiss";
+		}
+		return null;
+	}
+	
+	public String getStringColor(){
+		if(Color.WHITE.equals(this.color)) return "Weiss";
+		if(Color.CRIMSON.equals(this.color)) return "Rot";
+		if(Color.ORANGE.equals(this.color)) return "Orange";
+		if(Color.MEDIUMBLUE.equals(this.color)) return "Blau";
+		return null;
+	}
+	
+}

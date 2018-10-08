@@ -1,0 +1,111 @@
+package model;
+
+import view.DiceSkin;
+
+/**
+ * creates the two Dices for Settlers
+ * @author Lena Sonnleitner, Samantha Meindl, Stefanie Kloss
+ *
+ */
+public class Dice {
+	private int dice1;
+	private int dice2;
+	
+	private DiceSkin diceSkin;
+	
+	/**
+	 * Constructor
+	 */
+	public Dice(){
+		setDiceSkin(new DiceSkin(this));
+	}
+	
+	/**
+	 * dice the Dice
+	 */
+	public void dice(){
+		
+		this.setDice1((int)(Math.random()*6)+1);
+		this.setDice2((int)(Math.random()*6)+1);
+		
+		diceSkin.changeViewOfDices(this.dice1, this.dice2);
+		
+	}
+	
+	/**
+	 * dice the Dice and return the result
+	 * @return the result
+	 */
+	public int diceResult(){
+		
+		this.setDice1((int)(Math.random()*6)+1);
+		this.setDice2((int)(Math.random()*6)+1);
+		return dice1 + dice2;
+		
+	}
+	
+	public void diceRolled(int result) {
+		int res1, res2;
+		switch(result){
+		case 2  : res1 = 1; res2 = 1; break; 
+		case 3  : res1 = 2; res2 = 1; break; 
+		case 4  : res1 = 1; res2 = 3; break; 
+		case 5  : res1 = 3; res2 = 2; break; 
+		case 6  : res1 = 2; res2 = 4; break; 
+		case 7  : res1 = 4; res2 = 3; break;
+		case 8  : res1 = 5; res2 = 3; break;
+		case 9  : res1 = 4; res2 = 5; break;
+		case 10 : res1 = 6; res2 = 4; break; 
+		case 11 : res1 = 5; res2 = 6; break; 
+		case 12 : res1 = 6; res2 = 6; break; 
+		default : res1 = 1; res2 = 1; break;
+		}
+		
+		diceSkin.changeViewOfDices(res1, res2);
+		
+	}
+
+	/**
+	 * @return the dice2
+	 */
+	public int getDice2() {
+		return dice2;
+	}
+
+	/**
+	 * @param dice2 the dice2 to set
+	 */
+	public void setDice2(int dice2) {
+		this.dice2 = dice2;
+	}
+
+	/**
+	 * @return the dice1
+	 */
+	public int getDice1() {
+		return dice1;
+	}
+
+	/**
+	 * @param dice1 the dice1 to set
+	 */
+	public void setDice1(int dice1) {
+		this.dice1 = dice1;
+	}
+
+	/**
+	 * @return the diceSkin
+	 */
+	public DiceSkin getDiceSkin() {
+		return diceSkin;
+	}
+
+	/**
+	 * @param diceSkin the diceSkin to set
+	 */
+	public void setDiceSkin(DiceSkin diceSkin) {
+		this.diceSkin = diceSkin;
+	}
+
+	
+}

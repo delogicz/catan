@@ -1,0 +1,111 @@
+package jsonstructures;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import model.TerrainType;
+import model.Tile;
+
+/**
+ * This class is for the map of the island to initialize it
+ * @author Felixi
+ *
+ */
+public class KartenDaten {
+	private FeldDaten[] Felder;
+	private GebaeudeDaten[] Gebaeude;
+	private HafenDaten[] Haefen;
+	private String Raeuber;
+	
+	
+	/**
+	 * Creates a KartenDaten object and initializes the map
+	 * @param felder		array of tiles
+	 * @param gebaeude		array of buildings
+	 * @param haefen		array of harbors
+	 * @param raeuber		position of the robber
+	 */
+	public KartenDaten(FeldDaten[] felder, GebaeudeDaten[] gebaeude, HafenDaten[] haefen, String raeuber) {
+		Felder = felder;
+		Gebaeude = gebaeude;
+		Haefen = haefen;
+		Raeuber = raeuber;
+	}
+
+	/**
+	 * Getter for the Tiles
+	 * @return
+	 */
+	public List<Tile> getFelder() {
+		List<Tile> tiles = new ArrayList<Tile>();
+		for(int i = 0;i < Felder.length ;i++){
+			switch(Felder[i].getTyp()){
+			case FIELDS:	//tiles.add(new Tile(/*row */ ,/*pos*/,Felder[i].getTyp(),Felder[i].getZahl(),/*hasRobberOnIt */, /*location */, /*catan */));break;
+			case HILLS:		//tiles.add(new Tile(/*row */ ,/*pos*/,Felder[i].getTyp(),Felder[i].getZahl(),/*hasRobberOnIt */, /*location */, /*catan */));break;
+			case PASTURE:	//tiles.add(new Tile(/*row */ ,/*pos*/,Felder[i].getTyp(),Felder[i].getZahl(),/*hasRobberOnIt */, /*location */, /*catan */));break;
+			case FOREST:	//tiles.add(new Tile(/*row */ ,/*pos*/,Felder[i].getTyp(),Felder[i].getZahl(),/*hasRobberOnIt */, /*location */, /*catan */));break;
+			case MOUNTAINS: //tiles.add(new Tile(/*row */ ,/*pos*/,Felder[i].getTyp(),Felder[i].getZahl(),/*hasRobberOnIt */, /*location */, /*catan */));break;
+			case DESERT:	//tiles.add(new Tile(/*row */ ,/*pos*/,Felder[i].getTyp(),Felder[i].getZahl(),/*hasRobberOnIt */, /*location */, /*catan */));break;
+			}
+		}
+		return tiles;
+	}
+
+	/**
+	 * Setter for the tiles
+	 * @param felder
+	 */
+	public void setFelder(FeldDaten[] felder) {
+		Felder = felder;
+	}
+
+	/**
+	 * Getter for the GebaeudeDaten
+	 * @return
+	 */
+	public GebaeudeDaten[] getGebaeude() {
+		return Gebaeude;
+	}
+
+	/**
+	 * Setter for the GebaeudeDaten
+	 * @param gebaeude
+	 */
+	public void setGebaeude(GebaeudeDaten[] gebaeude) {
+		Gebaeude = gebaeude;
+	}
+
+	/**
+	 * Getter for the HafenDaten
+	 * @return
+	 */
+	public HafenDaten[] getHaefen() {
+		return Haefen;
+	}
+
+	/**
+	 * Setter for the HafenDaten
+	 * @param haefen
+	 */
+	public void setHaefen(HafenDaten[] haefen) {
+		Haefen = haefen;
+	}
+
+	/**
+	 * Getter for the Raeuber
+	 * @return
+	 */
+	public String getRaeuber() {
+		return Raeuber;
+	}
+
+	/**
+	 * Setter for the Raeuber
+	 * @param raeuber
+	 */
+	public void setRaeuber(String raeuber) {
+		Raeuber = raeuber;
+	}
+	
+	
+}

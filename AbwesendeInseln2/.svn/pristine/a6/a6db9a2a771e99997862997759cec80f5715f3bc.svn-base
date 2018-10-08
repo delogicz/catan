@@ -1,0 +1,116 @@
+package model;
+
+import java.util.ArrayList;
+
+import controller.GameControl;
+import game.GameManager;
+import view.GameSkin;
+
+/**
+ * Contains all units needed for a game of "The Settlers of Catan" (players included)
+ * 
+ */
+public class Catan {
+	
+	private Island island;
+	private GameSkin gameSkin;
+	
+
+
+	private GameControl gameControl;
+	private GameManager gameManager;
+
+
+	private ArrayList<Player> players;
+	private ArrayList<DevelopmentCard> devCards;
+	
+	private Player hasLongestRoad;
+	private Player hasLargestArmy;
+	
+	private Dice dice;
+	private Player currentTurnTaker;
+	private boolean turnIsComplete;
+	
+	public Catan(GameManager gameManager){
+		this.gameManager = gameManager;
+		this.island = new Island();
+		this.players = new ArrayList<Player>();
+		this.devCards = new ArrayList<DevelopmentCard>();
+		gameControl = new GameControl(this);
+		gameSkin = new GameSkin(this, gameManager);
+		turnIsComplete = false;
+		
+		this.setDice(new Dice());
+		
+		
+		//TODO: fill devCards
+	}
+	
+	
+//	public static void main(String[] args){
+//		
+//		Dice dice = new Dice();
+//		for(int i = 0; i<100; i++) {	
+//		dice.dice();
+//		System.out.println(dice.getDice1() + "                   " + dice.getDice2());
+//		}
+//	}
+	
+	public static void main(String[] args){
+		
+		Dice dice = new Dice();
+		for(int i = 0; i<100; i++) {	
+		dice.dice();
+		//System.out.println(dice.getdice1() + "                   " + dice.getdice2());
+		}
+	}
+	/**
+	 * Adds a new player to the game
+	 * @param playerColor The color of the new player
+	 */
+	public void addPlayer(PlayerColor playerColor){
+		int playerID = 1;
+		if(players.size() < 4){
+			Player player = new Player(this,playerColor,playerID);
+			players.add(player);
+			playerID++;
+		}
+		else{
+			System.out.println("There are already four players");
+		}
+		
+	}
+	
+	public Island getIsland() {
+		return this.island;
+	}
+	public GameSkin getGameSkin() {
+		return gameSkin;
+	}
+	public GameControl getGameControl() {
+		return gameControl;
+	}
+	
+	public Player getPlayer(int count){
+		return players.get(count);
+	}
+	
+	public ArrayList<Player> getPlayers(){
+		return players;
+	}
+
+	/**
+	 * @return the dice
+	 */
+	public Dice getDice() {
+		return dice;
+	}
+
+
+	/**
+	 * @param dice the dice to set
+	 */
+	public void setDice(Dice dice) {
+		this.dice = dice;
+	}
+}

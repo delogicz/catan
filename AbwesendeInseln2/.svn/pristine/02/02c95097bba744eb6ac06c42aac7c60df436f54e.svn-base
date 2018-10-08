@@ -1,0 +1,9 @@
+package model;
+
+import java.util.ArrayList;
+
+public class Catan {
+	private Island island;
+	private ArrayList<Player> players;
+	private ArrayList<DevelopmentCard> devCards; 
+}

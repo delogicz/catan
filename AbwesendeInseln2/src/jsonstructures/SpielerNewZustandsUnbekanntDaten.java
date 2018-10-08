@@ -1,0 +1,138 @@
+package jsonstructures;
+/**
+ * Object to be converted to JSON holding status data of a player without their hand
+ * @author georgschwab, Felix
+ *
+ */
+public class SpielerNewZustandsUnbekanntDaten {
+	private int id;					
+	private String Name;
+	private String Status;
+	private int Siegpunkte;
+	private RohstoffUnbekanntDaten Rohstoffe;
+	private int Rittermacht;
+	private RohstoffUnbekanntDaten Entwicklungskarten;
+	
+	/**
+	 * Creates a SpielerNewZustandsUnbekanntDaten object	
+	 * @param id			id of the player
+	 * @param status		status 
+	 * @param siegpunkte	victory points
+	 * @param ressourcenAnzahl		resources
+	 * @param ritterGespielt 
+	 * @param entwicklungskartenAnzahl 
+	 */
+	public SpielerNewZustandsUnbekanntDaten(int id, String status, int siegpunkte, int ressourcenAnzahl, int ritterGespielt, int entwicklungskartenAnzahl) {
+		this.id = id;
+		Name = null;
+		Status = status;
+		Siegpunkte = siegpunkte;
+		Rohstoffe = new RohstoffUnbekanntDaten(ressourcenAnzahl);
+		Rittermacht = ritterGespielt;
+		Entwicklungskarten = new RohstoffUnbekanntDaten(entwicklungskartenAnzahl);
+		
+	}
+	/**
+	 * Getter for Rittermacht
+	 * @return
+	 */
+	
+	public int getRittermacht() {
+		return Rittermacht;
+	}
+	/**
+	 * Getter for Entwicklungskarten
+	 * @return
+	 */
+	public RohstoffUnbekanntDaten getEntwicklungskarten() {
+		return Entwicklungskarten;
+	}
+
+	/**
+	 * Getter for id
+	 * @return
+	 */
+	public int getId() {
+		return id;
+	}
+	/**
+	 * Setter for ID
+	 * @param id
+	 */
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	
+	
+	/**
+	 * Getter for Name
+	 * @return
+	 */
+
+	public String getName() {
+		return Name;
+	}
+	
+	
+	/**
+	 * Setter for Name
+	 * @param name
+	 */
+	public void setName(String name) {
+		Name = name;
+	}
+	
+	
+	/**
+	 * Getter for Status
+	 * @return
+	 */
+	public String getStatus() {
+		return Status;
+	}
+	
+	
+	/**
+	 * Setter for Status
+	 * @param status
+	 */
+	public void setStatus(String status) {
+		Status = status;
+	}
+	
+	/**
+	 * Getter for Siegpunkte
+	 * @return
+	 */
+	public int getSiegpunkte() {
+		return Siegpunkte;
+	}
+	
+	/**
+	 * Setter for Siegpunkte
+	 * @param siegpunkte
+	 */
+
+	public void setSiegpunkte(int siegpunkte) {
+		Siegpunkte = siegpunkte;
+	}
+	
+	
+	/**
+	 * Getter for RohstoffDaten
+	 * @return
+	 */
+	public RohstoffUnbekanntDaten getRohstoffe() {
+		return Rohstoffe;
+	}
+	
+	/**
+	 * Setter for RohstoffDaten
+	 * @param rohstoffe
+	 */
+	public void setRohstoffe(RohstoffUnbekanntDaten rohstoffe) {
+		Rohstoffe = rohstoffe;
+	}
+}

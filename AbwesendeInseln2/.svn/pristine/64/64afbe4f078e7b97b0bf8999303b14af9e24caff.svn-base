@@ -1,0 +1,242 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
+import view.VertexSkin;
+
+/**
+ * Contains a vertex defined by it's position in the island.
+ *@author Daniel Panangian
+ */
+public class Vertex{
+
+	private Harbour harbour = null;
+	private ArrayList<Vertex> connectedVertices;
+	
+	private ArrayList<Edge> edges; 
+	
+	private ArrayList<Tile> hexes;
+	
+	
+	private int row;
+	/**
+	 * Position in row.
+	 */
+	private int pos;
+	
+	private VertexSkin skin;
+	private Catan catan;
+	
+	private boolean isOccupied;
+	
+
+	private Building occupyingBuilding;
+	
+	/**
+	 * Constructor
+	 * @param row
+	 * @param pos
+	 * @param catan
+	 */
+	public Vertex(int row, int pos,Catan catan) {
+		this.row = row;
+		this.pos = pos;
+		this.catan = catan;
+		skin = new VertexSkin(this);
+		connectedVertices = new ArrayList<Vertex>();
+		edges = new ArrayList<Edge>();
+		hexes = new ArrayList<Tile>();
+	}
+	
+	/**
+	 * Adjusts attribute "harbour".
+	 */
+	public void setHarbour(Harbour harbour) {
+		this.harbour = harbour;
+	}
+	
+	/**
+	 * @return the position in the row
+	 */
+	public int getPos() {
+		return pos;
+	}
+	
+	/**
+	 * @return the row
+	 */
+	public int getRow() {
+		return row;
+	}
+
+	/**
+	 * @return the skin
+	 */
+	public VertexSkin getSkin() {
+		return skin;
+	}
+
+	/**
+	 * @return the connectedVertices
+	 */
+	public ArrayList<Vertex> getConnectedVertices() {
+		return connectedVertices;
+	}
+	
+	/**
+	 * add a connected Vertex
+	 * @param vertex
+	 */
+	public void addConnectedVertex(Vertex vertex) {
+		connectedVertices.add(vertex);
+	}
+	
+	/**
+	 * @return the edges
+	 */
+	public ArrayList<Edge> getEdges() {
+		return edges;
+	}
+	
+	/**
+	 * add instances of Edge to edges
+	 * @param edges
+	 */
+	public void addEdge(Edge... edges) {
+		this.edges.addAll(Arrays.asList(edges));
+	}
+	
+	public List<Vertex> shortestPath(Vertex to){	
+		    //Initialization.
+		    HashMap<Vertex, Vertex> nextVertexMap = new HashMap<Vertex, Vertex>();
+		    Vertex currentVertex = this;
+
+		    //Queue
+		    Queue<Vertex> queue = new LinkedList<Vertex>();
+		    queue.add(currentVertex);
+
+		    /*
+		     * The set of visited vertices doesn't have to be a Map, and, since order
+		     * is not important, an ordered collection is not needed. HashSet is 
+		     * fast for add and lookup, if configured properly.
+		     */
+		    ArrayList<Vertex> visitedVertices = new ArrayList<Vertex>();
+		    visitedVertices.add(currentVertex);
+
+		    //Search.
+		    while (!queue.isEmpty()) {
+		        currentVertex = queue.remove();
+		        if (currentVertex.equals(to)) break;
+		            for (Edge childEdge : currentVertex.getEdges()) {
+		            	Vertex nextVertex;
+		            	if(!currentVertex.equals((childEdge.getVertexTo())))nextVertex = childEdge.getVertexTo();
+		            	else nextVertex = childEdge.getVertexFrom();
+		                if (!visitedVertices.contains(nextVertex)) {
+		                    queue.add(nextVertex);
+		                    visitedVertices.add(nextVertex);
+
+		                    //Look up of next vertex instead of previous.
+		                    nextVertexMap.put(nextVertex, currentVertex);
+		                    if (nextVertex.equals(to)) break;
+		                }
+		            }
+		    }
+
+		    //If all vertices are explored and the destination vertex hasn't been found.
+		    if (!currentVertex.equals(to)) {
+		        throw new RuntimeException("No feasible path.");
+		    }
+
+		    //Reconstruct path.
+		    List<Vertex> directions = new LinkedList<Vertex>();
+		    for (Vertex vertex = to ; vertex != null; vertex = nextVertexMap.get(vertex)) {
+		        directions.add(vertex);
+		        if(vertex.equals(this)) break;
+		    }
+		    
+		    Collections.reverse(directions);
+		    return directions;
+	}
+
+	/**
+	 * Get Occupying building on this vertex
+	 * @return occupyingBuilding
+	 */
+	public Building getOccupyingBuilding() {
+		return occupyingBuilding;
+	}
+	
+	public void setOccupyingBuilding(Building building){
+		this.occupyingBuilding = building;
+	}
+
+	public void addHex(Tile hex) {
+		this.hexes.add(hex);
+		
+	}
+	
+	/**
+	 * getter method for hexes
+	 * @return hexes
+	 */
+	public ArrayList<Tile> getHexes() {
+		return hexes;
+	}
+
+	public boolean isOccupied() {
+		return isOccupied;
+	}
+	
+	public void setOccupied(boolean isOccupied) {
+		this.isOccupied = isOccupied;
+	}
+
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+	
+	public Harbour getHarbour(){
+		return harbour;
+	}
+
+	public void checkIntersection() {
+		List<Edge> otherRoads = new ArrayList<Edge>();
+		for(Edge edge : this.getEdges()){
+			if(edge.getOccupyingBuilding() != null){
+				if(!edge.getOccupyingBuilding().getOwner().equals(this.getOccupyingBuilding().getOwner())){
+					otherRoads.add(edge);
+				}
+			}
+		}
+		
+		if (otherRoads.size() == 2){
+			if (otherRoads.get(1).getOccupyingBuilding().getOwner().equals(otherRoads.get(0).getOccupyingBuilding().getOwner())){
+				Player owner = otherRoads.get(1).getOccupyingBuilding().getOwner();
+				ArrayList<Edge> ownerlrPath = otherRoads.get(1).getOccupyingBuilding().getOwner().getLrPath();
+				if (ownerlrPath.contains(otherRoads.get(0)) && ownerlrPath.contains(otherRoads.get(1)) ){
+					otherRoads.get(0).getOccupyingBuilding().checkConnectedRoads();
+					otherRoads.get(1).getOccupyingBuilding().checkConnectedRoads();
+				
+					if (otherRoads.get(0).getOccupyingBuilding().getConnectedRoads() >=	otherRoads.get(0).getOccupyingBuilding().getConnectedRoads()){
+						owner.setConnectedRoads(otherRoads.get(0).getOccupyingBuilding().getConnectedRoads());
+					}
+					else owner.setConnectedRoads(otherRoads.get(1).getOccupyingBuilding().getConnectedRoads());
+				}
+			}
+		}
+	}
+
+}

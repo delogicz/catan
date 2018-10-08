@@ -1,0 +1,35 @@
+package jsonstructures;
+
+import java.util.ArrayList;
+
+import model.ResourceType;
+
+public class StatusUpdateUnbekanntNachricht {
+	SpielerZustandsUnbekanntDatenDaten Statusupdate;
+	
+
+	/**
+	 * Creates a SpielerZustandsDatenDaten object
+	 * @param statusupdate		SpielerZustandsDaten
+	 */
+	public StatusUpdateUnbekanntNachricht(int id, String farbe, String name, String status, int siegPunkte,
+			ArrayList<ResourceType> resourcen) {
+		Statusupdate = new SpielerZustandsUnbekanntDatenDaten(new SpielerZustandsUnbekanntDaten(id, farbe, name, status, siegPunkte, resourcen.size()));
+	}
+
+	/**
+	 * Getter for SpielerZustandsDatenDaten
+	 * @return
+	 */
+	public SpielerZustandsUnbekanntDatenDaten getStatusupdate() {
+		return Statusupdate;
+	}
+	
+	/**
+	 * Setter for SpielerZustandsDatenDaten
+	 * @param statusupdate
+	 */
+	public void setStatusupdate(SpielerZustandsUnbekanntDatenDaten statusupdate) {
+		Statusupdate = statusupdate;
+	}
+}

@@ -1,0 +1,10 @@
+package jsonstructures;
+
+public class ErtragNachricht {
+	
+	private ErtragsDaten Ertrag;
+
+	public ErtragNachricht(int spieler, RohstoffDaten rohstoffe) {
+		Ertrag = new ErtragsDaten(spieler, rohstoffe);
+	}
+}

@@ -1,0 +1,480 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+
+import controller.StatsControl;
+import controller.PlayerControl;
+import game.GameManager;
+import game.Settings;
+import network.Server;
+import view.GameSkin;
+
+/**
+ * Contains all units needed for a game of "The Settlers of Catan" (players included)
+ * @author Daniel Panangian, Stefanie Kloss
+ */
+public class Catan {
+	
+	private Island island;
+	private GameSkin gameSkin;
+
+	private GameManager gameManager;
+
+	private ArrayList<Player> players;
+	private PlayerClient playerClient;
+	private ArrayList<Player> bots;
+	
+	private DevelopmentCardDeck devCardDeck;
+	private ArrayList<TradeOffer> activeTradeOffers;
+	
+	private Dice dice;
+	private ArrayList<Integer> diceResultsOrder;
+	
+	private PlayerClient currentTurnTaker;
+	private int round;
+	/**
+	 * Starts with 0, ends with players.size()-1
+	 */
+	private int turnInRound;
+
+	private StatsControl statsControl;
+	
+	private int lumberCount = Settings.RESOURCE_CARD_COUNT;
+	private int grainCount = Settings.RESOURCE_CARD_COUNT;
+	private int brickCount = Settings.RESOURCE_CARD_COUNT;
+	private int woolCount = Settings.RESOURCE_CARD_COUNT;
+	private int oreCount = Settings.RESOURCE_CARD_COUNT;
+	
+	/**
+	 * Constructor for server
+	 * 
+	 * @param gameManager
+	 * @param players
+	 */
+	public Catan(ArrayList<Player> players){
+		this.island = new Island(this);
+		this.players = players;
+		for(Player player: players){
+			player.setCatan(this);
+		}
+		this.activeTradeOffers = new ArrayList<TradeOffer>();
+		this.bots = new ArrayList<Player>();
+		checkBots();
+		this.devCardDeck = new DevelopmentCardDeck();
+		this.dice = new Dice();
+
+		this.round = 0;
+		this.turnInRound = 0;
+		this.currentTurnTaker = (PlayerClient)players.get(turnInRound);
+		
+		this.diceResultsOrder = new ArrayList<Integer>();
+	}
+	
+	/**
+	 * Constructor for Client
+	 * 
+	 * @param gameManager
+	 * @param players
+	 */
+	public Catan(GameManager gameManager, ArrayList<Player> players, PlayerClient playerClient, 
+			TerrainType[] terrains, TokenNumber[] tokens, Harbour[] harbours, int[] harbourPositions){
+		
+		this.gameManager = gameManager;
+		this.island = new Island(this, terrains, tokens, harbours, harbourPositions);
+		this.players = players;
+		for(Player player: players){
+			player.setCatan(this);
+		}
+		this.playerClient = playerClient;
+		this.bots = new ArrayList<Player>();
+		checkBots();
+		this.activeTradeOffers = new ArrayList<TradeOffer>();
+		
+		this.round = 0;
+		
+		this.dice = new Dice();
+		
+	}
+	
+	/**
+	 *  Adjusts the currentTurnTaker after a turn is completed
+	 *  Potentially changes round
+	 */
+	public void changeTurnTaker(){
+		activateBots();
+		turnInRound++;
+		if(turnInRound < players.size()){
+			if(round == 2){
+				currentTurnTaker = (PlayerClient)players.get(players.size()-1 - turnInRound);
+			}else{
+				currentTurnTaker = (PlayerClient)players.get(turnInRound);
+			}
+		}
+		else{
+			round++;
+			turnInRound = 0;
+			if(round == 2){
+				currentTurnTaker = (PlayerClient)players.get(players.size()-1 - turnInRound);
+			}else{ 
+				currentTurnTaker = (PlayerClient)players.get(turnInRound);
+			}
+		}
+		brodcastPlayer();
+	}
+	
+	/**
+	 * Saves the results diced in the beginning (round = 0) to determine the order of players 
+	 * Brings the players in the correct order after everyone rolled the dice
+	 * @param diceResult
+	 */
+	public void saveDiceResultAndChangeOrder(int diceResult) {
+		diceResultsOrder.add(diceResult);
+		if(turnInRound == players.size()-1){
+			HashMap<Integer, PlayerClient> hashMap = new HashMap<Integer, PlayerClient>();
+			for(int i = 0; i < players.size(); i++){
+				hashMap.put(diceResultsOrder.get(i), (PlayerClient)players.get(i));
+			}
+			Collections.sort(diceResultsOrder);
+			players.clear();
+			for(int i = diceResultsOrder.size()-1; i >= 0 ; i--){
+				players.add(hashMap.get(diceResultsOrder.get(i)));
+			}   
+		}
+	}
+	
+	/**
+	 * Checks if players are bots
+	 */
+	private void checkBots() {
+		for (Player player:players){
+			if(player.isBot() ){
+			bots.add(player);
+			}
+		}
+	}
+	
+	/**
+	 * Activates a bot
+	 */
+	private void activateBots() {
+		for (Player bot:bots){
+			bot.activateBot();
+			}
+	}
+		
+	/**
+	 * Sets the currentTurnTaker
+	 */
+	private void brodcastPlayer() {
+		for (Player player: players){
+			((PlayerClient)player).setCurrentTurnTaker(currentTurnTaker);
+		
+	}
+		
+	}
+	/**
+	 * call when player won a game
+	 * 
+	 * @param winner the player who won
+	 */
+	public void gameWon(Player winner) {
+		//TODO: message: you won
+	}
+	/**
+	 * Get island
+	 * @return island
+	 */
+	public Island getIsland() {
+		return this.island;
+	}
+	/**
+	 * Get game skin
+	 * @return game
+	 */
+	public GameSkin getGameSkin() {
+		return this.gameSkin;
+	}
+	/**
+	 * Get game control
+	 * @return currentTurnTaker.getPlayerControl()
+	 */
+	public PlayerControl getGameControl() {
+		return playerClient.getPlayerControl();
+	}
+	/**
+	 * Get player by the order from the list
+	 * @return player
+	 */
+	public Player getPlayer(int count){
+		return players.get(count);
+	}
+	/**
+	 * Get current Turn taker
+	 * @return currentTurnTaker
+	 */
+	public PlayerClient getCurrentTurnTaker() {
+		return currentTurnTaker;
+	}
+	/**
+	 * Set current Turn taker
+	 * @param currentTurnTaker
+	 */
+	public void setCurrentTurnTaker(PlayerClient currentTurnTaker) {
+		this.currentTurnTaker = currentTurnTaker;
+	}
+	/**
+	 * Get list of players 
+	 * @return players
+	 */
+	public ArrayList<Player> getPlayers(){
+		return players;
+	}
+	
+	/**
+	 * @return the dice
+	 */
+	public Dice getDice() {
+		return dice;
+	}
+
+	/**
+	 * @return the gameManager
+	 */
+	public GameManager getGameManager() {
+		return gameManager;
+	}
+
+	/**
+	 * distributes the resources after the second round 
+	 * (every player gets resources for the first time, no dice result)
+	 */
+	public void distributeResources(Server server){
+	
+		for(Player player: getPlayers()){
+			Settlement settlement = ((PlayerClient)player).getSettlements().get(1);
+			for(Tile tile : settlement.getNeighboringTiles()){
+				if (tile.getTerrainType() != TerrainType.DESERT){
+					((PlayerClient)player).getHand().addResource((tile.getTerrainType().getProduce()));
+					server.sendProduce(player.getPlayerID(), tile.getTerrainType().getProduce());
+	}	}	} 	}	
+	
+
+	/**
+	 * distributes resources to a player
+	 * @param diceResult2
+	 */
+	public ArrayList<ResourceType> distributeResources(int[] diceResult2, PlayerClient player){
+		ArrayList<ResourceType> produce = new ArrayList<ResourceType>();
+		for(Settlement settlement : player.getSettlements()){
+			for(Tile tile : settlement.getNeighboringTiles()){
+				if(tile.getToken().getNumber() == (diceResult2[0]+ diceResult2[1]) && !tile.getHasRobberOnIt()){
+					ResourceType res = tile.getTerrainType().getProduce();
+					switch(res){
+					case LUMBER: 	if(lumberCount > 0){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										lumberCount--;
+									}else{
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+					case BRICK:		if(brickCount > 0){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										brickCount--;
+									}else{
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+					case GRAIN:		if(grainCount > 0){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										grainCount--;
+									}else{
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+					case ORE:		if(oreCount > 0){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										oreCount--;
+									}else{
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+					case WOOL:		if(woolCount > 0){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										woolCount--;
+									}else{
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+					}
+		} 	}	}	
+		for(City city : player.getCities()){
+			for(Tile tile : city.getNeighboringTiles()){
+				if(tile.getToken().getNumber() == (diceResult2[0]+ diceResult2[1]) && !tile.getHasRobberOnIt()){
+					ResourceType res = tile.getTerrainType().getProduce();
+					switch(res){
+					case LUMBER: 	if(lumberCount > 1){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										lumberCount--;
+										lumberCount--;
+									}else{
+										if(lumberCount > 0){
+											((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+											produce.add(tile.getTerrainType().getProduce());
+											lumberCount--;
+										}
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+					case BRICK:		if(brickCount > 1){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										brickCount--;
+										brickCount--;
+									}else{
+										if(brickCount > 0){
+											((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+											produce.add(tile.getTerrainType().getProduce());
+											brickCount--;
+										}
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+					case GRAIN:		if(grainCount > 1){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										grainCount--;
+										grainCount--;
+									}else{
+										if(grainCount > 0){
+											((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+											produce.add(tile.getTerrainType().getProduce());
+											grainCount--;
+										}
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+					case ORE:		if(oreCount > 1){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										oreCount--;
+										oreCount--;
+									}else{
+										if(oreCount > 0){
+											((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+											produce.add(tile.getTerrainType().getProduce());
+											oreCount--;
+										}
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+					case WOOL:		if(woolCount > 1){ 
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										produce.add(tile.getTerrainType().getProduce());
+										woolCount--;
+										woolCount--;
+									}else{
+										if(woolCount > 0){
+											((PlayerClient)player).getHand().addResource(tile.getTerrainType().getProduce());
+											produce.add(tile.getTerrainType().getProduce());
+											woolCount--;
+										}
+										System.out.println("[Mod]All 19 cards of the resource " + res + " have been given out already, no more cards to distribute" + " [Thread : "+ Thread.currentThread().getId() + "]" );
+									}break;
+								}
+				}	}	}
+		return produce;
+	}
+	
+	/**
+	 * get round
+	 * @return round
+	 */
+	public int getRound() {
+		return round;
+	}
+	/**
+	 * @return the turnInRound
+	 */
+	public int getTurnInRound() {
+		return turnInRound;
+	}
+	
+	/**
+	 * Sets the gameSki
+	 * @param gameSkin
+	 */
+	public void setGameSkin(GameSkin gameSkin) {
+		this.gameSkin = gameSkin;
+		
+	}
+	
+	/**
+	 * Getter for tradeoffers
+	 * @return
+	 */
+	public ArrayList<TradeOffer> getTrades(){
+		return activeTradeOffers;
+	}
+	
+	/**
+	 * Getter for TradeOffer
+	 * @param tradeId
+	 * @return
+	 */
+	public TradeOffer getTrade(int tradeId){
+		TradeOffer t = null;
+		for(TradeOffer offer : activeTradeOffers){
+			if(offer.getTradeId()==tradeId){
+				t = offer;
+			}
+		}
+		return t;
+	}
+	
+	/**
+	 * Gets player with the correct ID
+	 * @param playerID PlayerID of the player that is to be returned
+	 * @return the player (null, in case the playerID doesn't exist)
+	 */
+	public Player getPlayerWithID(int playerID) {
+		for(Player p: players){
+			if(p.getPlayerID() == playerID){
+				return p;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @return the playerClient
+	 */
+	public PlayerClient getPlayerClient() {
+		return playerClient;
+	}
+	
+	/**
+	 * Getter for player count
+	 * @return
+	 */
+	public int getPlayerCount(){
+		return players.size();
+	}
+	
+	/**
+	 * Getter for StatsControl
+	 * @return
+	 */
+	public StatsControl getStatsControl() {
+		return statsControl ;
+	}
+
+}

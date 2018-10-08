@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class VersionDaten {
+	private String Version;
+	
+	public VersionDaten(String version){
+		this.Version = version;
+	}
+}

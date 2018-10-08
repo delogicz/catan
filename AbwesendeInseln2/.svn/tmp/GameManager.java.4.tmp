@@ -1,0 +1,137 @@
+package game;
+
+import controller.GameControl;
+import javafx.scene.Scene;
+import javafx.scene.shape.Rectangle;
+import model.Catan;
+import model.City;
+import model.Player;
+import model.PlayerColor;
+import model.Settlement;
+import model.Tile;
+import view.GameSkin;
+
+/**
+ * The game manager initializes a new game.
+ *
+ */
+public class GameManager {
+
+
+	private Scene gameScene;
+	private Catan catan;
+	
+
+	private GameSkin gameSkin;
+	private GameControl gameControl;
+
+	public GameManager() {
+		newGame();
+	}
+	
+	/**
+	 *  Establishes new Game by creating instances of Catan and GameSkin  
+	 */
+	public void newGame() {
+		this.catan = new Catan();
+		this.gameControl = new GameControl(this);
+		this.gameSkin = new GameSkin(catan,this);
+		this.gameScene = new Scene(gameSkin);
+		
+		
+		locateDice();
+		
+		catan.addPlayer(PlayerColor.RED);
+		catan.getPlayer(0).buildRoad(catan.getIsland().getEdges().get(71), (GameSkin)gameScene.getRoot());
+		catan.getPlayer(0).buildSettlement(catan.getIsland().getVertex(5,6), (GameSkin)gameScene.getRoot());
+		catan.getPlayer(0).buildRoad(catan.getIsland().getEdges().get(70), (GameSkin)gameScene.getRoot());
+		catan.getPlayer(0).longestRoad();
+	}
+	
+	
+
+	private void locateDice(){
+		
+		Rectangle dice1 = catan.getDice().getDiceSkin().getDice1();
+		Rectangle dice2 = catan.getDice().getDiceSkin().getDice2();
+		
+		dice1.setTranslateX(380);		//TODO magic numbers entfernen
+		dice1.setTranslateY(290);
+		dice2.setTranslateX(430);
+		dice2.setTranslateY(290);
+		
+		gameSkin.getChildren().add(dice1);
+		gameSkin.getChildren().add(dice2);
+		
+	}
+
+	public void quit() {
+		gameScene.getWindow().hide();
+	}
+	
+
+	public Scene getGameScene() {
+		return gameScene;
+	}
+	
+	public GameControl getGameControl() {
+		return gameControl;
+	}
+	
+	public Catan getCatan() {
+		return catan;
+	}
+	
+	/**
+	 * distributes the resources to every player
+	 */
+	public void distributeResources(int diceResult){
+	
+		for(Player player: catan.getPlayers()){
+			for(Settlement settlement : player.getSettlements()){
+				for(Tile tile : settlement.getNeighboringTiles()){
+					if(tile.getToken().getNumber() == diceResult && !tile.getHasRobberOnIt()){
+						player.getCards().add(tile.getTerrain().getProduce());
+						if(settlement instanceof City){
+							player.getCards().add(tile.getTerrain().getProduce());
+						}
+	}	}	}	}	}
+	
+//	/**
+//	 * distributes the resources
+//	 */
+//	public void distributeResources(int diceResult, Player player){
+//		
+//		int tileNumber;
+//		Tile tile=null;
+//		for(int i = 0; i<19; i++){
+//			if(catan.getIsland().getHexes().get(i).getHasRobberOnIt()) {
+//				tileNumber = catan.getIsland().getHexagon(i).getNumberToken().getNumber();	
+//	
+//		if(diceResult != 7 && diceResult != tileNumber){
+//			for(int j =0; j<19; j++){
+//				if(catan.getIsland().getHexagon(j).getNumberToken().getNumber() == diceResult){
+//					tile = catan.getIsland().getHexagon(j);	
+//					
+//				switch(tile.getTerrain()) {
+//				case HILLS : player.getCards().add(ResourceType.BRICK); break;
+//				case FIELDS : player.getCards().add(ResourceType.GRAIN); break;
+//				case PASTURE : player.getCards().add(ResourceType.WOOL); break;
+//				case FOREST : player.getCards().add(ResourceType.LUMBER); break;
+//				case MOUNTAINS : player.getCards().add(ResourceType.ORE); break;
+//				}		
+//				}
+//			}
+//		}
+//		else{
+//			//TODO: Räuber bewegen
+//		}
+//			}
+//		}
+//	}
+	
+
+	
+}
+
+				

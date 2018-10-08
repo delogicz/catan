@@ -1,0 +1,39 @@
+package jsonstructures;
+
+/**
+ * This class contains the data of a development card for JSON
+ * @author Felixi
+ *
+ */
+public class EntwicklungKarteDaten {
+	private int Spieler;
+	private String Entwicklungskarte;
+	
+	/**
+	 * Constructor
+	 * @param spieler
+	 * @param entwicklungskarte
+	 */
+	public EntwicklungKarteDaten(int spieler, String entwicklungskarte) {
+		Spieler = spieler;
+		Entwicklungskarte = entwicklungskarte;
+	}
+
+	/**
+	 * Getter for Spieler
+	 * @return
+	 */
+	public int getSpieler() {
+		return Spieler;
+	}
+
+	/**
+	 * Getter for Entwicklungskarte
+	 * @return
+	 */
+	public String getEntwicklungskarte() {
+		return Entwicklungskarte;
+	}
+	
+	
+}

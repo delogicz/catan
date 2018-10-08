@@ -1,0 +1,119 @@
+package network;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+/**
+ * Handler der Kommunikation zwischen Server und einem Client
+ * @author georgschwab
+ *
+ */
+public class ServerHandler extends Thread{
+	private Socket client;
+	private Server server;
+	private int clientId;
+	private InputStream input;
+	
+	/**
+	 * Erstellt neuen Handler für angegebenen Client
+	 * @param cliend Client, mit dem der Server über den Handler kommunizieren will
+	 * @param servr Server
+	 */
+	public ServerHandler(Socket cliend, Server servr){
+		client = cliend;
+		server = servr;
+		server.sendHello(this);
+		System.out.println("[Net]Started Handler"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+	}
+	
+	@Override
+	/**
+	 * Empfängt und verarbeitet nachrichten vom angehängten Client
+	 */
+	public void run(){
+		Scanner in = null;
+		try {
+			input = client.getInputStream();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		in = new Scanner(input);
+		while(!client.isClosed()){
+			String text = in.nextLine();
+			if(text != null){
+				System.out.println("[Net]Handler " + clientId + " got: " + text+ " [Thread : "+ Thread.currentThread().getId() + "]");
+				server.handleInput(text,this);
+			}
+		}
+		in.close();
+	}	
+
+	/**
+	 * Schick eine Nachricht an den angehängten Client
+	 * @param message
+	 */
+	public void sendMessage(String message) {
+		System.out.println("[Net]Handler "+clientId+" sends: " + message+ " [Thread : "+ Thread.currentThread().getId() + "]");
+		try {
+		PrintWriter out;
+		out = new PrintWriter( client.getOutputStream(), true );
+		out.println(message);
+		} catch (IOException e) {
+			System.out.println("[Err]Server throws IOException while sending Text: " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	
+	/**
+	 * Sends the message to only the client with the right id
+	 * @param targetId			client id
+	 * @param message			message
+	 */
+	public void sendIf(int targetId,String message){
+		if(clientId==targetId){
+			System.out.println("[Net]Server sends: ["+message +"] to Client: "+targetId + " [Thread : "+ Thread.currentThread().getId() + "]");
+			sendMessage(message);
+		}
+	}
+	
+	/**
+	 * Sends the message to all clients but not to the one with the right ID
+	 * @param targetId			client id not to send the message
+	 * @param message
+	 */
+	public void sendIfNot(int targetId,String message){
+		if(clientId!=targetId){
+			System.out.println("[Net]Server sends: ["+message +"] to Client: "+ targetId + " [Thread : "+ Thread.currentThread().getId() + "]");
+			sendMessage(message);
+		}
+	}
+	
+	
+	/**
+	 * Closes the connection between client and server
+	 */
+	public void close(){
+		try {
+			client.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Setter for clientId
+	 * @param id
+	 */
+	public void setId(int id){
+		this.clientId = id;
+	}
+	
+	/**
+	 * Getter for clientId
+	 * @return
+	 */
+	public int getClientId(){
+		return clientId;
+	}
+}

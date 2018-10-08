@@ -1,0 +1,239 @@
+package network;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+
+import com.google.gson.Gson;
+
+import jsonstructures.BauNachricht;
+import jsonstructures.BauvorgangNachricht;
+import jsonstructures.ClientChatDaten;
+import jsonstructures.ErtragsDaten;
+import jsonstructures.FehlerNachricht;
+import jsonstructures.GebaeudeDaten;
+import jsonstructures.GebaeudeDatenDaten;
+import jsonstructures.HalloNachricht;
+import jsonstructures.KartenDaten;
+import jsonstructures.RohstoffDaten;
+import jsonstructures.ServerChatNachricht;
+import jsonstructures.ServerantwortNachricht;
+import jsonstructures.SpielerInitNachricht;
+import jsonstructures.SpielerZustandsDaten;
+import jsonstructures.SpielerZustandsDatenDaten;
+import jsonstructures.StatusUpdateNachricht;
+import jsonstructures.VersionProtokollDaten;
+import jsonstructures.WillkommenNachricht;
+import jsonstructures.WuerfelDaten;
+import jsonstructures.WuerfelNachricht;
+import model.Edge;
+import model.Vertex;
+
+
+public class Client extends Thread{
+	private static final String version = "JavaFXClient 0.1 (AbwesendeInseln)";
+	private Gson gson;
+	private Socket server;
+	/**
+	 * Creates new Client
+	 * @param host IP-Adress of Host
+	 * @param port Port
+	 */
+	public Client(String host, int port){
+		gson = new Gson();
+		/*try {
+			server = new Socket(host, port);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
+	}
+	
+	/**
+	 * Sends message Server
+	 * @param text Message
+	 */
+	public void sendText(String text){
+		PrintWriter out;
+		try {
+			out = new PrintWriter(server.getOutputStream(),true);
+			out.println(text);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Receives messages from Server
+	 */
+	public void receive(){
+		try {
+			Scanner in  = new Scanner(server.getInputStream());
+			if(!in.hasNextLine()){
+				in.close();
+				return;
+			}
+			String text = in.nextLine();
+			handleInput(text);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	private void handleInput(String text) {
+		String head = text.substring(0,2);
+		switch(head){
+		case "Ha": handleHello(text);break;
+		case "Wi": handleWelcome(text);break;
+		case "Se": handleServerMsg(text);break;
+		case "Ch": handleChat(text);break;
+		case "Fe": handleError(text);break;
+		case "Sp": handleStartMatch(text);break;
+		case "St": handleStatusUpdate(text);break;
+		case "Wu": handleDice(text);break;
+		case "Er": handleProduce(text);break;
+		case "Ba": handleConstruction(text);break;
+		}
+		
+	}
+
+	private void handleConstruction(String text) {
+		BauvorgangNachricht bn = gson.fromJson(text, BauvorgangNachricht.class);
+		GebaeudeDatenDaten gdd = bn.getBauvorgang();
+		GebaeudeDaten gd = gdd.getGebaeude();
+		int eigentuemer = gd.getEigentuemer();
+		String typ = gd.getTyp();
+		String location = gd.getOrt();
+	}
+
+	private void handleProduce(String text) {
+		ErtragsDaten en = gson.fromJson(text, ErtragsDaten.class);
+		int player = en.getSpieler();
+		RohstoffDaten rd = en.getRohstoffe();
+		int lumber = rd.getHolz();
+		int grain = rd.getGetreide();
+		int wool = rd.getWolle();
+		int ore = rd.getErz();
+		int brick = rd.getLehm();
+	}
+
+	private void handleDice(String text) {
+		WuerfelNachricht wn = gson.fromJson(text, WuerfelNachricht.class);
+		WuerfelDaten wd = wn.getWuerfelwurf();
+		int player = wd.getSpieler();
+		int number = wd.getWurf();
+	}
+
+	private void handleStatusUpdate(String text) {
+		StatusUpdateNachricht sn = gson.fromJson(text, StatusUpdateNachricht.class);
+		SpielerZustandsDatenDaten szdd = sn.getStatusupdate();
+		SpielerZustandsDaten szd = szdd.getSpieler();
+		int player = szd.getId();
+		int victoryPoints = szd.getSiegpunkte();
+		String name = szd.getName();
+		String status = szd.getStatus();
+		String color = szd.getFarbe();
+		RohstoffDaten rd = szd.getRohstoffe();
+		int ore = rd.getErz();
+		int grain = rd.getGetreide();
+		int lumber =rd.getHolz();
+		int brick =rd.getLehm();
+		int wool =rd.getWolle();
+	}
+
+	private void handleStartMatch(String text) {
+		String sub = text.substring(20,text.length()-1);
+		KartenDaten kd = gson.fromJson(sub, KartenDaten.class);
+		
+	}
+
+	private void handleError(String text) {
+		FehlerNachricht fn = gson.fromJson(text, FehlerNachricht.class);
+		String error = fn.getDaten();
+	}
+
+	private void handleChat(String text) {
+		ServerChatNachricht cn = gson.fromJson(text, ServerChatNachricht.class);
+		int authorId = cn.getDaten().getId();
+		String message = cn.getDaten().getNachricht();
+		//TODO Handle
+	}
+
+	private void handleServerMsg(String text) {
+		ServerantwortNachricht sn = gson.fromJson(text, ServerantwortNachricht.class);
+		String answer = sn.getDaten();
+		//TODO Handle
+	}
+
+	private void handleWelcome(String text) {
+		WillkommenNachricht wn = gson.fromJson(text, WillkommenNachricht.class);
+		int id = wn.getDaten();
+		//TODO Handle
+	}
+
+	private void handleHello(String text) {
+		HalloNachricht hn = gson.fromJson(text, HalloNachricht.class);
+		VersionProtokollDaten vpData = (VersionProtokollDaten) hn.getDaten();
+		String ver = vpData.getVersion();
+		String prot = vpData.getProtokoll();
+		//TODO Hello Handeln
+	}
+
+	/**
+	 * Run-Method of Client Thread
+	 */
+	@Override
+	public void run(){
+		while(true){
+			receive();
+		}
+	}
+	
+	public void sendEndTurn(){
+		sendText("{ \"Zug beenden\":{}}");
+	}
+	
+	public void sendRollDice(){
+		sendText("{ \"Wuerfeln\":{}}");
+	}
+	
+	public void sendStartMatch(){
+		sendText("{ \"Spiel starten\":{}}");
+	}
+	
+	public void sendChat(String text){
+		ClientChatDaten ccd = new ClientChatDaten(text);
+		sendText("{ \"Chatnachricht senden\":" + gson.toJson(ccd)+ "}");
+	}
+	
+	public void sendHello(){
+		HalloNachricht HelloMessage = new HalloNachricht(version);
+		sendText(gson.toJson(HelloMessage));
+	}
+	
+	public void sendPlayerInit(String name, String color){
+		SpielerInitNachricht initMessage = new SpielerInitNachricht(name,color);
+		sendText(gson.toJson(initMessage));
+	}
+	
+	public void sendConstructSettlement(Vertex target){
+		BauNachricht bn = new BauNachricht("Dorf", target);
+		sendText(gson.toJson(bn));
+	}
+	
+	public void sendConstructCity(Vertex target){
+		BauNachricht bn = new BauNachricht("Stadt", target);
+		sendText(gson.toJson(bn));
+	}
+	
+public void sendConstructRoad(Edge target){
+	BauNachricht bn = new BauNachricht("Strasse", target);
+	sendText(gson.toJson(bn));
+	}
+
+	public static void main(String[] args){
+		Client c = new Client("localhost", 4404);
+	}
+	
+}

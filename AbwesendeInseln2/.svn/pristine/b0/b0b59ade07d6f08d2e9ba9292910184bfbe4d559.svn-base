@@ -1,0 +1,142 @@
+package view;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import model.PlayerColor;
+import controller.GameControl;
+import game.GameManager;
+import game.Settings;
+
+public class GameControlSkin extends BorderPane {
+	private HBox command;
+	private HBox hand;
+	private GameControl gameControl;
+	private Button buildSetButton,buildRoadButton,rollDiceButton,endTurnButton;
+	private Label lumber,brick,wool,grain,ore,settlement,city,road,player;
+	
+	public GameControlSkin(GameControl gameControl){
+		
+		setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+		setPadding(new Insets(10, 10, 10, 10));
+		setPickOnBounds(false);
+		this.gameControl = gameControl;
+		command = new HBox();
+		buildSetButton = new Button("Build Settlement");
+	    buildRoadButton = new Button("Build Road");
+	    rollDiceButton = new Button("Roll Dice");
+	    endTurnButton = new Button("End Turn");
+	    command.getChildren().addAll(buildSetButton,buildRoadButton,rollDiceButton,endTurnButton);
+	    
+	    rollDiceButton.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				//TODO: if(Spieler, der auf rollDice klickt == CurrentTurnTaker)
+				gameControl.getCatan().getCurrentTurnTaker().dice();
+			}
+			
+		});
+	    
+	    hand = new HBox();
+	    hand.setSpacing(20);
+	    lumber = new Label("Lumber :" );
+	    brick = new Label("Brick :");
+	    wool = new Label("Wool :");
+	    grain = new Label("Grain :");
+	    ore = new Label("Ore :");
+	    settlement = new Label("Settlement :" );
+	    city = new Label("City :");
+	    road = new Label("Road :");
+	    
+	    player = new Label("| Player");
+	    
+	    hand.getChildren().addAll(lumber,brick,wool,grain,ore,settlement,city,road,player);
+	    
+	    setTop(hand);
+	    setBottom(command);
+	}
+	public Label getOre() {
+		return ore;
+	}
+	public void setOre(Label ore) {
+		this.ore = ore;
+	}
+	public Label getGrain() {
+		return grain;
+	}
+	public void setGrain(Label grain) {
+		this.grain = grain;
+	}
+	public Label getWool() {
+		return wool;
+	}
+	public void setWool(Label wool) {
+		this.wool = wool;
+	}
+	public Label getBrick() {
+		return brick;
+	}
+	public void setBrick(Label brick) {
+		this.brick = brick;
+	}
+	public Label getLumber() {
+		return lumber;
+	}
+	public void setLumber(Label lumber) {
+		this.lumber = lumber;
+	}
+	public Button getEndTurnButton() {
+		return endTurnButton;
+	}
+	public void setEndTurnButton(Button endTurnButton) {
+		this.endTurnButton = endTurnButton;
+	}
+	public Button getRollDiceButton() {
+		return rollDiceButton;
+	}
+	public void setRollDiceButton(Button rollDiceButton) {
+		this.rollDiceButton = rollDiceButton;
+	}
+	public Button getBuildRoadButton() {
+		return buildRoadButton;
+	}
+	public void setBuildRoadButton(Button buildRoadButton) {
+		this.buildRoadButton = buildRoadButton;
+	}
+	public Button getBuildSetButton() {
+		return buildSetButton;
+	}
+	public void setBuildSetButton(Button buildSetButton) {
+		this.buildSetButton = buildSetButton;
+	}
+	public Label getSettlement() {
+		return settlement;
+	}
+	public void setSettlement(Label settlement) {
+		this.settlement = settlement;
+	}
+	public Label getCity() {
+		return city;
+	}
+	public void setCity(Label city) {
+		this.city = city;
+	}
+	public Label getRoad() {
+		return road;
+	}
+	public void setRoad(Label road) {
+		this.road = road;
+	}
+	public Label getPlayer() {
+		return player;
+	}
+	
+
+	
+}

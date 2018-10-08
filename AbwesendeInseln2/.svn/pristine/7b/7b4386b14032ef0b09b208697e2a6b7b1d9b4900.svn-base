@@ -1,0 +1,52 @@
+package view;
+
+import controller.LogMaster;
+import game.Settings;
+import javafx.application.Platform;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import model.Settlement;
+/**
+ * View of a city
+ * @author Daniel Panangian
+ */
+public class CitySkin extends Rectangle {
+	
+	/**
+	 * Constructor
+	 * @param building
+	 * @param islandSkin
+	 */
+	public CitySkin(Settlement building, IslandSkin islandSkin){
+
+		super(Settings.CITY_WIDTH, Settings.CITY_HEIGHT);
+		Color color = building.getOwner().getPlayerColor().getColor();
+		setFill(color);
+		if(color != Color.WHITE){
+			setStroke(Color.ANTIQUEWHITE);
+		}
+		else setStroke(Color.BLACK);
+		setStrokeWidth(Settings.CITY_STROKEWIDTH);
+		setScaleX(Settings.SCALE);
+		setScaleY(Settings.SCALE);
+		setTranslateX(building.getVertex().getSkin().getShape().getTranslateX());
+		setTranslateY(building.getVertex().getSkin().getShape().getTranslateY());
+		
+		CitySkin citySkin = this;
+		
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				islandSkin.getChildren().add(citySkin);
+				LogMaster.log("[UI]City auf IslandSkin"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+			}
+		});
+		try {
+			LogMaster.log("[Thr]Thread sleeps for 10ms [Thread : "+ Thread.currentThread().getId() + "]");
+			Thread.sleep(Settings.SLEEP_SHORT);
+		} catch (InterruptedException e) {
+			LogMaster.log("[Exc]Thread.sleep throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+		
+	}
+}

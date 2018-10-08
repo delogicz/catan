@@ -1,0 +1,30 @@
+package jsonstructures;
+
+/**
+ * This class is for the map of the island to initialize it
+ * @author Felixi
+ *
+ */
+public class KartenDaten {
+	private FeldDaten[] Felder;
+	private GebaeudeDaten[] Gebaeude;
+	private HafenDaten[] Haefen;
+	private String Raeuber;
+	
+	
+	/**
+	 * Creates a KartenDaten object and initializes the map
+	 * @param felder		array of tiles
+	 * @param gebaeude		array of buildings
+	 * @param haefen		array of harbors
+	 * @param raeuber		position of the robber
+	 */
+	public KartenDaten(FeldDaten[] felder, GebaeudeDaten[] gebaeude, HafenDaten[] haefen, String raeuber) {
+		Felder = felder;
+		Gebaeude = gebaeude;
+		Haefen = haefen;
+		Raeuber = raeuber;
+	}
+	
+	
+}

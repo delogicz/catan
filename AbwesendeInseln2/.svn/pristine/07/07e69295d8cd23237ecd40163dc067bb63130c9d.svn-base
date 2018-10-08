@@ -1,0 +1,10 @@
+package model;
+
+public class Tile {
+	/**
+	 * Vertices of the Tile, starting from top going clockwise
+	 */
+	private Vertex[] vertices;
+	private TerrainType terrain;
+	private boolean hasRobberOnIt;
+}

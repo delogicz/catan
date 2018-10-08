@@ -1,0 +1,29 @@
+package model;
+
+import view.IslandSkin;
+import view.RoadSkin;
+
+/**
+ * A road. Defined by associated edge and player.
+ *
+ */
+public class Road {
+	
+	private Edge edge;
+	private Player player;
+	private RoadSkin roadSkin;
+	
+	public Road(Edge edge, Player player, IslandSkin islandSkin){
+		this.edge = edge;
+		this.player = player;
+		this.roadSkin = new RoadSkin(this, islandSkin);
+	}
+	
+	public Player getPlayer(){
+		return this.player;
+	}
+	
+	public Edge getEdge(){
+		return this.edge;
+	}
+}

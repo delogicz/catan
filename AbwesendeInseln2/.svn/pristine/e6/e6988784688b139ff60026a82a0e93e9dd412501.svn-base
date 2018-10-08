@@ -1,0 +1,49 @@
+package controller;
+
+import model.Edge;
+import model.Vertex;
+import network.Server;
+
+public class ServerControl {
+	private Server server;
+	
+	public ServerControl(int port) {
+		server = new Server(this,port);
+	}
+
+	public static void main(String[] args) {
+		ServerControl c = new ServerControl(5505);
+	}
+
+	public void handleStartGame(int clientId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void handleDiceRoll(int clientId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void handleEndTurn(int clientId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void handleBuildRoad(Edge kante, int clientId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void handleBuildSettlement(Vertex ecke, int clientId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void handleBuildCity(Vertex ecke, int clientId) {
+		// TODO Auto-generated method stub
+		
+		
+	}
+
+}

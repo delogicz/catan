@@ -1,0 +1,132 @@
+package game;
+
+import javafx.scene.Cursor;
+
+import java.util.ArrayList;
+
+import controller.GameControl;
+import javafx.scene.Scene;
+import model.Catan;
+import model.Player;
+import model.PlayerClient;
+import model.SetUp;
+import model.TerrainType;
+import model.TokenNumber;
+import network.Client;
+import view.GameSkin;
+import view.TradeSkin;
+
+/**
+ * The game manager initializes a new game.
+ * @author Daniel Panangian, Stefanie Kloss
+ */
+public class GameManager {
+	
+	private App app;
+	private Client client;
+	
+	private SetUp setUp;
+	/**
+	 * @return the setUp
+	 */
+	public SetUp getSetUp() {
+		return setUp;
+	}
+
+	private Scene setUpScene;
+	
+	private Scene gameScene;
+	private Catan catan;
+	private GameSkin gameSkin; 
+	private GameControl gameControl;
+	
+	/**
+	 * Constructor
+	 * @param app 
+	 */
+	public GameManager(App app) {
+		this.app = app;
+		this.client = new Client("localhost",10000, this);
+		setGameUp();
+	}
+	
+	/**
+	 * Starts the set up of the game
+	 */
+	private void setGameUp() {
+		this.setUp = new SetUp(this);
+		this.setUpScene = new Scene(setUp.getSetUpSkin());
+//		TradeSkin ts = new TradeSkin(this); //Testen von Handel Feld
+	}
+
+	/**
+	 *  Establishes new Game after all players joined (setUp)
+	 *  Creates a new instance of GameSkin
+	 */
+	public void newGame(Catan catan) {
+		
+		this.catan = catan;
+		this.gameSkin = new GameSkin(catan, this);
+		catan.setGameSkin(gameSkin);
+		this.gameScene = new Scene(gameSkin);
+		app.changeScene(gameScene);
+		
+	}
+	
+	public void quit() {
+		gameScene.getWindow().hide();
+	}
+	
+	/**
+	 * @return the gameScene
+	 */
+	public Scene getGameScene() {
+		return gameScene;
+	}
+	
+	/**
+	 * @return the gameControl
+	 */
+	public GameControl getGameControl() {
+		return gameControl;
+	}
+	
+	/**
+	 * @return the catan
+	 */
+	public Catan getCatan() {
+		return catan;
+	}
+	
+	/**
+	 * @return the setUpScene
+	 */
+	public Scene getSetUpScene() {
+		return setUpScene;
+	}
+	
+	/**
+	 * @return the app
+	 */
+	public App getApp() {
+		return this.app;
+	}
+
+	/**
+	 * @return the client
+	 */
+	public Client getClient() {
+		return client;
+	}
+
+	/**
+	 * @return the gameSkin
+	 */
+	public GameSkin getGameSkin() {
+		return gameSkin;
+	}
+	
+	
+}
+
+				

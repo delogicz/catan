@@ -1,0 +1,67 @@
+package network;
+
+import java.util.ArrayList;
+
+/**
+ * Class for Client queue message 
+ * @author Felixi
+ *
+ */
+public class ClientQueueHandler extends Thread{
+	private ArrayList<String> messageQueue;
+	private Client c;
+	private final Object lockObject = new Object(); //java is stupid
+	
+	/**
+	 * Constructor
+	 * @param client
+	 */
+	public ClientQueueHandler(Client client){
+		messageQueue = new ArrayList<String>();
+		c = client;
+	}
+	
+	/**
+	 * Adds messages to queue
+	 * @param message
+	 */
+	public void addMessage(String message){
+		synchronized(lockObject){
+			System.out.println("[Net]Added to Client Queue: " + message + " [Thread : "+ Thread.currentThread().getId() + "]");
+			messageQueue.add(message);
+			System.out.println("[Thr]Waking up Thread: " + this.getId() + " [Thread : "+ Thread.currentThread().getId() + "]");
+			lockObject.notify();
+		}
+	}
+	/**
+	 * Pops message every couple of miliseconds
+	 */
+	private void popMessage(){
+		if(messageQueue.size() > 0){
+			String s = messageQueue.get(0);
+			messageQueue.remove(0);
+			c.handleInput(s);
+		}
+	}
+	
+	/**
+	 * Pops the messages
+	 */
+	public void run(){
+		while(true){
+			synchronized(lockObject){
+				if(messageQueue.size() > 0){
+						popMessage();
+				}else{
+					try {
+						System.out.println("[Thr]Thread waits [Thread : "+ Thread.currentThread().getId() + "]");
+						lockObject.wait();
+					} catch (InterruptedException e) {
+						System.out.println("[Err]Wait throws InterruptedException:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+					}
+				}
+			}
+		}
+	}
+}
+

@@ -1,0 +1,95 @@
+package model;
+
+import javafx.scene.shape.Shape;
+
+/**
+ * Represent a game piece
+ * 
+ * @author Daniel Panangian
+ */
+public abstract class Building {
+	/**
+	 * Type of game pieces
+	 * 
+	 */
+	public enum BuildingType {
+		Road,City,Settlement;
+	}
+	
+		protected Player owner;
+		protected BuildingType buildingType;
+		
+		/**
+		 * Getter for Buildingtype
+		 * @return
+		 */
+		public BuildingType getBuildingType() {
+			return buildingType;
+		}
+		
+		/**
+		 *Get the owner of the game piece
+		 * @return owner
+		 */
+		public Player getOwner() {
+			return owner;
+		}
+		/**
+		 *Check if a player is the owner of a game piece
+		 *@param player
+		 *@return True if the player is the owner, otherwise false
+		 */
+		public boolean isOwner(Player player) {
+			return owner.getPlayerID() == player.getPlayerID();
+		}
+		/**
+		 *Check if a player is the owner of a game piece
+		 *@param player
+		 *@param building
+		 *@return True if the player is the owner, otherwise false
+		 */
+		public static boolean isOwner(Player player, Building building) {
+			return building != null && building.isOwner(player);
+		}
+		/**
+		 *Get the owner's color
+		 *@return color of the owner
+		 */
+		public PlayerColor getColor() {
+
+			return owner.getPlayerColor();
+		}
+		
+		/**
+		 * Getter for SettlementSkin
+		 * @return
+		 */
+		public Shape getSettlementSkin() {
+			return null;
+		}
+		
+		public void checkConnectedRoads() {
+			// TODO Auto-generated method stub
+			
+		}
+		@SuppressWarnings("unused")
+		public int checkConnectedRoadsFrom(Edge edge) {
+			return 0;
+			
+		}
+		@SuppressWarnings("unused")
+		public int checkConnectedRoadsTo(Edge edge) {
+			return 0;
+			
+		}
+		/**
+		 * @return connectedRoads
+		 */
+		public int getConnectedRoads() {
+			return 0;
+		}
+
+
+		
+	}
+

@@ -1,0 +1,37 @@
+package jsonstructures;
+
+/**
+ * This class contains the data of the dice roll a player made sent by the server
+ * @author Felixi
+ *
+ */
+public class WuerfelDaten {
+	private int Spieler;
+	private int Wurf;
+	
+	/**
+	 * Creates a WuerfelDaten object
+	 * @param spieler	player who rolled the dice
+	 * @param wurf		number of the dice roll
+	 */
+	public WuerfelDaten(int spieler, int wurf) {
+		Spieler = spieler;
+		Wurf = wurf;
+	}
+
+	public int getSpieler() {
+		return Spieler;
+	}
+
+	public void setSpieler(int spieler) {
+		Spieler = spieler;
+	}
+
+	public int getWurf() {
+		return Wurf;
+	}
+
+	public void setWurf(int wurf) {
+		Wurf = wurf;
+	}
+}

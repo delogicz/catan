@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class idDaten {
+	private int id;
+	
+	public idDaten(int id){
+		this.id = id;
+	}
+}

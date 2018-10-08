@@ -1,0 +1,19 @@
+package jsonstructures;
+
+public class SpielerZustandsDaten {
+	private int id;
+	private String Farbe;
+	private String Name;
+	private String Status;
+	private int Siegpunkte;
+	private RohstoffDaten Rohstoffe;
+	
+	public SpielerZustandsDaten(int id, String farbe, String name, String status, int siegpunkte, RohstoffDaten rohstoffe) {
+		this.id = id;
+		Farbe = farbe;
+		Name = name;
+		Status = status;
+		Siegpunkte = siegpunkte;
+		Rohstoffe = rohstoffe;
+	}
+}

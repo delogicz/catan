@@ -1,0 +1,16 @@
+package model;
+
+import view.IslandSkin;
+
+/**
+ * A city.
+ *
+ */
+public class City extends Settlement {
+	
+	public City(Vertex vertex, Player player, IslandSkin islandSkin){
+		super(vertex, player, islandSkin);
+		super.buildingType = BuildingType.City;
+		
+	}
+}

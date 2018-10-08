@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class GebaeudeDatenDaten {
+	private GebaeudeDaten Gebaeude;
+
+	public GebaeudeDatenDaten(GebaeudeDaten gebaeude) {
+		Gebaeude = gebaeude;
+	}
+}

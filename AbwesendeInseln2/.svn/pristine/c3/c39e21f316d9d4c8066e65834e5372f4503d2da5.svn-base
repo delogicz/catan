@@ -1,0 +1,61 @@
+package model;
+
+import controller.LogMaster;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+public enum DevelopmentCardType {
+	
+	/** Knight Cards */
+	KNIGHT("knight", false),
+	
+	/** Victory Point Cards */
+	CHAPEL("chapel", true),
+	GREATHALL("greathall", true),
+	LIBRARY("library", true),
+	MARKET("market", true),
+	UNIVERSITY("university", true),
+	
+	/** Progress Cards */
+	MONOPOLY("monopoly", false),
+	ROADBUILDING("roadbuilding", false),
+	YEAROFPLENTY("yearofplenty", false);
+	
+	private ImageView coloredSkin;
+	private ImageView bwSkin;
+	private final boolean VICTORY_POINT;
+
+	private DevelopmentCardType(String skinFileName, boolean victoryPoint){
+		VICTORY_POINT = victoryPoint;
+		try{
+			coloredSkin = new ImageView(new Image(DevelopmentCardType.class.getResourceAsStream("/img/devcards/"+skinFileName+".jpg"),250,250,true,true));
+			bwSkin = new ImageView(new Image(DevelopmentCardType.class.getResourceAsStream("/img/devcards/"+skinFileName+"1.jpg"),250,250,true,true));
+		}catch(Exception e){
+			LogMaster.logExc("[Exc]Problem loading skin of DevelopmentCardType " + e.getStackTrace());
+		}
+	}
+	
+	/**
+	 * Gets the colored Skin of the DevelopmentCardType
+	 * @return the skin
+	 */
+	public ImageView getColoredSkin() {
+		return coloredSkin;
+	}
+	
+	/**
+	 * Gets the black and white Skin of the DevelopmentCardType
+	 * @return the skin
+	 */
+	public ImageView getBWSkin() {
+		return bwSkin;
+	}
+	
+	/**
+	 * @return true if DevelopmentCardType belongs to the VictoryPoint-Cards
+	 */
+	public boolean isVictoryPoint() {
+		return VICTORY_POINT;
+	}
+
+}

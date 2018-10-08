@@ -1,0 +1,63 @@
+package model;
+
+import java.util.ArrayList;
+
+import javafx.scene.Cursor;
+
+public class PlayerClient extends Player {
+	
+	/**
+	 * Constructor
+	 */
+	public PlayerClient(PlayerColor playerColor, int playerId, String name){
+		
+		super(playerColor, playerId, name);
+		setCards(new ArrayList<ResourceType>());
+	}
+	
+	/**
+	 * Updates the information of the player
+	 * @param victoryPoints
+	 * @param name
+	 * @param status
+	 * @param color
+	 * @param resources
+	 */
+	public void update(int victoryPoints, String name, String status, PlayerColor color,
+			ArrayList<ResourceType> resources) {
+		this.victoryPoints = victoryPoints;
+		this.name = name;
+		this.status = status;
+		this.playerColor = color;
+		this.resCards = resources;
+		this.resCardsCount = resources.size();
+		
+		catan.getGameControl().disableAllButtons();
+		switch(this.status){
+		case "Dorf bauen": catan.getGameControl().enableBuildSetButton(); break;
+		case "Strasse bauen": catan.getGameControl().enableBuildRoadButton(); break;
+		case "Wuerfeln": catan.getGameControl().enableRollDiceButton(); break;
+		case "Karten wegen Raeuber abgeben": //TODO break;
+		case "Raeuber versetzen": this.setRelocateRobber(true); break;
+		case "Handeln oder bauen": catan.getGameControl().enableAllButtons(); break;
+		}
+		
+	}
+
+	
+	/**
+	 * Use when PlayerClient has costs in form of resource cards 
+	 */
+	public void resCardsCosts(ArrayList<ResourceType> costs){
+		this.resCards.removeAll(costs);
+		resCardsCosts(costs.size());
+	}
+	
+	/**
+	 * Use when PlayerClient receives resource cards 
+	 */
+	public void resCardsProduce(ArrayList<ResourceType> resources) {
+		this.resCards.addAll(resources);
+		resCardsProduce(resources.size());
+	}
+}

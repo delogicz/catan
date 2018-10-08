@@ -1,0 +1,110 @@
+package game;
+
+import java.util.ArrayList;
+
+import javafx.scene.paint.Color;
+import model.ResourceType;
+
+/**
+ * Static variables
+ * @author Daniel Panangian, Samantha Meindl
+ */
+public class Settings {
+		
+		// Graphics
+		// Sizing & layout
+		public static final double SCALE = 63;
+		public static final double BORDER_WIDTH = 1.6 * SCALE;
+		public static final double OFFSET_X = 267 ;  //273
+		public static final double OFFSET_Y = 192 ;  //271
+		public static final double HALF_SQRT_THREE = 0.866025;
+		
+		public static final double GAME_SKIN_WIDTH = 1000;
+		public static final double GAME_SKIN_HEIGHT = 900;
+		
+		public static final double ISLAND_SKIN_WIDTH = 1000;
+		public static final double ISLAND_SKIN_HEIGHT = 900;
+		
+		public static final double EDGE_LENGTH = 0.68;
+		public static final double EDGE_WIDTH = 0.07;
+		
+		public static final int[] HEXAGON_LAYOUT = new int[] { 3, 4, 5, 4, 3 };
+		public static final int[] VERTEX_LAYOUT = new int[] { 7, 9, 11, 11, 9, 7 };
+		
+		public static final double CITY_WIDTH = 0.4;
+		public static final double CITY_HEIGHT = 0.25;
+		public static final double CITY_STROKEWIDTH = 0.03;
+		
+		public static final int HANDSKIN_X = 300;
+		public static final int HANDSKIN_Y = 118;
+		
+		/**
+		 * The maximum width of the chat window
+		 */
+		public static final int CHAT_WIDTH = 190;
+		
+		/**
+		 * The maximum height of the chat window
+		 */
+		public static final int CHAT_HEIGHT = 320;
+		
+		/**
+		 * The height and width of a dice
+		 */
+		public static final int DICE_SIZE = 35;
+		
+		/**		
+		 * The amount of hexes in the game
+		 */
+		public static final int AMOUNT_OF_HEXES = 19;
+		
+		/**
+		 * The amount of roads in the game
+		 */
+		public static final int AMOUNT_OF_ROADS = 15;
+		
+		/**
+		 * The amount of settlements in the game
+		 */
+		public static final int AMOUNT_OF_SETTLEMENTS = 5;
+		
+		/**
+		 * The amount of cities in the game
+		 */
+		public static final int AMOUNT_OF_CITIES = 4;
+		
+		// Colors
+
+		public static final Color EDGE_HOVER_COLOR = Color.PALEGOLDENROD;
+		public static final Color EDGE_SKIN_COLOR = Color.TRANSPARENT;
+
+
+		public static final Color VERTEX_SKIN_COLOR = Color.TRANSPARENT;
+		public static final Color VERTEX_HOVER_COLOR = Color.PALEGOLDENROD;
+		
+	
+		public static final String OSWALD_PATH      = Settings.class.getResource("/Oswald-Regular.ttf").toString();
+		public static final int STANDARD_FONT_SIZE = 14;
+		public static final int LITTLE_FONT_SIZE = 12;
+		public static final int BIG_FONT_SIZE = 16;
+		public static final int GIANT_FONT_SIZE = 18;
+		
+		 //Cards
+		 public static final int KNIGHT_CARDS = 14;
+		 public static final int CHAPEL_CHARD = 1;
+		 public static final int GREATHALL_CARD = 1;
+		 public static final int LIBRARY_CARD = 1;
+		 public static final int MARKET_CARD = 1;
+		 public static final int UNIVERSITY_CARD = 1;
+		 public static final int MONOPOLY_CARDS = 2;
+		 public static final int ROADBUILDING_CARDS = 2;
+		 public static final int YEAROFPLENTY_CARDS = 2;
+		 
+		 //Dice Location
+		 public static final int DICE1_X = 380;
+		 public static final int DICE1_Y = 290;
+		 public static final int DICE2_X = 430;
+		 public static final int DICE2_Y = 290;
+		
+
+}

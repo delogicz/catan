@@ -1,0 +1,353 @@
+package view;
+
+import controller.PlayerControl;
+import game.Settings;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import model.Player;
+/**
+ * View of a game control
+ * @author Daniel Panangian, Stefanie Kloss
+ */
+public class PlayerControlSkin extends BorderPane {
+	
+	private VBox commandVBox,chatVBox, otherButtons;
+	private HBox buildAndBuyButtons;
+	private GridPane allInfo;
+	private Button buildSetButton,buildRoadButton,buildCityButton,buyDevCardButton; 
+	private Button tradeButton, rollDiceButton,endTurnButton, showDevCardButton;
+	private Label lumber,brick,wool,grain,ore,settlement,city,road, status;
+	private Player player;
+	
+	/**
+	 * Constructor
+	 */
+	public PlayerControlSkin(PlayerControl playerControl){
+		
+		this.player = playerControl.getPlayer();
+		
+		
+		setPrefSize(Settings.GAME_SKIN_WIDTH, Settings.GAME_SKIN_HEIGHT);
+		setPickOnBounds(false);
+		
+		this.commandVBox = new VBox();
+		this.buildAndBuyButtons = new HBox();
+		this.otherButtons = new VBox();
+		
+		buildSetButton = new Button("Build Settlement");
+
+	    buildRoadButton = new Button("Build Road");
+
+	    buildCityButton = new Button("Build City");
+
+	    buyDevCardButton = new Button("Buy Development Card");
+
+	    tradeButton = new Button("Trading Options");
+	    rollDiceButton = new Button("Roll Dice");
+	    rollDiceButton.setPrefHeight(Settings.HEIGHT_IMPORTANT_BUTTON);
+	    endTurnButton = new Button("End Turn");
+	    endTurnButton.setPrefHeight(Settings.HEIGHT_IMPORTANT_BUTTON);
+	    showDevCardButton = new Button("Developement Cards");
+	   
+	    buildAndBuyButtons.getChildren().addAll(buildSetButton,buildRoadButton,buildCityButton,buyDevCardButton);
+	    buildAndBuyButtons.setSpacing(20);
+	    
+	    VBox tradeAndDevVBox = new VBox();
+	    tradeAndDevVBox.getChildren().addAll(tradeButton,showDevCardButton);
+	    tradeAndDevVBox.setSpacing(30);
+	    
+	    VBox diceAndEndVBox = new VBox();
+	    diceAndEndVBox.getChildren().addAll(rollDiceButton,endTurnButton);
+	    diceAndEndVBox.setSpacing(30);
+	    
+	    otherButtons.getChildren().addAll(tradeAndDevVBox,diceAndEndVBox);
+	    otherButtons.setSpacing(100);
+	   
+	    commandVBox.setSpacing(20);
+	    
+	    ImageView lumberImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/lumber.png"),50,50,true,true));
+		ImageView brickImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/brick.png"),50,50,true,true));
+		ImageView woolImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/wool.png"),40,40,true,true));
+		ImageView grainImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/grain.png"),35,35,true,true));
+		ImageView oreImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/ore.png"),40,40,true,true));
+		ImageView settlementImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/settlementCost.png"),200,100,true,true));
+		ImageView cityImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/cityCost.png"),200,100,true,true));
+		ImageView roadImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/roadCost.png"),120,60,true,true));
+		ImageView developmentImg = new ImageView(new Image(TradeSkin.class.getResourceAsStream("/img/resourcetypes/developmentCardCost.png"),150,75,true,true));
+		
+	    Tooltip settleT = new Tooltip();
+	    settleT.setGraphic(settlementImg);
+	    buildSetButton.setTooltip(settleT);
+	    
+	    Tooltip cityT = new Tooltip();
+	    cityT.setGraphic(cityImg);
+	    buildCityButton.setTooltip(cityT);
+	    
+	    Tooltip roadT = new Tooltip();
+	    roadT.setGraphic(roadImg);
+	    buildRoadButton.setTooltip(roadT);
+	    
+	    Tooltip devT = new Tooltip();
+	    devT.setGraphic(developmentImg);
+	    buyDevCardButton.setTooltip(devT);
+		
+	    allInfo = new GridPane();
+	    
+	    lumber = new Label(": 0");
+	    brick = new Label(": 0");
+	    wool = new Label(": 0");
+	    grain = new Label(": 0");
+	    ore = new Label(": 0");
+	    
+	    status = new Label(Settings.WARTEN_BEGINN);
+	    settlement = new Label(": 0" );
+	    city = new Label(": 0");
+	    road = new Label(": 0");
+	    
+		road.setTextFill(player.getPlayerColor().getColor());
+		city.setTextFill(player.getPlayerColor().getColor());
+		status.setTextFill(player.getPlayerColor().getColor());
+		settlement.setTextFill(player.getPlayerColor().getColor());
+		lumber.setTextFill(player.getPlayerColor().getColor());
+		brick.setTextFill(player.getPlayerColor().getColor());
+		wool.setTextFill(player.getPlayerColor().getColor());
+		grain.setTextFill(player.getPlayerColor().getColor());
+		ore.setTextFill(player.getPlayerColor().getColor());
+	    
+	    allInfo.setHgap(20);
+	    allInfo.setVgap(20);
+	    allInfo.add(status, 8, 4);
+	    allInfo.add(settlement, 8, 5);
+	    allInfo.add(city, 10, 5);
+	    allInfo.add(road, 12, 5);
+	    allInfo.add(lumberImg, 0, 4);
+	    allInfo.add(lumber, 1, 4);
+	    allInfo.add(brickImg, 2, 4);
+	    allInfo.add(brick, 3, 4);
+	    allInfo.add(woolImg, 0, 5);
+	    allInfo.add(wool, 1, 5);
+	    allInfo.add(grainImg, 2, 5);
+	    allInfo.add(grain, 3, 5);
+	    allInfo.add(oreImg, 4, 5);
+	    allInfo.add(ore, 5, 5);
+	    
+	    allInfo.setMouseTransparent(true);
+	    
+	    commandVBox.getChildren().addAll(allInfo,buildAndBuyButtons);
+	    changeAllFonts();
+	    
+	    
+	    chatVBox = new ChatSkin(playerControl);
+	    
+	    setBottom(commandVBox);
+	    commandVBox.setAlignment(Pos.CENTER);
+	    commandVBox.setPickOnBounds(false);
+	    buildAndBuyButtons.setMouseTransparent(false);
+	    BorderPane.setMargin(commandVBox, new Insets(0, 0, 10, 15));
+	    BorderPane.setAlignment(commandVBox, Pos.CENTER);
+	    setLeft(chatVBox);
+	    BorderPane.setAlignment(chatVBox,Pos.CENTER);
+	    setRight(otherButtons);
+	    otherButtons.setAlignment(Pos.BOTTOM_RIGHT);
+	    BorderPane.setAlignment(otherButtons, Pos.BOTTOM_RIGHT);
+	    BorderPane.setMargin(otherButtons, new Insets(0, 15, 0, 0));
+	}
+
+	/**
+	 * changes font of a labeled object
+	 * @param labeled
+	 */
+	private void changeFont(Labeled labeled){
+		labeled.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.LITTLE_FONT_SIZE));
+	}
+	
+	/**
+	 * changes font of a labeled object
+	 * @param labeled
+	 */
+	private void changeFontBig(Labeled labeled){
+		labeled.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.BIG_FONT_SIZE));
+	}
+	
+	/**
+	 * changes font of all labeled objects in class
+	 */
+	private void changeAllFonts(){
+	    changeFont(buildSetButton);
+	    changeFont(buildRoadButton);
+	    changeFont(buildCityButton);
+	    changeFont(buyDevCardButton);
+	    changeFont(tradeButton);
+	    changeFont(rollDiceButton);
+	    changeFont(endTurnButton);
+	    changeFont(showDevCardButton);
+	    changeFontBig(lumber);
+	    changeFontBig(brick);
+	    changeFontBig(wool);
+	    changeFontBig(grain);
+	    changeFontBig(ore);
+	    status.setFont(Font.loadFont(Settings.OSWALD_PATH, Settings.HUGE_FONT_SIZE));
+	    changeFontBig(settlement);
+	    changeFontBig(city);
+	    changeFontBig(road);
+	}
+	
+	/**
+	 * Getter for ore
+	 * @return
+	 */
+	public Label getOre() {
+		return ore;
+	}
+	/**
+	 * Getter for grain
+	 * @return
+	 */
+	public Label getGrain() {
+		return grain;
+	}
+	
+	/**
+	 * Getter for wool
+	 * @return
+	 */
+	public Label getWool() {
+		return wool;
+	}
+	
+	/**
+	 * Getter for brick
+	 * @return
+	 */
+	public Label getBrick() {
+		return brick;
+	}
+	
+	/**
+	 * Getter for lumber
+	 * @return
+	 */
+	public Label getLumber() {
+		return lumber;
+	}
+	/**
+	 * 
+	 * @return the endTurnButton
+	 */
+	public Button getEndTurnButton() {
+		return endTurnButton;
+	}
+	/**
+	 * 
+	 * @return the rollDiceButton
+	 */
+	public Button getRollDiceButton() {
+		return rollDiceButton;
+	}
+	/**
+	 * @return the tradeButton
+	 */
+	public Button getTradeButton() {
+		return tradeButton;
+	}
+	/**
+	 * @return the BuildRoadButton
+	 */
+	public Button getBuildRoadButton() {
+		return buildRoadButton;
+	}
+	/**
+	 * 
+	 * @return the buildSetButton
+	 */
+	public Button getBuildSetButton() {
+		return buildSetButton;
+	}
+	/**
+	 * 
+	 * @return the buildCityButton
+	 */
+	public Button getBuildCityButton() {
+		return buildCityButton;
+	}
+	/**
+	 * 
+	 * @return the showDevCardButton
+	 */
+	public Button getShowDevCardButton() {
+		return showDevCardButton;
+	}
+	
+	/**
+	 * @return the status
+	 */
+	public Label getStatus() {
+		return status;
+	}
+	
+	/**
+	 * 
+	 * @return the settlement
+	 */
+	public Label getSettlement() {
+		return settlement;
+	}
+	
+	/**
+	 * Getter for city
+	 * @return
+	 */
+	public Label getCity() {
+		return city;
+	}
+	
+	/**
+	 * Setter for city
+	 * @param city
+	 */
+	public void setCity(Label city) {
+		this.city = city;
+	}
+	
+	/**
+	 * Getter for road
+	 * @return
+	 */
+	public Label getRoad() {
+		return road;
+	}
+	
+	/**
+	 * Setter for road
+	 * @param road
+	 */
+	public void setRoad(Label road) {
+		this.road = road;
+	}
+	
+	/**
+	 * @return the buyDevelopmentCard
+	 */
+	public Button getBuyDevCardButton() {
+		return buyDevCardButton;
+	}
+
+	/**
+	 * Getter for chatBox
+	 * @return
+	 */
+	public ChatSkin getChatVBox(){
+		return (ChatSkin) chatVBox;
+	}
+}

@@ -1,0 +1,188 @@
+package view;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import controller.LogMaster;
+import controller.ServerControl;
+import game.GameManager;
+import game.Settings;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+
+/**
+ * The Login View to create a Client
+ * @author Stefanie Kloss
+ *
+ */
+public class ClientLogin extends StackPane{
+	
+	private GameManager gameManager;
+	private String myIP;
+	private LogLevelView logLevelView;
+	/**
+	 * Constructor
+	 * @param gameManager
+	 */
+	public ClientLogin(GameManager gameManager){
+		
+		super();
+		this.gameManager = gameManager;
+		
+		setPrefSize(Settings.GAME_SKIN_WIDTH/2.7, Settings.GAME_SKIN_HEIGHT/3.2);
+		setStyle("-fx-background-color: darkred; -fx-padding: 10;");
+		getIpAdress();
+		addElements();
+		
+	}
+	
+	/**
+	 * Adds text, textfields, buttons, etc
+	 */
+	private void addElements() {
+
+		Text welcome = new Text("Welcome to Settlers of Catan");
+		welcome.setFill(Color.ANTIQUEWHITE);
+		welcome.setFont(Font.loadFont(Settings.OSWALD_PATH, 30));
+		Text host = new Text("Host:            ");
+		host.setFill(Color.ANTIQUEWHITE);
+		host.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		TextField enterHost = new TextField();
+		enterHost.setText("localhost");
+		enterHost.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		HBox hBoxHost = new HBox();
+		hBoxHost.getChildren().addAll(host, enterHost);
+		hBoxHost.setAlignment(Pos.BASELINE_LEFT);
+		
+		Text port = new Text("Port:            ");
+		port.setFill(Color.ANTIQUEWHITE);
+		port.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		TextField enterPort = new TextField();
+		enterPort.setText("5506");
+		enterPort.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		HBox hBoxPort = new HBox();
+		hBoxPort.getChildren().addAll(port, enterPort);
+		hBoxPort.setAlignment(Pos.BASELINE_LEFT);
+		
+		Button loginButton = new Button("Login as Client");
+		loginButton.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		
+		Button loginButtonBot = new Button("Login as BotClient");
+		loginButtonBot.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		
+		loginButton.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				try{
+					int portInt = Integer.parseInt(enterPort.getText());
+					try {
+						gameManager.initializeClient(enterHost.getText(), portInt);
+					}catch(Exception e){
+						LogMaster.logExc("[Exc]Connection to " + enterHost.getText()+":"+portInt+" was refused.");
+						gameManager.getApp().popUpMessage("The connection was refused.\nPlease try again.");
+					}
+					
+				}catch(Exception e){
+					gameManager.getApp().popUpMessage("The port must consist out of numbers.");
+				}
+			}
+		});
+
+		loginButtonBot.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				try{
+					int portInt = Integer.parseInt(enterPort.getText());
+					try {
+						gameManager.initializeBotClient(enterHost.getText(), portInt);
+					}catch(Exception e){
+						gameManager.getApp().popUpMessage("The connection was refused.\nPlease try again.");
+					}
+				}catch(Exception e){
+					gameManager.getApp().popUpMessage("The port must consist out of numbers.");
+				}
+			}
+		});
+		Button logLevel = new Button("Log Level");
+		logLevel.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		
+		logLevel.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				logLevelView = new LogLevelView(gameManager);
+			}
+		});
+		
+		Text myHostIP = new Text("Your IP: " + myIP);
+		myHostIP.setFill(Color.ANTIQUEWHITE);
+		myHostIP.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		HBox hBoxIP = new HBox();
+		hBoxIP.getChildren().addAll(myHostIP);
+		hBoxIP.setAlignment(Pos.BASELINE_LEFT);
+		
+		Text orServer = new Text("Or host your own Server");
+		orServer.setFill(Color.ANTIQUEWHITE);
+		orServer.setFont(Font.loadFont(Settings.OSWALD_PATH, 18));
+		Text textPort = new Text("Port:            ");
+		textPort.setFill(Color.ANTIQUEWHITE);
+		textPort.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		TextField serverPort = new TextField();
+		serverPort.setText("5506");
+		serverPort.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		
+		HBox serverBox = new HBox();
+		serverBox.getChildren().addAll(textPort, serverPort);
+		serverBox.setAlignment(Pos.BASELINE_LEFT);
+		Button startServer = new Button("Start Server");
+		startServer.setFont(Font.loadFont(Settings.OSWALD_PATH, 16));
+		
+		startServer.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				try{
+					LogMaster.log("[Thr]Launched ServerApp [Thread : "+ Thread.currentThread().getId() + "]");
+					LogMaster.log("[Thr]Initializing Server [Thread : "+ Thread.currentThread().getId() + "]");
+					int port = Integer.parseInt(serverPort.getText());
+					new ServerControl(port);
+					startServer.setDisable(true);
+				}catch(Exception e){
+					gameManager.getApp().popUpMessage("Failed to start the server");
+				}
+			}
+		});
+		
+		VBox vBox = new VBox();
+		vBox.setSpacing(30);
+		vBox.getChildren().addAll(welcome,hBoxHost, hBoxPort, loginButton, loginButtonBot,orServer,hBoxIP,serverBox ,startServer,logLevel);
+		
+		setMargin(vBox, new Insets(40,40,40,40));
+		getChildren().add(vBox);	
+		
+	}
+	
+	/**
+	 * Getter for ipAdress
+	 */
+	private void getIpAdress(){
+        try {
+            myIP = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException ex) {
+        	myIP = "unknown";
+            ex.printStackTrace();
+        }
+    }
+
+}

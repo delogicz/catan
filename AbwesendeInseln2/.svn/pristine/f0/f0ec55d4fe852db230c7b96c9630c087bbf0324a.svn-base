@@ -1,0 +1,104 @@
+package network;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Scanner;
+/**
+ * Handler der Kommunikation zwischen Server und einem Client
+ * @author georgschwab
+ *
+ */
+public class Handler extends Thread{
+	private Socket client;
+	private Server server;
+	private int clientId;
+	
+	/**
+	 * Erstellt neuen Handler für angegebenen Client
+	 * @param cliend Client, mit dem der Server über den Handler kommunizieren will
+	 * @param servr Server
+	 */
+	public Handler(Socket cliend, Server servr){
+		client = cliend;
+		server = servr;
+		server.sendHello(this);
+	}
+	
+	@Override
+	/**
+	 * Empfängt und verarbeitet nachrichten vom angehängten Client
+	 */
+	public void run(){
+		while(!client.isClosed()){
+			Scanner in;
+			try {
+				in = new Scanner(client.getInputStream());
+				String text = in.nextLine();
+				if(text != null){
+					System.out.println("Handler got: " + text);
+					server.handleInput(text,this);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}	
+
+	/**
+	 * Schick eine Nachricht an den angehängten Client
+	 * @param message
+	 */
+	public void sendMessage(String message) {
+		System.out.println("Handler sends: " + message);
+		try {
+		PrintWriter out;
+		out = new PrintWriter( client.getOutputStream(), true );
+		out.println(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		/*
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+	}
+	
+	public void sendIf(int targetId,String message){
+		if(clientId==targetId){
+			sendMessage(message);
+		}
+	}
+	
+	public void sendIfNot(int targetId,String message){
+		if(clientId!=targetId){
+			sendMessage(message);
+		}
+	}
+	
+	
+	/**
+	 * Schließt die Verbindung zwischen Handler und Client
+	 */
+	public void close(){
+		try {
+			client.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setId(int id){
+		this.clientId = id;
+	}
+	
+	public int getClientId(){
+		return clientId;
+	}
+}

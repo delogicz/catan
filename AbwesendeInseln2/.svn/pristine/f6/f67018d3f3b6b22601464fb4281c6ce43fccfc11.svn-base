@@ -1,0 +1,32 @@
+package model;
+
+
+/**
+ * Determines all different types of harbours
+ *
+ */
+public enum Harbour {
+	THREETOONE,
+	TWOTOONEBRICK,
+	TWOTOONEGRAIN,
+	TWOTOONEWOOL,
+	TWOTOONELUMBER,
+	TWOTOONEORE;
+	
+	/**
+	 * 
+	 * @return filename (string)
+	 *
+	 */
+	public String getFileName() {
+		switch(this){
+		case THREETOONE:  	 return "schiff.png";
+		case TWOTOONEBRICK:	 return "brick.png";
+		case TWOTOONEGRAIN:	 return "grain.png";
+		case TWOTOONELUMBER: return "lumber.png";
+		case TWOTOONEORE:	 return "ore.png";
+		case TWOTOONEWOOL:	 return "wool.png";
+		}
+		return null;
+	}
+}

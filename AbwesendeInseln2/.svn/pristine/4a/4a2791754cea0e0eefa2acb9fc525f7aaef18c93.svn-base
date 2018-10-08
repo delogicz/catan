@@ -1,0 +1,36 @@
+package controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.scene.layout.BorderPane;
+import model.Catan;
+import model.Player;
+import model.PlayerClient;
+import view.StatsControlSkin;
+import view.StatsControlSkin3p;
+import view.StatsControlSkin4p;
+
+public class StatsControl {
+	private StatsControlSkin skin;
+	private Catan catan;
+	private ArrayList<Player> players;
+	private PlayerClient player;
+	public StatsControl(Catan catan) {
+		players = catan.getPlayers();
+		player = catan.getPlayerClient();
+		if (players.size() == 3){
+			skin = new StatsControlSkin3p(player,players);
+		}
+		else{
+		if (players.size() == 4){
+			skin = new StatsControlSkin4p(player,players);
+			}
+		}
+	}
+	
+	public StatsControlSkin getSkin() {
+		return skin;
+	}
+
+}

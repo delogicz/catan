@@ -1,0 +1,13 @@
+package model;
+
+/**
+ * Determines all different types of development cards
+ *
+ */
+public enum DevelopmentCard {
+	KNIGHT,
+	VICTORYPOINT,
+	MONOPOLY,
+	YEAROFPLENTY,
+	ROADBUILDING;
+}

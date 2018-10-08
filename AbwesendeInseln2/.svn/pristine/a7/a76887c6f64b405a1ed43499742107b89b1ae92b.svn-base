@@ -1,0 +1,31 @@
+package game;
+
+import javafx.scene.Scene;
+import view.GameSkin;
+
+public class GameManager {
+
+
+	private Scene gameScene;
+
+
+	public GameManager() {
+		newGame();
+	}
+
+	public void newGame() {
+		gameScene = new Scene(new GameSkin());
+	}
+
+	public void quit() {
+		gameScene.getWindow().hide();
+	}
+
+	
+
+	public Scene getGameScene() {
+		return gameScene;
+	}
+
+
+}

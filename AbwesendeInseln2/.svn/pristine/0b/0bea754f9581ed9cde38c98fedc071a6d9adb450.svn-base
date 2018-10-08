@@ -1,0 +1,42 @@
+package model;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+public enum DevelopmentCardType {
+	
+	/** Knight Cards */
+	KNIGHT("/knight.jpg"),
+	
+	/** Victory Point Cards */
+	CHAPEL("/chapel.jpg"),
+	GREATHALL("/greathall.jpg"),
+	LIBRARY("/library.jpg"),
+	MARKET("/market.jpg"),
+	UNIVERSITY("/university.jpg"),
+	
+	/** Progress Cards */
+	MONOPOLY("/monopoly.jpg"),
+	ROADBUILDING("/roadbuilding.jpg"),
+	YEAROFPLENTY("/yearofplenty.jpg");
+	
+	private ImageView skin;
+	
+	private DevelopmentCardType(String skinFileName){
+		try{
+			skin = new ImageView(new Image(DevelopmentCardType.class.getResourceAsStream("/img/devcards"+skinFileName),180,180,true,true));
+		}catch(Exception e){
+			System.out.println("Problem loading skin of DevelopmentCardType " + e.getStackTrace());
+		}
+	}
+	
+	/**
+	 * Gets the Skin of the DevelopmentCardType
+	 * @return the skin
+	 */
+	public ImageView getSkin() {
+		return skin;
+	}
+		
+
+}

@@ -1,0 +1,38 @@
+package jsonstructures;
+
+/**
+ * Class for Data of a trade
+ * @author Felixi
+ *
+ */
+public class HandelBestätigungDaten {
+
+	int Spieler;
+	int Mitspieler;
+	
+	/**
+	 * Constructor
+	 * @param spieler
+	 * @param mitspieler
+	 */
+	public HandelBestätigungDaten(int spieler, int mitspieler) {
+		Spieler = spieler;
+		Mitspieler = mitspieler;
+	}
+	/**
+	 * Getter for Spieler
+	 * @return
+	 */
+	public int getSpieler() {
+		return Spieler;
+	}
+	/**
+	 * Getter for Mitspieler
+	 * @return
+	 */
+	public int getMitspieler() {
+		return Mitspieler;
+	}
+	
+	
+}

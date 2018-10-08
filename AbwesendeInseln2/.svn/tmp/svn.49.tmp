@@ -1,0 +1,69 @@
+package model;
+
+
+import view.EdgeSkin;
+
+/**
+ * Contains an edge defined by two vertices.
+ *
+ */
+public class Edge extends Buildable{
+	private Vertex from;
+	private Vertex to;
+	private Catan catan;
+	private EdgeSkin skin;
+	private Building occupyingBuilding;
+	
+	public Edge(Vertex from, Vertex to,Catan catan) {
+		this.from = from;
+		this.to = to;
+		this.catan = catan;
+		skin = new EdgeSkin(this);
+	}
+	
+	public Vertex getVertexFrom() {
+		return this.from;
+	}
+
+	public Vertex getVertexTo() {
+		return this.to;
+	}
+
+	public EdgeSkin getSkin() {
+		return this.skin;
+	}
+	
+	
+	/**
+	 * Sets rotation of the skin (view) of the edge
+	 * @param degrees 
+	 */
+	public void setRotation(double degrees) {
+		skin.getShape().setRotate(degrees);
+	}
+	
+	public Building getOccupyingBuilding() {
+		return occupyingBuilding;
+	}
+	
+	public void setOccupyingBuilding(Building building){
+		this.occupyingBuilding = building;
+	}
+
+	/**
+	 * Gives out position of the edge when clicked on with the mouse
+	 */
+	public void pressed() {
+		System.out.format("Edge pressed [{%d}, {%d}] to [{%d}, {%d}].%n", from.getRow(), from.getPos(), to.getRow(),
+				to.getPos());
+		System.out.println("Is occupied by : " + this.occupyingBuilding);
+		if (catan.getCurrentTurnTaker().canBuildRoad(this) 
+				&& catan.getCurrentTurnTaker().isBuildRoadPressed()){
+			catan.getCurrentTurnTaker().buildRoad(this);
+			catan.getGameControl().updateHand();
+		}
+	
+	}
+
+
+}

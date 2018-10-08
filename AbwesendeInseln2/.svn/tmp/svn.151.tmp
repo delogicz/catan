@@ -1,0 +1,901 @@
+package controller;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Random;
+
+import game.Settings;
+import jsonstructures.ConvertMaster;
+import jsonstructures.RohstoffDaten;
+import model.Catan;
+import model.DevelopmentCardType;
+import model.Edge;
+import model.Player;
+import model.PlayerClient;
+import model.PlayerColor;
+import model.ResourceType;
+import model.Road;
+import model.TradeOffer;
+import model.Vertex;
+import network.Server;
+
+/**
+ * This class is the controller of the server that manages the model of the server
+ * 
+ * @author Stefanie Kloss
+ */
+
+public class ServerControl {
+	
+	private Server server;
+	
+	private Catan catan;
+	private ArrayList<Player> players;
+	private ArrayList<Integer> tradeIdList;
+	/**
+	 * Count of players with more than seven cards when the robber gets moved
+	 */
+	private int bigHandCount;
+	/**
+	 * PlayerID of player that has diced a 7 in this turn, "-1" if player diced sth else 
+	 */
+	private int playerToRelocateRobber;
+	
+	/**
+	 * Constructor
+	 * @param port
+	 */
+	public ServerControl(int port) {
+		server = new Server(this,port);
+		server.start();
+		LogMaster.log("[Thr]Started new Thread Server with ID "  + server.getId() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		players = new ArrayList<Player>();
+		tradeIdList = new ArrayList<Integer>();
+		bigHandCount = 0;
+	}
+
+	/**
+	 * Handles the start game message from the client
+	 * @param clientId
+	 */
+	public void handleStartGame(int clientId) {
+		
+		PlayerClient p = getPlayerWithID(clientId);
+		boolean allPlayersReady = true;
+		p.setReadyToStartGame(true);
+		server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(), Settings.WARTEN_BEGINN, p.getVictoryPoints(), p.getResCards(),p.getKnightCount(),p.getDevCards());
+		for(Player player: players){
+			if(!((PlayerClient)player).isReadyToStartGame()){
+				allPlayersReady = false;
+			}
+		}
+		if(allPlayersReady && (players.size() == 3 || players.size() == 4)){
+			this.catan = new Catan(players);
+			server.sendStartMatch(catan.getIsland());
+			PlayerClient turnTaker = (PlayerClient)catan.getCurrentTurnTaker();
+			server.sendStatusUpdate(turnTaker.getPlayerID(), turnTaker.getPlayerColor().toServerString(), turnTaker.getName(), Settings.WUERFELN, turnTaker.getVictoryPoints(), ((PlayerClient)turnTaker).getResCards(),turnTaker.getKnightCount(),turnTaker.getDevCards());
+			server.sendError(turnTaker.getPlayerID(), "Dice to determine in which order you're going to play.");
+			for(Player c : players){
+				if(!turnTaker.equals(c)){
+					server.sendStatusUpdate(c.getPlayerID(), c.getPlayerColor().toServerString(), c.getName(), Settings.WARTEN, c.getVictoryPoints(), ((PlayerClient)c).getResCards(),c.getKnightCount(),((PlayerClient)c).getDevCards());
+				}
+			}
+		}
+	}
+
+	
+	/**
+	 * Rolls the dice and sends the number to the clients
+	 * Distributes resources
+	 * @param clientId
+	 */
+	public void handleDiceRoll(int clientId) {
+		
+		if(getPlayerWithID(clientId).getStatus().equals(Settings.WUERFELN)){
+			
+			int[] diceResult = catan.getDice().diceResult();
+			server.sendOk(clientId);
+			server.sendDice(clientId, diceResult);
+			
+			if(catan.getRound() == 0){
+				dicedToDetermineOrder(diceResult[0]+diceResult[1]);
+				return;
+			}
+			
+			Player p = getPlayerWithID(clientId);
+			if((diceResult[0]+diceResult[1]) == 7){
+				playerToRelocateRobber = clientId;
+				for(Player pl : catan.getPlayers()){
+					if(((PlayerClient)pl).getResCards().size() > 7){
+						bigHandCount++;
+						server.sendStatusUpdate(pl.getPlayerID(), pl.getPlayerColor().toServerString(), pl.getName(), Settings.KARTEN_ABGEBEN, pl.getVictoryPoints(), ((PlayerClient)pl).getResCards(), pl.getKnightCount(),((PlayerClient)pl).getDevCards());
+					}
+				}
+				waitThenMoveRobber(false);
+			}
+			else { 
+				for(Player pl : players){
+					int id = ((PlayerClient)pl).getPlayerID();
+					server.sendProduce(id, catan.distributeResources(diceResult[0]+diceResult[1], (PlayerClient)pl));
+				}
+				server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(), Settings.HANDELN_BAUEN, p.getVictoryPoints(), ((PlayerClient)p).getResCards(),p.getKnightCount(),((PlayerClient)p).getDevCards());
+			}
+		}
+	}
+	
+	/**
+	 * Use when player rolled the dice to determine the order of players 
+	 * Sends correct StatusUpdates to all players
+	 * @param diceResult
+	 */
+	private void dicedToDetermineOrder(int diceResult){
+		catan.saveDiceResultAndChangeOrder(diceResult);
+		catan.changeTurnTaker();
+		PlayerClient c = (PlayerClient)catan.getCurrentTurnTaker();
+		for(Player p : players){
+			if(!c.equals(p)){
+				server.sendStatusUpdate(p.getPlayerID(), p.getPlayerColor().toServerString(), p.getName(), Settings.WARTEN, p.getVictoryPoints(), ((PlayerClient)p).getResCards(),p.getKnightCount(),((PlayerClient)p).getDevCards());
+			}
+		}
+		
+		if(catan.getRound() == 0){
+			server.sendStatusUpdate(c.getPlayerID(), c.getPlayerColor().toServerString(), c.getName(), Settings.WUERFELN, c.getVictoryPoints(), ((PlayerClient)c).getResCards(),c.getKnightCount(), ((PlayerClient)c).getDevCards());
+			server.sendError(c.getPlayerID(), "Dice to determine in which order you're going to play.");
+		}
+		else{
+			server.sendStatusUpdate(c.getPlayerID(), c.getPlayerColor().toServerString(), c.getName(), Settings.DORF_BAUEN, c.getVictoryPoints(), ((PlayerClient)c).getResCards(),c.getKnightCount(), ((PlayerClient)c).getDevCards());
+		}
+	}
+	
+	/**
+	 * Waits until all players have given away cards, then sends the message to relocate the robber
+	 * @param newPlayerGaveCards true if bigHandCount should get reduced, otherwise false
+	 */
+	private void waitThenMoveRobber(boolean newPlayerGaveCards) {
+		if(newPlayerGaveCards) bigHandCount--;
+		if(bigHandCount == 0){
+			Player p = getPlayerWithID(playerToRelocateRobber);
+			playerToRelocateRobber = -1;
+			server.sendStatusUpdate(p.getPlayerID(), p.getPlayerColor().toServerString(), p.getName(), Settings.RAEUBER_VERSETZEN, p.getVictoryPoints(), ((PlayerClient)p).getResCards(),p.getKnightCount(), ((PlayerClient)p).getDevCards());
+		}
+	}
+	
+	/**
+	 * Handles the KartenAbgabeDaten
+	 * @param clientID
+	 * @param resources
+	 */
+	public void handleGiveCards(int clientID, ArrayList<ResourceType> resources) {
+		if(getPlayerWithID(clientID).getStatus().equals(Settings.KARTEN_ABGEBEN)){
+			PlayerClient p = (PlayerClient) catan.getPlayerWithID(clientID);
+			int discardCount = p.getResCards().size()/2;
+			if(resources.size() == p.getResCards().size()/2)
+				if(p.getResCards().containsAll(resources)){
+					p.getHand().spend(resources);
+					catan.giveCardsBack(resources);
+					server.sendOk(clientID);
+					server.sendCosts(clientID, resources);
+					server.sendStatusUpdate(clientID, p.getPlayerColor().toServerString(), p.getName(), Settings.WARTEN, p.getVictoryPoints(), p.getResCards(),p.getKnightCount(), ((PlayerClient)p).getDevCards());
+					waitThenMoveRobber(true);
+				}
+				else{
+					server.sendError(clientID, "You can only discard resources you own!\nPlease try again.");
+				}
+			else server.sendError(clientID, "You have to discard exactly " + discardCount + " cards!\nPlease try again.");
+		}
+	}
+
+	/**
+	 * Handles the ClientRäuberDaten message from a Client 
+	 * @param clientID
+	 * @param tile the location of the tile as string
+	 * @param aimedPlayerID the player that is getting robbed from
+	 */
+	public void handleRelocateRobber(int clientID, String tile, int aimedPlayerID){
+		if(getPlayerWithID(clientID).getStatus().equals(Settings.RAEUBER_VERSETZEN)){
+			if(ConvertMaster.convertToTile(tile) != catan.getIsland().getRobber().getTile()){
+			catan.getIsland().getRobber().setTile(ConvertMaster.convertToTile(tile));
+			server.sendOk(clientID);
+			server.sendRobberRelocated(clientID, tile, aimedPlayerID);
+			PlayerClient robber = (PlayerClient)catan.getPlayerWithID(clientID);
+			if(aimedPlayerID >= 0){
+				PlayerClient aim = (PlayerClient)catan.getPlayerWithID(aimedPlayerID);
+				ResourceType robbedRes = aim.getHand().getRandomResource();
+				aim.getHand().spend(robbedRes);
+				server.sendCosts(aimedPlayerID, robbedRes);
+				server.sendError(aimedPlayerID, robber.getName() + " just stole you a " + robbedRes + "!");
+				robber.getHand().addResource(robbedRes);
+				server.sendProduce(clientID, robbedRes);
+				server.sendError(clientID, "You just stole " + aim.getName() +  " a " + robbedRes + "!");
+			}
+			server.sendStatusUpdate(clientID, robber.getPlayerColor().toServerString(), robber.getName(), Settings.HANDELN_BAUEN, robber.getVictoryPoints(), robber.getResCards(),robber.getKnightCount(), ((PlayerClient)robber).getDevCards());
+			}else{
+				server.sendError(clientID, "You can not put the robber on the same tile");
+			}
+		}
+	}
+
+	/**
+	 * Handles the end turn event of a client
+	 * @param clientId
+	 */
+	public void handleEndTurn(int clientId) {
+		if(getPlayerWithID(clientId).getStatus().equals(Settings.HANDELN_BAUEN)){
+			Player p = getPlayerWithID(clientId);
+			server.sendOk(clientId);
+			server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(), Settings.WARTEN, p.getVictoryPoints(), ((PlayerClient)p).getResCards(),p.getKnightCount(), ((PlayerClient)p).getDevCards());
+			catan.changeTurnTaker(); 
+			Player turn  = catan.getCurrentTurnTaker();
+			if(catan.getRound() > 2){
+				server.sendStatusUpdate(turn.getPlayerID(), turn.getPlayerColor().toServerString(), turn.getName(), Settings.WUERFELN, turn.getVictoryPoints(), ((PlayerClient)turn).getResCards(),turn.getKnightCount(), ((PlayerClient)turn).getDevCards());
+			}else{
+				server.sendStatusUpdate(turn.getPlayerID(), turn.getPlayerColor().toServerString(), turn.getName(), Settings.DORF_BAUEN, turn.getVictoryPoints(), ((PlayerClient)turn).getResCards(),turn.getKnightCount(), ((PlayerClient)turn).getDevCards());
+			}
+		}
+	}
+
+	/**
+	 * Handles the build road event of a client
+	 * @param kante			edge where to build the road
+	 * @param clientId		client
+	 */
+	public void handleBuildRoad(Edge kante, int clientId) {
+		
+		PlayerClient p = getPlayerWithID(clientId);
+		
+		if(p.getStatus().equals(Settings.HANDELN_BAUEN) || p.getStatus().equals(Settings.STRASSE_BAUEN)){
+		
+			boolean allowedLocation = p.canBuildRoad(kante);
+			if(!allowedLocation){
+				server.sendError(clientId, "You cannot build a road on this edge!");
+				return;
+			}
+			
+			if((catan.getRound() == 1 && p.countRoads() == 0) || (catan.getRound() == 2 && p.countRoads() == 1)){
+				server.sendOk(clientId);
+				server.sendConstruction(p.build(kante, true));
+				server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(),Settings.WARTEN, p.getVictoryPoints(), p.getResCards(),p.getKnightCount(), ((PlayerClient)p).getDevCards());
+				catan.changeTurnTaker();
+				PlayerClient turn = (PlayerClient)catan.getCurrentTurnTaker();
+				if(catan.getRound() < 3) server.sendStatusUpdate(turn.getPlayerID(), turn.getPlayerColor().toServerString(), turn.getName(), Settings.DORF_BAUEN, turn.getVictoryPoints(), turn.getResCards(),turn.getKnightCount(), ((PlayerClient)turn).getDevCards());
+				else{
+					catan.distributeResources(server);
+					server.sendStatusUpdate(turn.getPlayerID(), turn.getPlayerColor().toServerString(), turn.getName(), Settings.WUERFELN, turn.getVictoryPoints(), turn.getResCards(),turn.getKnightCount(), ((PlayerClient)turn).getDevCards());
+				}
+			}
+			else{
+				if(p.getHand().canBuyRoad() && (p.getRoadsLeft() > 0)){ 
+					p.getHand().buyRoad();
+					server.sendOk(clientId);
+					server.sendConstruction(p.build(kante, true));
+					if(catan.checkLongestRoad()){
+						server.sendLongestRoad(clientId);
+						sendStatusUpdatesOfAll();
+					}
+					ArrayList<ResourceType> resList = new ArrayList<ResourceType>();
+					resList.add(ResourceType.BRICK);
+					resList.add(ResourceType.LUMBER);
+					server.sendCosts(clientId, resList);
+					catan.giveCardsBack(resList);
+				}else{
+					if(p.getRoadsLeft() <= 0) server.sendError(clientId, "You don't have any roads left!");
+					else server.sendError(clientId, Settings.RESOURCES_ERROR);
+				}
+			}
+		}
+	}
+
+	
+	/**
+	 * Handles the build settlement event
+	 * @param ecke				vertex where to build settlement
+	 * @param clientId			client
+	 */
+	public void handleBuildSettlement(Vertex ecke, int clientId) {
+
+		PlayerClient p = getPlayerWithID(clientId);
+		
+		if(p.getStatus().equals(Settings.HANDELN_BAUEN) || p.getStatus().equals(Settings.DORF_BAUEN)){
+
+			boolean allowedLocation = p.canBuildSettlement(ecke);
+			if(!allowedLocation){
+				server.sendError(clientId, "You cannot build a settlement on this vertex!");
+				return;
+			}
+			
+			if((catan.getRound() == 1 && p.countSettlements() == 0) || (catan.getRound() == 2 && p.countSettlements() == 1)){
+				p.addAndCheckVictoryPoints(1);
+				server.sendOk(clientId);
+				server.sendConstruction(p.build(Settings.DORF, ecke, true));
+				server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(),Settings.STRASSE_BAUEN, p.getVictoryPoints(), p.getResCards(),p.getKnightCount(), ((PlayerClient)p).getDevCards());
+			}
+			else if(catan.getRound() > 2){
+				if(p.getHand().canBuySettlement() && (p.getSettlementsLeft() > 0)){ 
+					p.getHand().buySettlement();
+					server.sendOk(clientId);
+					server.sendConstruction(p.build(Settings.DORF, ecke, true));
+					ResourceType[] res = {ResourceType.BRICK, ResourceType.LUMBER, ResourceType.WOOL, ResourceType.GRAIN};
+					ArrayList<ResourceType> resList = new ArrayList<ResourceType>();
+					Collections.addAll(resList, res);
+					catan.giveCardsBack(resList);
+					server.sendCosts(clientId, resList);
+					server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(),Settings.HANDELN_BAUEN, p.getVictoryPoints(), p.getResCards(),p.getKnightCount(), ((PlayerClient)p).getDevCards());
+					if(catan.checkLongestRoad()){
+						server.sendLongestRoad(clientId);
+						sendStatusUpdatesOfAll();
+					}
+					boolean gameWon = p.addAndCheckVictoryPoints(1);
+					if(gameWon){
+						server.sendEndMatch(p);
+						for(Player player : players){
+							player.setStatus("Game Over");
+						}
+					}
+				}else{
+					if(p.getSettlementsLeft() <= 0) server.sendError(clientId, "You don't have any settlements left!");
+					else server.sendError(clientId, Settings.RESOURCES_ERROR);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Handles the build city event
+	 * @param ecke			vertex where tu build city
+	 * @param clientId		client
+	 */
+	public void handleBuildCity(Vertex ecke, int clientId) {
+		
+		PlayerClient p = getPlayerWithID(clientId);
+		
+		if(p.getStatus().equals(Settings.HANDELN_BAUEN)){
+			
+			boolean allowedLocation = ecke.getOccupyingBuilding().isOwner(p);
+			if(!allowedLocation){
+				server.sendError(clientId, "You cannot build a city on this vertex!");
+				return;
+			}
+			
+			if(p.getHand().canBuyCity() && (p.getCitiesLeft() > 0)){ 
+				p.getHand().buyCity();
+				server.sendOk(clientId);
+				server.sendConstruction(p.build("Stadt", ecke, true));
+				ResourceType[] res = {ResourceType.ORE, ResourceType.ORE, ResourceType.ORE, ResourceType.GRAIN, ResourceType.GRAIN};
+				ArrayList<ResourceType> resList = new ArrayList<ResourceType>();
+				Collections.addAll(resList, res);
+				catan.giveCardsBack(resList);
+				server.sendCosts(clientId, resList);
+				server.sendStatusUpdate(clientId, p.getPlayerColor().toServerString(), p.getName(),Settings.HANDELN_BAUEN, p.getVictoryPoints(), p.getResCards(),p.getKnightCount(), ((PlayerClient)p).getDevCards());
+				boolean gameWon = p.addAndCheckVictoryPoints(1);
+				if(gameWon){
+					server.sendEndMatch(p);
+					for(Player player : players){
+						player.setStatus("Game Over");
+					}
+				}
+			}else{
+				if(p.getCitiesLeft() <= 0) server.sendError(clientId, "You don't have any cities left!");
+				else server.sendError(clientId, Settings.RESOURCES_ERROR);
+			}
+		}		
+	}
+	
+	/**
+	 * Handles the BuyDevelopment message from a Client
+	 * @param playerID ID of the player that's trying to buy a DevelopmentCard
+	 */
+	public void handleBuyDevelopment(int playerID){
+		PlayerClient p = getPlayerWithID(playerID);
+		if(p.getStatus().equals(Settings.HANDELN_BAUEN)){
+			if(p.getHand().canBuyDevCard()){
+				DevelopmentCardType devCard = catan.getDevCardDeck().getNextDevCard();
+				p.getHand().buyDevCard();
+				server.sendDevelopmentCard(playerID, devCard);
+				ResourceType[] res = {ResourceType.ORE, ResourceType.WOOL, ResourceType.GRAIN};
+				ArrayList<ResourceType> resList = new ArrayList<ResourceType>();
+				Collections.addAll(resList, res);
+				catan.giveCardsBack(resList);
+				server.sendCosts(playerID, resList);
+				server.sendStatusUpdate(playerID, p.getPlayerColor().toServerString(), p.getName(),Settings.HANDELN_BAUEN, p.getVictoryPoints(), p.getResCards(),p.getKnightCount(), ((PlayerClient)p).getDevCards());
+				if(devCard.isVictoryPoint()){
+					p.getDevCards().add(devCard);
+					p.setDevVictoryPoints(p.getDevVictoryPoints()+1);
+					if(p.addAndCheckVictoryPoints(0)){
+						server.sendEndMatch(p);
+						for(Player player : players){
+							player.setStatus("Game Over");
+						}
+						return;
+					}
+				}
+				else p.getDevCardsNext().add(devCard);
+			}
+		}
+	}
+	
+	/**
+	 * Handles the PlayKnight message from a Client 
+	 * @param playerID
+	 * @param tile the location of the tile as string
+	 * @param aimID the player that is getting robbed from (-1 if no one is getting robbed from)
+	 */
+	public void handlePlayKnight(int playerID, String tile, int aimID){
+		PlayerClient p = getPlayerWithID(playerID);
+		if((p.getStatus().equals(Settings.HANDELN_BAUEN) || p.getStatus().equals(Settings.WUERFELN)) 
+				&& p.isCanPlayDevCard() && p.getDevCards().contains(DevelopmentCardType.KNIGHT)){
+			p.setCanPlayDevCard(false);
+			p.getDevCards().remove(DevelopmentCardType.KNIGHT);
+			server.sendOk(playerID);
+			server.sendRobberRelocated(playerID, tile, aimID);
+			if(aimID >= 0){
+				PlayerClient aim = (PlayerClient)catan.getPlayerWithID(aimID);
+				ResourceType robbedRes = aim.getHand().getRandomResource();
+				aim.getHand().spend(robbedRes);
+				server.sendCosts(aimID, robbedRes);
+				server.sendError(aimID, p.getName() + " just stole you a " + robbedRes + "!");
+				p.getHand().addResource(robbedRes);
+				server.sendProduce(playerID, robbedRes);
+				server.sendError(playerID, "You just stole " + aim.getName() +  " a " + robbedRes + "!");
+			}
+			if(p.addAndCheckKnightCount()){
+				server.sendBiggestArmy(playerID);
+				sendStatusUpdatesOfAll();
+			}
+			server.sendStatusUpdate(playerID, p.getPlayerColor().toServerString(), p.getName(), p.getStatus(), p.getDevVictoryPoints(), p.getResCards(), p.getKnightCount(), p.getDevCards());
+		}
+		else if(!p.isCanPlayDevCard()) server.sendError(playerID, Settings.ONE_DEVCARD_PER_TURN);
+	}
+	
+	/**
+	 * Handles the Monopoly message from a Client
+	 * @param playerID
+	 * @param res the resourceType the player has a monopoly on
+	 */
+	public void handleMonopoly(int playerID, ResourceType res){
+		
+		PlayerClient p = getPlayerWithID(playerID);
+		if((p.getStatus().equals(Settings.HANDELN_BAUEN) || p.getStatus().equals(Settings.WUERFELN)) 
+				&& p.isCanPlayDevCard() && p.getDevCards().contains(DevelopmentCardType.MONOPOLY)){
+			p.setCanPlayDevCard(false);
+			p.getDevCards().remove(DevelopmentCardType.MONOPOLY);
+			server.sendMonopoly(playerID, ConvertMaster.convertResource(res));
+			for(Player player : players){
+				if(playerID != player.getPlayerID()){
+					ArrayList<ResourceType> resCards = new ArrayList<ResourceType>();
+					int resCount;
+					switch(res){
+					case GRAIN: 	resCount = ((PlayerClient)player).getHand().getGrainCount(); break;
+					case WOOL:	 	resCount = ((PlayerClient)player).getHand().getWoolCount(); break;
+					case LUMBER: 	resCount = ((PlayerClient)player).getHand().getLumberCount(); break;
+					case BRICK: 	resCount = ((PlayerClient)player).getHand().getBrickCount(); break;
+					case ORE: 		resCount = ((PlayerClient)player).getHand().getOreCount(); break;
+					default: 		resCount = 0; break;
+					}
+					for(int i = 0; i < resCount; i++){
+						resCards.add(res);
+					}
+					((PlayerClient)player).getHand().spend(resCards);
+					server.sendCosts(player.getPlayerID(), resCards);
+					p.getHand().produce(resCards);
+					server.sendProduce(playerID, resCards);
+				}
+			}
+			server.sendOk(playerID);
+			server.sendStatusUpdate(playerID, p.getPlayerColor().toServerString(), p.getName(), p.getStatus(), p.getDevVictoryPoints(), p.getResCards(), p.getKnightCount(), p.getDevCards());
+		}
+	}
+	
+	/**
+	 * Handles the YearOfPlenty message from a Client
+	 * @param playerID
+	 * @param resources the resources the Client wants to receive
+	 */
+	public void handleYearOfPlenty(int playerID, ArrayList<ResourceType> resources){
+		PlayerClient p = getPlayerWithID(playerID);
+		if((p.getStatus().equals(Settings.HANDELN_BAUEN) || p.getStatus().equals(Settings.WUERFELN)) 
+				&& p.isCanPlayDevCard() && p.getDevCards().contains(DevelopmentCardType.YEAROFPLENTY)){
+			if(resources.size() == 2){
+				p.setCanPlayDevCard(false);
+				p.getDevCards().remove(DevelopmentCardType.YEAROFPLENTY);
+				resources = catan.distributeResources(playerID, resources);
+				server.sendYearOfPlenty(playerID, resources);
+				server.sendStatusUpdate(playerID, p.getPlayerColor().toServerString(), p.getName(), p.getStatus(), p.getDevVictoryPoints(), p.getResCards(), p.getKnightCount(), p.getDevCards());
+			}
+			else server.sendError(playerID, "You have to select exactly two resources");
+		}
+	}
+	
+	public void handleHello(int clientID) {
+
+			PlayerClient p = new PlayerClient(null, clientID, null);
+			players.add(p);
+			p.setStatus(Settings.SPIEL_STARTEN);
+			Iterator<Player> iter = players.iterator();
+			//Player oldP;
+			while (iter.hasNext()) {
+			    Player oldP = iter.next();
+			    if(oldP.getPlayerID() != clientID && oldP.getPlayerColor() != null ){
+					//if(oldP.getStatus() == null) oldP.setStatus(Settings.SPIEL_STARTEN);
+					server.sendStatusUpdate(oldP.getPlayerID(), oldP.getPlayerColor().toServerString(), 
+					  oldP.getName(), oldP.getStatus(), oldP.getVictoryPoints(), ((PlayerClient)oldP).getResCards(),oldP.getKnightCount(), ((PlayerClient)oldP).getDevCards());
+				}else{
+				//	if(oldP.getStatus() == null) oldP.setStatus(Settings.SPIEL_STARTEN);
+					server.sendStatusNewUpdate(oldP.getPlayerID(), oldP.getStatus(), oldP.getVictoryPoints(), ((PlayerClient)oldP).getResCards(),oldP.getKnightCount(), ((PlayerClient)oldP).getDevCards());
+				}
+			}
+//			for(Player oldP: players){
+//				if(oldP.getPlayerID() != clientID && oldP.getPlayerColor() != null ){
+//					//if(oldP.getStatus() == null) oldP.setStatus(Settings.SPIEL_STARTEN);
+//					server.sendStatusUpdate(oldP.getPlayerID(), oldP.getPlayerColor().toServerString(), 
+//					  oldP.getName(), oldP.getStatus(), oldP.getVictoryPoints(), ((PlayerClient)oldP).getResCards(),oldP.getKnightCount(), ((PlayerClient)oldP).getDevCards());
+//				}else{
+//				//	if(oldP.getStatus() == null) oldP.setStatus(Settings.SPIEL_STARTEN);
+//					server.sendStatusNewUpdate(oldP.getPlayerID(), oldP.getStatus(), oldP.getVictoryPoints(), ((PlayerClient)oldP).getResCards(),oldP.getKnightCount(), ((PlayerClient)oldP).getDevCards());
+//				}
+//			}
+			
+	}
+	/**
+	 * Handles the SpielerInitNachricht
+	 * @param name
+	 * @param color
+	 * @param clientID
+	 */
+	public void handlePlayerInit(String name, PlayerColor color, int clientID){
+		
+		for(Player player: players){
+			if(player.getPlayerColor() != null){
+			if(player.getPlayerColor().equals(color) && player.getPlayerID() != clientID ){
+				server.sendError(clientID, "This color is already taken!");
+				return;
+			}if(player.getName().equals(name) && player.getPlayerID() != clientID ){
+				server.sendError(clientID, "This name is already taken!");
+				return;
+			}
+		}
+			getPlayerWithID(clientID).setName(name);
+			getPlayerWithID(clientID).setPlayerColor(color);
+			getPlayerWithID(clientID).createPlayerControl();
+		}
+		sendAllStatus();
+		
+	}
+	
+	public void sendAllStatus() {
+		for(Player oldP: players){
+			if(oldP.getPlayerColor() != null){
+				server.sendStatusUpdate(oldP.getPlayerID(), oldP.getPlayerColor().toServerString(), 
+				  oldP.getName(), oldP.getStatus(), oldP.getVictoryPoints(), ((PlayerClient)oldP).getResCards(),oldP.getKnightCount(), ((PlayerClient)oldP).getDevCards());
+			}
+		}
+	}
+	/**
+	 * Gets the player, the playerId belongs to
+	 * @param playerID
+	 * @return the searched player
+	 */
+	private PlayerClient getPlayerWithID(int playerID){
+		
+		for(Player player: players){
+			if(player.getPlayerID() == playerID){
+				return (PlayerClient)player;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Handles an incoming trade offer
+	 * @param offer offered resources
+	 * @param demand demanded resources
+	 * @param idPlayer id of the offerer
+	 */
+	public void handleTradeOffer(ArrayList<ResourceType> offer, RohstoffDaten demand, int idPlayer) {
+		
+		if(getPlayerWithID(idPlayer).getStatus().equals(Settings.HANDELN_BAUEN)){
+			if(getPlayerWithID(idPlayer).getHand().containsRes(offer)){
+				server.sendOk(idPlayer);
+				int idTrade = newTradeId();
+				catan.getTrades().add(new TradeOffer(idTrade, getPlayerWithID(idPlayer), offer, demand.getResources(), true));
+				server.sendTradeOffer(idPlayer, offer, demand, idTrade);
+			}
+			else server.sendError(idPlayer, "You can only offer resources you currently own!");
+		}
+	}
+	
+	/**
+	 * Checks whether the player that accepted a trade has enough resources for the trade
+	 * @param tradeId
+	 * @param clientId
+	 */
+	public void handleAcceptTrade(int tradeId, int clientId) {
+		if(getPlayerWithID(clientId).getStatus().equals(Settings.WARTEN)){
+			TradeOffer trade = catan.getTrade(tradeId);
+			if(trade != null){
+				if(getPlayerWithID(clientId).getHand().containsRes(trade.getDemand())){
+					server.sendTradeAccepted(tradeId,clientId);
+					catan.getTrade(tradeId).accept(clientId);
+				}
+				else  server.sendError(clientId, Settings.RESOURCES_ERROR);
+			}
+			else server.sendError(clientId, Settings.TRADE_ALREADY_DONE);
+		}
+	}
+
+	public void handleNotAcceptTrade(int tradeId, int clientId) {
+		if(getPlayerWithID(clientId).getStatus().equals(Settings.WARTEN)){
+			TradeOffer trade = catan.getTrade(tradeId);
+			if(trade != null){
+					server.sendTradeNotAccepted(tradeId,clientId);
+					catan.getTrade(tradeId).decline(clientId);
+			}
+			else server.sendError(clientId, Settings.TRADE_ALREADY_DONE);
+		}
+	}
+	
+	/**
+	 * Generates a random TradeID (between 0 and 1000) that isn't assigned yet
+	 * @return The new TradeID
+	 */
+	private int newTradeId(){
+		Random rand = new Random();
+		int tradeId = rand.nextInt(1000);
+		while(tradeIdList.contains(tradeId)){
+			tradeId = rand.nextInt(1000);
+		}
+		tradeIdList.add(tradeId);
+		return tradeId;
+	}
+	
+	/**
+	 * Executes a trade. Sends cost and produce messages.
+	 * @param tradeId
+	 * @param acceptedID
+	 * @param offererID
+	 */
+	public void executeTrade(int tradeId, int acceptedID, int offererID) {
+		if(getPlayerWithID(offererID).getStatus().equals(Settings.HANDELN_BAUEN)){
+			TradeOffer tradeOffer = catan.getTrade(tradeId);
+			if(tradeOffer != null && tradeOffer.hasAccepted(acceptedID)){
+				if(getPlayerWithID(acceptedID).getHand().containsRes(tradeOffer.getDemand()) 
+						&& getPlayerWithID(offererID).getHand().containsRes(tradeOffer.getOffer())){
+					getPlayerWithID(offererID).getHand().produce(tradeOffer.getDemand());
+					getPlayerWithID(offererID).getHand().remResource(tradeOffer.getOffer());
+					getPlayerWithID(acceptedID).getHand().remResource(tradeOffer.getDemand());
+					getPlayerWithID(acceptedID).getHand().produce(tradeOffer.getOffer());
+					server.sendSuccessfulTrade(catan.getTrade(tradeId).getPlayerId(), acceptedID);
+					server.sendCosts(offererID, tradeOffer.getOffer());
+					server.sendProduce(offererID, tradeOffer.getDemand());
+					server.sendCosts(acceptedID, tradeOffer.getDemand());
+					server.sendProduce(acceptedID, tradeOffer.getOffer());
+					catan.getTrades().remove(tradeOffer);
+				}
+				else{
+					server.sendError(offererID, "A problem occured. Seems like one of\nyou hasn't got the needed resources.");
+				}
+			}else{
+				if(tradeOffer == null) server.sendError(offererID, Settings.TRADE_ALREADY_DONE);
+				else if(!tradeOffer.hasAccepted(acceptedID))server.sendError(offererID, getPlayerWithID(acceptedID).getName() + " doesn't want to trade!");
+			}
+		}
+	}
+	
+	/**
+	 * Cancels a trade or adds a player to the declined Traders
+	 * @param tradeId
+	 * @param clientId
+	 */
+	public void handleCancelTrade(int tradeId, int clientId) {
+		if(catan.getTrade(tradeId) != null){
+			server.sendCancelledTrade(tradeId,clientId);
+			if(catan.getTrade(tradeId).getPlayerId() == clientId){
+				catan.removeOfferWithID(tradeId);;
+			}else{
+				catan.getTrade(tradeId).decline(clientId);
+				if(catan.getTrade(tradeId).getDeclinedTraders().size()==catan.getPlayerCount()-1){
+					catan.removeOfferWithID(tradeId);
+				}
+			}
+		}
+		else server.sendError(clientId, Settings.TRADE_ALREADY_DONE);
+	}
+	
+	/**
+	 * Handles the request of a player to do a maritime trades
+	 * @param clientId
+	 * @param offer
+	 * @param offerList
+	 * @param demand
+	 */
+	public void handleMaritimeTrade(int clientId, int[] offer,ArrayList<ResourceType> offerList, ArrayList<ResourceType> demand){
+		if(getPlayerWithID(clientId).getStatus().equals(Settings.HANDELN_BAUEN)){
+			boolean priceOk = false;
+			for(int i=0;i<5;i++){
+				if(offer[i] == getPlayerWithID(clientId).getMaritimePrices(demand.get(0))[i]){
+					priceOk = true;
+				}
+			}
+			if(priceOk){
+				if(getPlayerWithID(clientId).getHand().containsRes(offerList)){
+					getPlayerWithID(clientId).getHand().produce(demand);
+					getPlayerWithID(clientId).getHand().remResource(offerList);
+					server.sendCosts(clientId, offerList);
+					server.sendProduce(clientId, demand);
+				}else{
+					server.sendError(clientId, Settings.RESOURCES_ERROR); 
+				}
+			}else{
+				server.sendError(clientId, "You don't control the right Harbour to trade at this rate!");
+			}
+		}
+	}
+
+	/**
+	 * Activates cheat and gives the player 5 of each resource
+	 * @param playerID
+	 */
+	public void greedCheatActivated(int playerID) {
+		ArrayList<ResourceType> cheat = new ArrayList<ResourceType>();
+		for(int i = 0; i < 5;i++ ){
+			cheat.add(ResourceType.BRICK);
+			cheat.add(ResourceType.GRAIN);
+			cheat.add(ResourceType.LUMBER);
+			cheat.add(ResourceType.ORE);
+			cheat.add(ResourceType.WOOL);
+		}
+		PlayerClient p = (PlayerClient) catan.getPlayerWithID(playerID);
+		p.getHand().produce(cheat);
+		server.sendProduce(playerID,cheat);
+	}
+	
+	/**
+	 * Updates the status of a player
+	 * @param id id of the playerClient
+	 * @param status new status of the playerClient
+	 */
+	public void updatePlayerStatus(int id, String status) {
+		getPlayerWithID(id).setStatus(status);
+		if(status.equals(Settings.WUERFELN)){
+			for(TradeOffer trade : catan.getTrades()){
+				server.sendCancelledTrade(trade.getPlayerId(), trade.getPlayerId());
+			}
+			catan.getTrades().clear();
+		}
+	}
+	
+	/**
+	 * Checks for all Trades if the offerers still own the offered resources.
+	 * If that's not the case the affected trade gets removed.
+	 */
+	public void checkTrades() {
+		ArrayList<TradeOffer> trades = catan.getTrades();
+		for(TradeOffer trade : trades){
+			if(!getPlayerWithID(trade.getPlayerId()).getHand().containsRes(trade.getOffer())){
+				server.sendError(trade.getPlayerId(), "Your Trade Offer with the ID " + trade.getTradeId() 
+				           + " got deleted because you don't own all offered resources anymore.");
+				server.sendCancelledTrade(trade.getTradeId(),trade.getPlayerId());
+				trades.remove(trade);
+				
+			}
+		}	
+	}
+
+	/**
+	 * Handles the road building event when someone played the Road building development card
+	 * @param playerID
+	 * @param one  edge on which the first road is tried to be built on
+	 * @param two second edge on which the secoqnd road is tried to be built on
+	 */
+	public void handleRoadBuilding(int playerID, Edge one, Edge two) {
+		PlayerClient p = getPlayerWithID(playerID);
+		Road roadOne = null;
+		Road roadTwo = null;
+		boolean ableToBuildSth = false;
+		if(canDoRoadBuilding(p,2)){
+			if(p.canBuildRoad(one)) roadOne = p.build(one, true);
+			if(p.canBuildRoad(two)) roadTwo = p.build(two, true);
+			if(roadOne == null && p.canBuildRoad(one)) roadOne = p.build(one, true);
+			if(roadOne != null && roadTwo != null){
+				ableToBuildSth = true;
+				String build = "{\"Strassenbaukarte ausspielen\":{\"Spieler\":" + playerID  +",\"Strasse 1\":"
+		              + ConvertMaster.convertEdge(one) + ",\"Strasse 2\":" + ConvertMaster.convertEdge(two) + "}}";
+				server.sendToAll(build);
+				server.sendConstruction(roadOne);
+				server.sendConstruction(roadTwo);
+			}
+			else{
+				server.sendError(playerID, "The action \"roadbuilding\" was unsuccessful."
+						+ "\nTry again and make sure to choose edges you can build on.");
+				return;
+			}
+		}
+		
+		else if(canDoRoadBuilding(p,1)){
+			if(p.canBuildRoad(one)){
+				roadOne = p.build(one, true);
+				ableToBuildSth = true;
+				String build = "{\"Strassenbaukarte ausspielen\":{\"Spieler\":" + playerID  
+						+",\"Strasse 1\":" + ConvertMaster.convertEdge(one) +"}}";
+				server.sendToAll(build);
+				server.sendConstruction(roadOne);
+				server.sendError(playerID, "The second road couldn't be built");
+			}
+			else if(p.canBuildRoad(two)){
+				ableToBuildSth = true;
+				roadTwo = p.build(two, true);
+				String build = "{\"Strassenbaukarte ausspielen\":{\"Spieler\":" + playerID  
+						+",\"Strasse 1\":" + ConvertMaster.convertEdge(two) +"}}";
+				server.sendToAll(build);
+				server.sendConstruction(roadTwo);
+				server.sendError(playerID, "The first road couldn't be built");
+			}
+		}
+		else if(p.getRoadsLeft() == 0 || p.getBuildableEdges().size() == 0){
+			server.sendError(playerID, "You have already built all 15 roads or there is\n"
+					+ "no edge you could place a road on right now.");
+		}
+		if(ableToBuildSth){
+			p.setCanPlayDevCard(false);
+			p.getDevCards().remove(DevelopmentCardType.ROADBUILDING);
+			server.sendStatusUpdate(playerID, p.getPlayerColor().toServerString(), p.getName(), p.getStatus(), p.getDevVictoryPoints(), p.getResCards(), p.getKnightCount(), p.getDevCards());
+		}
+		else server.sendError(playerID, "The action \"roadbuilding\" was unsuccessful.\nCheck the location and the amount of roads you have left.");
+	}
+	
+	/**
+	 * Handles the road building event when someone played the Road building development card
+	 * @param playerID
+	 * @param one edge the road is tried to be built on
+	 */
+	public void handleRoadBuilding(int playerID, Edge one) {
+		PlayerClient p = getPlayerWithID(playerID);
+		if(canDoRoadBuilding(p, 1) && p.canBuildRoad(one)){
+			p.setCanPlayDevCard(false);
+			Road roadOne = p.build(one, true);
+			String build = "{\"Strassenbaukarte ausspielen\":{\"Spieler\":" + playerID  +
+						",\"Strasse 1\":" + ConvertMaster.convertEdge(one) +"}}";
+			server.sendToAll(build);
+			server.sendConstruction(roadOne);
+			p.getDevCards().remove(DevelopmentCardType.ROADBUILDING);
+			server.sendStatusUpdate(playerID, p.getPlayerColor().toServerString(), p.getName(), p.getStatus(), p.getDevVictoryPoints(), p.getResCards(), p.getKnightCount(), p.getDevCards());
+		}
+		else server.sendError(playerID, "The action \"roadbuilding\" was unsuccessful.\nCheck the location and the amount of roads you have left.");
+	}
+	
+	/**
+	 * Sends StatusUpdates of every Player
+	 */
+	private void sendStatusUpdatesOfAll(){
+		for(Player player : players){
+			PlayerClient p = (PlayerClient) player;
+			server.sendStatusUpdate(p.getPlayerID(), p.getPlayerColor().toServerString(), p.getName(), p.getStatus(), p.getVictoryPoints(), p.getResCards(), p.getKnightCount(), p.getDevCards());
+		}
+	}
+	
+	/**
+	 * Check whether the player fulfills all needed factors to build one or two roads
+	 * @param player the
+	 * @param roadCount amount of roads that are planned to be built (1 or 2)
+	 * @return if the player is able to build two roads
+	 */
+	private static boolean canDoRoadBuilding(PlayerClient player, int roadCount){
+		boolean correctStatus = player.getStatus().equals(Settings.HANDELN_BAUEN) || player.getStatus().equals(Settings.WUERFELN);
+		boolean canPlayRoadCard = player.isCanPlayDevCard() && player.getDevCards().contains(DevelopmentCardType.ROADBUILDING);
+		boolean ableToBuildRoads = player.getRoadsLeft() >= roadCount;
+		return correctStatus && canPlayRoadCard && ableToBuildRoads;
+	}
+
+	public void handleLostConnection(int clientId) {
+		if(catan != null){
+			PlayerClient p = (PlayerClient) catan.getPlayerWithID(clientId);
+			server.sendStatusUpdate(clientId, p.getPlayerColor().toString(), p.getName(), Settings.VERBINDUNG_VERLOREN, p.getVictoryPoints(), p.getResCards(), p.getKnightCount(), p.getDevCards());
+			for(Player player: players){
+				server.sendError(player.getPlayerID(), "The player: " + player.getName() + " has left the game, the server is shutting down the game.");
+			}
+		}
+		server.closeConnection();
+	}
+
+
+}

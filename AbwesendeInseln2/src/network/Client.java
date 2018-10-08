@@ -1,0 +1,1001 @@
+package network;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import com.google.gson.Gson;
+
+import controller.LogMaster;
+import game.GameManager;
+import game.Settings;
+import javafx.application.Platform;
+import jsonstructures.*;
+import model.*;
+
+/**
+ * This class is the Client for the connection to the server
+ * @author Felixi, Stefanie Kloss
+ *
+ */
+public class Client extends Thread{
+	
+	protected String version = "JavaFXClient 1.0 (AbwesendeInseln)";
+	protected Gson gson;
+	private Socket server;
+	private Scanner in;
+	private InputStream input;
+	
+	private ClientQueueHandler handler;
+	
+	private int clientID;
+	protected GameManager gameManager;
+	private boolean isRunning;
+	
+	private boolean gameStarted;
+	
+	/**
+	 * Creates new Client
+	 * @param host IP-Adress of Host
+	 * @param port Port of the Server
+	 * @throws Exception Exception in case connection to server gets refused
+	 */
+	public Client(String host, int port, GameManager gameManager) throws Exception{
+		LogMaster.log("[Net]Created Client on port " + port+ " [Thread : "+ Thread.currentThread().getId() + "]");
+		gson = new Gson();
+		handler = new ClientQueueHandler(this);
+		isRunning = true;
+		handler.start();
+		LogMaster.log("[Thr]Started new Thread ClientQueueHandler with ID "  + handler.getId() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		server = new Socket(host, port);
+		this.gameManager = gameManager;
+		this.gameStarted = false;
+		
+	}
+	
+
+	/**
+	 * Run-Method of Client Thread
+	 */
+	@Override
+	public void run(){
+		try {
+			input = server.getInputStream();
+		} catch (IOException e) {
+			LogMaster.logExc("[Exc]Problem receiving from Server: " + e.getMessage());
+		}
+		in  = new Scanner(input);
+		while(isRunning){
+			receive();
+		}
+	}
+	
+	/**
+	 * Sends message Server
+	 * @param text Message that gets sent to the server
+	 */
+	public void sendText(String text){
+		LogMaster.log("[Net]Client sends: " + text + " [Thread : "+ Thread.currentThread().getId() + "]");
+		//System.out.println("[Net]Client sends: " + text + " [Thread : "+ Thread.currentThread().getId() + "]");
+		PrintWriter out;
+		try {
+			out = new PrintWriter(server.getOutputStream(),true);
+			out.println(text);
+		} catch (IOException e) {
+			LogMaster.log("[Exc]Client throws IOException while sending Text: " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+		}
+	}
+	
+	/**
+	 * Receives messages from Server
+	 */
+	public void receive(){
+		if(server == null){
+			in.close();
+			return;
+		}
+		try{
+			if(!in.hasNextLine()){
+				in.close();
+				return;
+			}
+		}catch(IllegalStateException e){
+			try {
+				server.close();
+			} catch (IOException e1) {
+				in.close();
+			}
+			LogMaster.logExc("[Exc]Server closed: " + e.getMessage());
+			in.close();
+			isRunning = false;
+		}
+		try{
+			String text = in.nextLine();
+			handler.addMessage(text);
+		}catch(IllegalStateException e1){
+			LogMaster.logExc("[Exc]Server closed: " + e1.getMessage());
+			try {
+				server.close();
+			} catch (IOException e) {
+				LogMaster.logExc("[Exc]Server closed: " + e1.getMessage());
+			}
+			isRunning = false;
+		}
+	}
+	
+	/**
+	 * Handles the JSON text input and handles which message is send by the server
+	 * @param text	input by the server
+	 */
+	public void handleInput(String text) {
+		LogMaster.log("[Net]Client " + clientID +  " received: " + text+ " [Thread : "+ Thread.currentThread().getId() + "]");
+//		System.out.println("[Net]Client " + clientID +  " received: " + text+ " [Thread : "+ Thread.currentThread().getId() + "]");
+		String head = text.substring(0,10);
+		String head2 = text.substring(0,19);
+		switch(head){
+		case "{\"Hallo\":{": handleHello(text);break;
+		case "{\"Willkomm": handleWelcome(text);break;
+		case "{\"Chatnach": handleChat(text);break;
+		case "{\"Fehler\":": handleError(text);break;
+		case "{\"Spiel ge": handleStartMatch(text);break;
+		case "{\"Statusup": handleStatusUpdate(text);break;
+		case "{\"Wuerfelw": handleDice(text);break;
+		case "{\"Ertrag\":": handleProduce(text);break;
+		case "{\"Bauvorga": handleConstruction(text);break;
+		case "{\"Spiel be": handleEndMatch(text);break;
+		case "{\"Kosten\":": handleCost(text);break;
+		case "{\"Raeuber ": handleSetRobber(text);break;
+		case "{\"Handel a": handleTradeDone(text);break; //Handel ausgefuehrt
+		case "{\"Serveran": handleServerMsg(text);break;
+		case "{\"Laengste": handleLongestRoad(text);break;
+		case "{\"Groesste": handleBiggestArmy(text);break;
+		case "{\"Ritter a": handlePlayKnight(text);break;
+		case "{\"Monopol\"": handleMonopoly(text);break;
+		case "{\"Erfindun":	handleYearOfPlenty(text);break;
+		case "{\"Entwickl": handleBuyDevelopment(text);break;
+		case "{\"Strassen": handleRoadBuilding(text);break;
+		case "{\"Handelsa": 	switch(head2){
+									case "{\"Handelsangebot\":{": handleTrade(text);break;
+									case "{\"Handelsangebot an": handleAcceptedTrade(text);break;
+									case "{\"Handelsangebot ab": handleCanceledTrade(text);break;
+								}break;
+		default: LogMaster.log("[Exc]Error: Client got unexpected message: " + head+ " [Thread : "+ Thread.currentThread().getId() + "]");break;
+		}
+		
+	}
+	
+	/**
+	 * Handles Development Card Road building event
+	 * @param text input from server
+	 */
+	private void handleRoadBuilding(String text) {
+
+		int startPlayer = text.indexOf("Spieler")+9;
+		int help = startPlayer;
+		char c = text.charAt(startPlayer);
+		int counter = 0;
+		while(Character.isDigit(c)){
+			counter++;
+			c = text.charAt(++help);
+		}
+		int endPlayer = text.indexOf("Spieler")+9+counter;
+		String player = text.substring(startPlayer, endPlayer);
+		int playerID = -1;
+		try{
+			playerID = Integer.parseInt(player);
+		}catch(Exception e){
+			LogMaster.logExc("[Exc]Exception while parseInt: " + e.getMessage());
+		}
+		
+		String playerName = "";
+		int roadCount = 0;
+		
+		if(text.contains("Strasse 2")) roadCount = 2; //build 2 roads
+		else roadCount = 1;                   //build only 1 road
+		
+		if(playerID != clientID){
+			gameManager.getCatan().getPlayerWithID(playerID).removeDevCard();
+			playerName = gameManager.getCatan().getPlayerWithID(playerID).getName();
+		}
+		else{
+			gameManager.getCatan().getPlayerClient().getDevCards().remove(DevelopmentCardType.ROADBUILDING);
+			gameManager.getCatan().getPlayerClient().setRoadBuilding(false);
+			playerName = "You";
+		}
+		gameManager.getApp().popUpMessage(playerName + " build " + roadCount + " road(s) by playing the development card \"roadbuilding\"");
+	}
+	 /**
+	 * Handles Buy Development card event
+	 * @param text input from server
+	 */
+	private void handleBuyDevelopment(String text) {
+		int start = text.indexOf(":") + 1;
+		int end = text.length() - 1;
+		String sub = text.substring(start, end);
+		EntwicklungKarteDaten ekd = gson.fromJson(sub, EntwicklungKarteDaten.class);
+		int playerID = ekd.getSpieler();
+		String card = ekd.getEntwicklungskarte();
+		if(clientID == playerID && !card.equals(Settings.UNBEKANNT)){
+			DevelopmentCardType devCard = ConvertMaster.convertDevCard(card);
+			if(devCard.isVictoryPoint()){
+				gameManager.getCatan().getPlayerClient().getDevCards().add(devCard);
+				gameManager.getCatan().getPlayerClient().setDevVictoryPoints(gameManager.getCatan().getPlayerClient().getDevVictoryPoints()+1);
+			}
+			else gameManager.getCatan().getPlayerClient().getDevCardsNext().add(devCard);
+			gameManager.getGameSkin().getDevelopmentCardSkin().showCloseUp(devCard);
+		}
+		else{
+			gameManager.getCatan().getPlayerWithID(playerID).addDevCard();
+		}
+	}
+	
+	/**
+	 * Handle YearOfPlenty event from dev card
+	 * @param text input from server
+	 */
+	private void handleYearOfPlenty(String text) {
+		
+		ErfindungServerNachricht esn = gson.fromJson(text, ErfindungServerNachricht.class);
+		int playerID = esn.getErfindung().getSpieler();
+		esn.getErfindung().getRohstoffe().getResources();
+		if(playerID != clientID) gameManager.getCatan().getPlayerWithID(playerID).removeDevCard();
+		else gameManager.getCatan().getPlayerClient().getDevCards().remove(DevelopmentCardType.YEAROFPLENTY);
+
+	}
+
+	/**
+	 * Handles Monopoly development card event
+	 * @param text input from server
+	 */
+	private void handleMonopoly(String text) {
+		
+		MonopolServerNachricht msn = gson.fromJson(text, MonopolServerNachricht.class);
+		String resource = msn.getMonopol().getRohstoff();
+		int playerID = msn.getMonopol().getSpieler();
+		if(playerID != this.clientID){
+			gameManager.getGameSkin().handCardsToPlayerStage(resource, gameManager.getCatan().getPlayerWithID(playerID).getName());
+			gameManager.getCatan().getPlayerWithID(playerID).removeDevCard();
+		}
+		else gameManager.getCatan().getPlayerClient().getDevCards().remove(DevelopmentCardType.MONOPOLY);
+
+	}
+
+	/**
+	 * Handles Knight played event
+	 * @param text input from server
+	 */
+	private void handlePlayKnight(String text) {
+		int start = text.indexOf(":") + 1;
+		int end = text.length() - 1;
+		String sub = text.substring(start, end);
+		RaeuberDaten rd = gson.fromJson(sub, RaeuberDaten.class);
+		rd.getZiel();
+		int playerID = rd.getSpieler();
+		gameManager.getApp().closeAllPopUpStages();
+		gameManager.getCatan().getIsland().changeRobberPosition(rd.getOrt(false));
+		gameManager.getCatan().getPlayerClient().setRelocateRobber(false);
+		if(playerID != clientID) gameManager.getCatan().getPlayerWithID(playerID).removeDevCard();
+		else gameManager.getCatan().getPlayerClient().getDevCards().remove(DevelopmentCardType.KNIGHT);
+		gameManager.getGameSkin().updateStats();
+	}
+
+	/**
+	 * Handle biggestArmy
+	 * @param text input from server
+	 */
+	private void handleBiggestArmy(String text) {
+		int start = text.indexOf(":") + 1;
+		int end = text.length() - 1;
+		String player = text.substring(start, end);
+		SpielerIdDaten sid = gson.fromJson(player, SpielerIdDaten.class);
+		int playerId = sid.getSpieler();
+		String name = "";
+		if(clientID == playerId) name = "You have ";
+		else name = gameManager.getCatan().getPlayerWithID(playerId).getName() + " has "; 
+		gameManager.getApp().popUpMessage(name + "now the largest Army!");
+		gameManager.getCatan().getPlayerControl().getSkin().setLargestKnight(playerId);
+	}
+
+	/**
+	 * Handles longest Road
+	 * @param text input from server
+	 */
+	private void handleLongestRoad(String text) {
+
+		if(!text.contains("Spieler")){ 
+			gameManager.getApp().popUpMessage("No one has the longest Road anymore!");
+			gameManager.getCatan().getPlayerControl().getSkin().setLongestRoad();
+		}else{
+			int start = text.indexOf(":") + 1;
+			int end = text.length() - 1;
+			String player = text.substring(start, end);
+			SpielerIdDaten sid = gson.fromJson(player, SpielerIdDaten.class);
+			int playerId = sid.getSpieler();
+			String name = "";
+			if(clientID == playerId) name = "You have ";
+			else name = gameManager.getCatan().getPlayerWithID(playerId).getName() + " has"; 
+			gameManager.getApp().popUpMessage(name + " the longest Road now!");
+			gameManager.getCatan().getPlayerControl().getSkin().setLongestRoad(playerId);
+		}
+	}
+
+	/**
+	 * When the player or server cancels the trade "Handelsangebot abgebrochen"
+	 * @param text input from server
+	 */
+	private void handleCanceledTrade(String text) {
+			int start = text.indexOf("Spieler") + 9;
+			int mid = text.indexOf(",");
+			int end = text.indexOf(" id") + 5;
+			String player = text.substring(start, mid);
+			String trade = text.substring(end, text.length()-2);
+			int tradeId = Integer.parseInt(trade);
+			int playerId = Integer.parseInt(player);
+			TradeOffer tradeOffer = gameManager.getCatan().getTrade(tradeId);
+			if(tradeOffer != null){
+				boolean showOfferOverview = true;
+				if(playerId == tradeOffer.getPlayerId()){
+					gameManager.getCatan().removeOfferWithID(tradeId);
+					if(gameManager.getCatan().getTrades().size() == 0){
+						gameManager.getApp().closeAllPopUpStages();
+						showOfferOverview = false;
+					}
+					gameManager.getApp().popUpMessage("The trade " + tradeId +" got canceled");
+				}
+				else if(playerId == clientID){
+					gameManager.getCatan().removeOfferWithID(tradeId);
+					if(gameManager.getCatan().getTrades().size() == 0){
+						gameManager.getApp().closeAllPopUpStages();
+						showOfferOverview = false;
+					}
+					gameManager.getApp().popUpMessage("You declined trade " + tradeId +".");
+				}
+				else{
+					tradeOffer.decline(playerId);
+					if(tradeOffer.getDeclinedTraders().size() == gameManager.getCatan().getPlayerCount()-1){
+						gameManager.getCatan().removeOfferWithID(tradeId);
+						if(gameManager.getCatan().getTrades().size() == 0){
+							gameManager.getApp().closeAllPopUpStages();
+							showOfferOverview = false;
+						}
+						gameManager.getApp().popUpMessage("The trade " + tradeId +" got canceled");;
+					}
+				}
+				gameManager.getGameSkin().getTradeSkin().updateOfferOverview(gameManager.getCatan().getTrades(), showOfferOverview);
+			}
+	}
+
+	/**
+	 * When the trade is done "Handel ausgefuehrt"
+	 * @param text input from server
+	 */
+	private void handleTradeDone(String text) {
+		int idBegin = text.indexOf(Settings.HANDEL_ID) + 11;
+		int idEnd = text.indexOf(Settings.SPIELER) - 2;
+		int start = text.indexOf(Settings.SPIELER) + 9;
+		int mid = text.indexOf(",\"M");
+		int end = text.indexOf(Settings.MITSPIELER) + 12;
+		int tradeID = Integer.parseInt(text.substring(idBegin, idEnd));
+		int offererID = Integer.parseInt(text.substring(start, mid));
+		int playerId = Integer.parseInt(text.substring(end, text.length()-2));
+		
+		gameManager.getApp().closeAllPopUpStages();
+		String nameTradePlayer = gameManager.getCatan().getPlayerWithID(offererID).getName();
+		String namePlayer = gameManager.getCatan().getPlayerWithID(playerId).getName();
+		String message = "";
+		if(clientID == offererID){
+			message = "Your trade with " + namePlayer + " was successful.";
+		}
+		else if(clientID == playerId){
+			message = "The trade with " + nameTradePlayer + " was successful.";
+		}
+		else{
+			message = nameTradePlayer + " decided to trade with " + namePlayer;
+		}
+		TradeOffer tradeOffer = gameManager.getCatan().getTrade(tradeID);
+		if(tradeOffer != null){
+			gameManager.getCatan().removeOfferWithID(tradeID);
+		}
+
+		gameManager.getApp().popUpMessage(message);
+	}
+	
+	/**
+	 * When the offer has been accepted "Handelsangebot angenommen"
+	 * @param text input from server
+	 */
+	private void handleAcceptedTrade(String text) {
+		int start = text.indexOf(Settings.MITSPIELER) + 12;
+		int mid = text.indexOf(",");
+		int end = text.indexOf(" id") + 5;
+		String player = text.substring(start, mid);
+		int playerId = Integer.parseInt(player);
+		int endTrade = text.indexOf("\"Annehmen\"");
+		String trade = text.substring(end, endTrade-1);
+		int tradeId = Integer.parseInt(trade);
+		TradeOffer tradeOffer = gameManager.getCatan().getTrade(tradeId);
+			if(tradeOffer != null){
+				if(text.contains("false")){
+					if(tradeOffer.getPlayerId() == clientID){
+					tradeOffer.decline(playerId);
+					gameManager.getApp().popUpMessage("Your trade with the ID " + tradeId + 
+							" just got declined by " + gameManager.getCatan().getPlayerWithID(playerId).getName() + ".");
+					}else if(playerId == clientID){
+						gameManager.getCatan().removeOfferWithID(tradeId);
+						if(gameManager.getCatan().getTrades().size() == 0){
+							gameManager.getApp().closeAllPopUpStages();
+						}
+						else gameManager.getGameSkin().getTradeSkin().updateOfferOverview(gameManager.getCatan().getTrades(), true);
+						gameManager.getApp().popUpMessage("You just declined the trade\nwith the ID " + tradeId);
+					}
+				
+			}else{
+				if(tradeOffer.getPlayerId() == clientID){
+					tradeOffer.accept(playerId);
+					gameManager.getCatan().getGameSkin().getTradeSkin().tradeAccepted("Your trade with the ID " + tradeId + 
+							" just got accepted by " + gameManager.getCatan().getPlayerWithID(playerId).getName() + ".",
+							gameManager.getApp().getStage());
+				}
+				
+				else if(playerId == clientID){
+					gameManager.getCatan().removeOfferWithID(tradeId);
+						if(gameManager.getCatan().getTrades().size() == 0){
+							gameManager.getApp().closeAllPopUpStages();
+						}
+						else gameManager.getGameSkin().getTradeSkin().updateOfferOverview(gameManager.getCatan().getTrades(), true);
+						gameManager.getApp().popUpMessage("You just accepted the trade\nwith the ID " + tradeId);
+				}
+			}
+		}
+	}
+	/**
+	 * When the client receives an offer to trade
+	 * @param text input from server
+	 */
+	private void handleTrade(String text) {
+		int startPosQ = text.indexOf(" id") - 7;
+		String preQ = text.substring(0, startPosQ);
+		String postQ = text.substring(startPosQ+11, text.length());
+		String finl = preQ + "\"Q\"" + postQ;
+		int start = finl.indexOf(":") + 1;
+		int end = finl.length() - 1;
+		String sub = finl.substring(start, end);
+		HandelsangebotDaten had = gson.fromJson(sub, HandelsangebotDaten.class);
+		int tradeId = had.getHandel();
+		int playerId = had.getSpieler();
+		ArrayList<ResourceType> offer = had.getAngebot().getResources();
+		ArrayList<ResourceType> demand = had.getNachfrage().getResources();
+
+		Player offerer = gameManager.getCatan().getPlayerWithID(playerId);
+		gameManager.getCatan().getTrades().add(new TradeOffer(tradeId, offerer, offer, demand, false));
+		boolean showOfferOverview = true;
+		if(playerId == clientID){
+			Platform.runLater(new Runnable() { 
+				@Override
+				public void run() {
+					gameManager.getGameSkin().getTradeSkin().getTradeStage().close();
+				}
+			});
+		}
+		gameManager.getGameSkin().getTradeSkin().updateOfferOverview(gameManager.getCatan().getTrades(), showOfferOverview);
+	}
+	
+	/**
+	 * When the robber has been set "Raeuber versetzt"
+	 * @param text input from server
+	 */
+	private void handleSetRobber(String text) {
+		int start = text.indexOf(":") + 1;
+		int end = text.length() - 1;
+		String robber = text.substring(start, end);
+		RaeuberDaten rd = gson.fromJson(robber, RaeuberDaten.class);
+		Tile tile = rd.getOrt(false);
+		gameManager.getApp().closeAllPopUpStages();
+		gameManager.getCatan().getIsland().changeRobberPosition(tile);
+		gameManager.getCatan().getPlayerClient().setRelocateRobber(false);
+		gameManager.getGameSkin().updateStats();
+	}
+
+	/**
+	 * When the client has to give away his resources, 
+	 * when he builds a building or when the robber hits "Kosten"
+	 * @param text input from server
+	 */
+	private void handleCost(String text) {
+		KostenNachricht kn = gson.fromJson(text, KostenNachricht.class);
+		KostenDaten kd = kn.getKosten();
+		int playerID = kd.getSpieler();
+		ArrayList<ResourceType> costs = kd.getRohstoffe();
+		if(playerID == clientID){
+			PlayerClient p = gameManager.getCatan().getPlayerClient();
+			p.resCardsCosts(costs);
+			if(p.getStatus().equals(Settings.KARTEN_ABGEBEN)) p.setDiscardCards(false);
+		}
+		else gameManager.getCatan().getPlayerWithID(playerID).resCardsCosts(costs.size());
+		gameManager.getGameSkin().updateStats();
+	}
+
+	/**
+	 * When someone won the game "Spiel beendet"
+	 * @param text input from server
+	 */
+	private void handleEndMatch(String text) {
+		int start = text.indexOf(":") + 1;
+		int end = text.length() - 1;
+		String endGame = text.substring(start, end);
+		SpielBeendetDaten sbd = gson.fromJson(endGame, SpielBeendetDaten.class);
+		String message = sbd.getNachricht();
+		int winner = sbd.getSieger();
+		PlayerClient p =  gameManager.getCatan().getPlayerClient();
+		if(winner == p.getPlayerID()){
+			gameManager.getApp().popUpMessage(Settings.GAME_WON_MESSAGE);
+			p.setStatus(Settings.YOU_WON, false);
+		}
+		else{ gameManager.getApp().popUpMessage(message);
+		     p.setStatus(Settings.GAME_OVER, false);
+		}
+		Platform.runLater(new Runnable() { 
+			@Override
+			public void run() {
+				try{
+					p.getPlayerControl().disableAllButtons();
+				}catch(Exception e){
+					LogMaster.log("[Exc]Platform run later uncaught exception:  " + e.getMessage() + " [Thread : "+ Thread.currentThread().getId() + "]");
+				}
+			}
+		});
+		gameManager.getGameSkin().updateStats();
+		
+	}
+
+	/**
+	 * Handles the construction message
+	 * @param text input from server
+	 */
+	private void handleConstruction(String text) {
+		BauvorgangNachricht bn = gson.fromJson(text, BauvorgangNachricht.class);
+		GebaeudeDatenDaten gdd = bn.getBauvorgang();
+		GebaeudeDaten gd = gdd.getGebaeude();
+		int playerID = gd.getEigentuemer();
+		String typ = gd.getTyp();
+		Object location = gd.getOrt(false);
+		
+		if(location instanceof Edge){
+			Edge edge = (Edge) location; 
+			gameManager.getCatan().getPlayerWithID(playerID).build(edge, false);
+		}else{
+			Vertex vertex = (Vertex) location;
+			gameManager.getCatan().getPlayerWithID(playerID).build(typ, vertex, false);	 
+		}
+		gameManager.getGameSkin().updateStats();
+	}
+
+	/**
+	 * handles the produce message
+	 * @param text input from server
+	 */
+	private void handleProduce(String text) {
+		ErtragNachricht en = gson.fromJson(text, ErtragNachricht.class);
+		int playerID = en.getSpieler();
+		RohstoffDaten rd = en.getRohstoffe();
+		ArrayList<ResourceType> resources = rd.getResources();
+		if(playerID == clientID){
+			gameManager.getCatan().getPlayerClient().resCardsProduce(resources);
+		}
+		else gameManager.getCatan().getPlayerWithID(playerID).resCardsCountProduce(resources.size());
+		gameManager.getGameSkin().updateStats();
+	}
+
+	/**
+	 * handles the dice roll message
+	 * @param text input from server
+	 */
+	private void handleDice(String text) {
+		WuerfelNachricht wn = gson.fromJson(text, WuerfelNachricht.class);
+		WuerfelDaten wd = wn.getWuerfelwurf();
+		wd.getSpieler();
+		int res1 = wd.getWurf1();
+		int res2 = wd.getWurf2();
+		gameManager.getCatan().getDice().diceRolled(res1, res2);
+	}
+
+	/**
+	 * handles the status update message
+	 * @param text input from server
+	 */
+	private void handleStatusUpdate(String text) {
+		if(text.contains(Settings.FARBE)){
+		if (text.contains(Settings.UNBEKANNT)){
+				StatusUpdateUnbekanntNachricht suun = gson.fromJson(text, StatusUpdateUnbekanntNachricht.class);
+				SpielerZustandsUnbekanntDatenDaten szudd = suun.getStatusupdate();
+				SpielerZustandsUnbekanntDaten szud = szudd.getSpieler();
+				if(szud.getFarbe()!= null){
+					int playerID = szud.getId();
+					int victoryPoints = szud.getSiegpunkte();
+					String name = szud.getName();
+					String status = szud.getStatus();
+					PlayerColor color = szud.getFarbe();
+					RohstoffUnbekanntDaten rd = szud.getRohstoffe();
+					int unknownResources = rd.getAnzahl();
+					int knights = szud.getRittermacht();
+					RohstoffUnbekanntDaten devCard = szud.getEntwicklungskarten();
+					int devCardCount = devCard.getAnzahl();
+					if(status.equals(Settings.SPIEL_STARTEN)){
+								gameManager.getSetUp().adjustPlayer(color, name, playerID, false,status);
+					}else if(status.equals(Settings.WARTEN_BEGINN)){
+							gameManager.getSetUp().adjustPlayer(color, name, playerID, false,status);
+					}else{
+						if(gameManager.getCatan().getPlayerWithID(playerID) == null){
+							gameManager.getSetUp().adjustPlayer(color, name, playerID, false,status);
+						}
+						gameManager.getCatan().getPlayerWithID(playerID).update(victoryPoints, name, status, color, unknownResources,knights,devCardCount);
+						}
+				}
+			}else{
+			StatusUpdateNachricht sn = gson.fromJson(text, StatusUpdateNachricht.class);
+			SpielerZustandsDatenDaten szdd = sn.getStatusupdate();
+			SpielerZustandsDaten szd = szdd.getSpieler();
+			if(szd.getFarbe() != null){
+				int playerID = szd.getId();
+				int victoryPoints = szd.getSiegpunkte();
+				String name = szd.getName();
+				String status = szd.getStatus();
+				PlayerColor color = szd.getFarbe();
+				RohstoffDaten rd = szd.getRohstoffe();
+				ArrayList<ResourceType> resources = rd.getResources();
+				int largestArmy = szd.getRittermacht();
+				
+				EntwicklungKarteDatenDaten ekd = szd.getEntwicklungskarten();
+				ArrayList<DevelopmentCardType> devCards = new ArrayList<DevelopmentCardType>();
+				devCards = ekd.getAllDevCards();
+				
+				if(status.equals(Settings.SPIEL_STARTEN)){
+					gameManager.getSetUp().adjustPlayer(color, name, playerID, true,status);
+				}else if(status.equals(Settings.WARTEN_BEGINN)){ 
+					gameManager.getSetUp().waitForStart();
+					gameManager.getSetUp().adjustPlayer(color, name, playerID, true,status);
+				}else{
+					gameManager.getCatan().getPlayerClient().update(victoryPoints, name, status, color, resources,largestArmy, devCards);
+				}
+				}
+			}
+		}
+		try{
+			gameManager.getGameSkin().updateStats();
+		}catch(Exception e){
+			//do nothing - only for beginning, when player doesn't have game skin yet
+		}
+	}
+	
+	/**
+	 * handles the start match message
+	 * @param text input from server
+	 */
+	private void handleStartMatch(String text) {
+		String sub = text.substring(19,text.length()-1);
+		KartenNachricht kn = gson.fromJson(sub, KartenNachricht.class);
+		KartenDaten kd = kn.getKartenDaten();
+		TerrainType[] terrain = kd.getFeldTypen();
+		TokenNumber[] token = kd.getFeldZahlen();
+		Harbour[] harbours = kd.getHaefen();
+		int[] harbourPositions = kd.getHafenPositionen();
+		
+		gameManager.getSetUp().startMatch(terrain, token, harbours, harbourPositions);
+		this.gameStarted = true;
+	}
+
+	/**
+	 * handles the error messages
+	 * @param text input from server
+	 */
+	private void handleError(String text) {
+		FehlerNachricht fn = gson.fromJson(text, FehlerNachricht.class);
+		String error = fn.getDaten();
+		boolean popUp = true;
+		if(gameStarted && gameManager.getCatan().getPlayerClient().isBot()){
+			popUp = false;             //Bot doesn't receive errors
+		}
+		try{
+			if(popUp) gameManager.getApp().popUpMessage(error);
+		}catch(Exception e){
+			//do nothing - only for the very beginning, when player doesn't have game skin yet
+		}
+		
+	}
+
+	/** 
+	 * handles the chat messages
+	 * @param text input from server 
+	 */
+	private void handleChat(String text) {
+		ServerChatNachricht cn = gson.fromJson(text, ServerChatNachricht.class);
+		int authorId = cn.getDaten().getId();
+		String message = cn.getDaten().getNachricht();
+		Player author = null;
+		if(gameManager.getCatan().getPlayerWithID(authorId).getName() == null){
+			author = null;
+		}else{
+			author = gameManager.getCatan().getPlayerWithID(authorId);
+		}
+
+		gameManager.getCatan().getPlayerClient().getPlayerControl().getSkin().
+		 			getChatVBox().appendText(author,message);
+	}
+
+	/**
+	 * handles the server messages
+	 * @param text input from server
+	 */
+	private void handleServerMsg(String text) {
+		ServerantwortNachricht sn = gson.fromJson(text, ServerantwortNachricht.class);
+		sn.getDaten();
+	}
+
+	/**
+	 * handles the welcome message
+	 * @param text input from server
+	 */
+	private void handleWelcome(String text) {
+		WillkommenNachricht wn = gson.fromJson(text, WillkommenNachricht.class);
+		this.clientID = wn.getDaten();
+		
+	}
+	
+	/**
+	 * handles the first message send by the server
+	 * @param text input from server
+	 */
+
+	private void handleHello(String text) {
+		HalloServerNachricht hn = gson.fromJson(text, HalloServerNachricht.class);
+		hn.getVersion();
+		hn.getProtokoll();
+		sendHello();
+	}
+	
+	/**
+	 * sends end turn message to the server
+	 */
+	public void sendEndTurn(){
+		sendText("{\"Zug beenden\":{}}");
+	}
+	
+	/**
+	 * sends roll dice request
+	 */
+	public void sendRollDice(){
+		sendText("{\"Wuerfeln\":{}}");
+	}
+	
+	/**
+	 * sends start match request
+	 */
+	public void sendStartMatch(){
+		LogMaster.log("[Net]Client " + this.clientID +" hat Spiel starten gedrückt"+ " [Thread : "+ Thread.currentThread().getId() + "]");
+		sendText("{\"Spiel starten\":{}}");
+	}
+	
+	/**
+	 * sends text for the chat
+	 * @param text
+	 */
+	public void sendChat(String text){
+		ClientChatDaten ccd = new ClientChatDaten(text);
+		sendText("{\"Chatnachricht senden\":" + gson.toJson(ccd)+ "}");
+	}
+	
+	/**
+	 * sends server handshake
+	 */
+	public void sendHello(){
+		HalloNachricht HelloMessage = new HalloNachricht(version);
+		
+		sendText(gson.toJson(HelloMessage));
+	}
+	
+	/**
+	 * sends player initialize message
+	 * @param name		name of the player
+	 * @param color		color of the player
+	 */
+	public void sendPlayerInit(String name, String color){
+		SpielerInitNachricht initMessage = new SpielerInitNachricht(name,color);
+		sendText(gson.toJson(initMessage));
+	}
+	
+	/**
+	 * sends construct settlement request
+	 * @param target		location of the settlment
+	 */
+	public void sendConstructSettlement(Vertex target){
+		BauNachricht bn = new BauNachricht(Settings.DORF, target, false);
+		sendText(gson.toJson(bn));
+	}
+	
+	/**
+	 * sends construct city request
+	 * @param target		location of the city
+	 */
+	public void sendConstructCity(Vertex target){
+		BauNachricht bn = new BauNachricht(Settings.STADT, target, false);
+		sendText(gson.toJson(bn));
+	}
+	
+	/**
+	 * sends construct road request
+	 * @param target		location of the road
+	 */
+	public void sendConstructRoad(Edge target){
+		BauNachricht bn = new BauNachricht(Settings.STRASSE, target, false);
+		sendText(gson.toJson(bn));
+	}
+	
+	/**
+	 * When you rolled a 7 and set the robber to a different tile
+	 * @param tile the tile one wants so set the robber on
+	 * @param robbedPlayer the player one wants to rob
+	 */
+	public void sendSetRobber(Tile tile, int robbedPlayer){
+		ClientRaeuberDaten crd = new ClientRaeuberDaten(ConvertMaster.convertTile(tile, false), robbedPlayer);
+		String string = "{\"Raeuber versetzen\":" + gson.toJson(crd) + "}";
+		sendText(string);
+	}
+	
+	
+	
+	/**
+	 * When the client handles with the harbor 
+	 * @param offer			offered resources
+	 * @param demand		demanded resources
+	 */
+	public void sendMaritimeTrade(int[] offer, int[] demand){
+		SeehandelNachricht sn = new SeehandelNachricht(offer,demand);
+		sendText(gson.toJson(sn));
+	}
+	
+	/**
+	 * When the client wants to trade with the other players
+	 * @param offer			offered resources
+	 * @param demand		demanded resources
+	 */
+	public void sendTradeOffer(int[] offer, int[] demand){
+		ClientHandelAngebot cha = new ClientHandelAngebot(offer,demand);
+		String string = "{\"Handel anbieten\":" + gson.toJson(cha) + "}";
+		sendText(string);
+	}
+	
+	/**
+	 * When the client accepts the trade
+	 * @param tradeID the id of the trade that one accepted 
+	 */
+	public void sendAcceptTrade(int tradeID){
+		String string = "{\"Handel annehmen\":{\"Handel id\":" + tradeID + ",\"Annehmen\":true" + "}}";
+		sendText(string);
+	}
+	
+	/**
+	 * When the client doesn't accept the trade
+	 * @param tradeID the id of the trade one didn't accept
+	 */
+	public void sendNotAcceptTrade(int tradeID){
+		String string = "{\"Handel annehmen\":{\"Handel id\":" + tradeID + ",\"Annehmen\":false" + "}}";
+		sendText(string);
+	}
+	
+	/**
+	 * When the client chose with whom he wants to trade
+	 * @param tradeID	the id of the trade one wants to complete		
+	 * @param tradePartnerID the id of the player one decided to trade with
+	 */
+	public void sendSuccessfullTrade(int tradeID, int tradePartnerID){
+		String string = "{\"Handel abschliessen\":{\"Handel id\":"+ tradeID+",\"Mitspieler\":" + tradePartnerID + "}}";
+		sendText(string);
+	}
+	
+	/**
+	 * When the client wants to cancel the trade
+	 * @param tradeID the id of the trade one wants to cancel
+	 */
+	public void sendCancelTrade(int tradeID){
+		String string = "{\"Handel abbrechen\":{\"Handel id\":" + tradeID + "}}";
+		sendText(string);
+	}
+	
+	/**
+	 * When the client has to pay resources for example by the robber
+	 * @param lumber count of lumber to give away
+	 * @param brick count of brick to give away
+	 * @param wool count of wool to give away
+	 * @param grain count of grain to give away
+	 * @param ore count of ore to give away
+	 */
+	public void sendGiveCards(int lumber, int brick, int wool, int grain, int ore){
+		KartenAbgebenDaten kad = new KartenAbgebenDaten(lumber, brick, wool, grain, ore);
+		RohstoffDaten rd = kad.getAbgeben();
+		String string = "{\"Karten abgeben\":" + gson.toJson(rd) + "}";
+		sendText(string);
+	}
+	
+	/**
+	 * Sends request to buy a development card
+	 */
+	public void sendBuyDevelopmentCard(){
+		String text = "{\"Entwicklungskarte kaufen\":{}}";
+		sendText(text);
+	}
+	
+	/**
+	 * sends Play knight event
+	 * @param targetTile the tile one wants to set the robber on
+	 * @param targetId the id of the player one wants to rob
+	 */
+	public void sendPlayKnight(Tile targetTile, int targetId){
+		String tile = ConvertMaster.convertTile(targetTile, false);
+		ClientRaeuberDaten crd = new ClientRaeuberDaten(tile, targetId);
+		String text = "{\"Ritter ausspielen\":{" + gson.toJson(crd)  + "}";
+		sendText(text);
+	}
+	
+	/**
+	 * Sends Monopoly played
+	 * @param res the resource one wants to claim a monopoly on
+	 */
+	public void sendMonopoly(ResourceType res){
+		String resource = ConvertMaster.convertResource(res);
+		MonopolNachricht mn = new MonopolNachricht(resource);
+		String text = gson.toJson(mn);
+		sendText(text);
+	}
+	
+	/**
+	 * Sends Year of plenty card played
+	 * @param res the list of resources one wants to receive
+	 */
+	public void sendYearOfPlenty(ArrayList<ResourceType> res){
+		ErfindungNachricht en = new ErfindungNachricht(res);
+		String text = gson.toJson(en);
+		sendText(text);
+	}
+	
+	/**
+	 * Sends Road Building card played
+	 * @param roadOne edge on which player wants to build the first road on
+	 * @param roadTwo edge on which player wants to build the second road on
+	 */
+	public void sendRoadBuilding(Edge roadOne, Edge roadTwo){
+		String one = ConvertMaster.convertEdge(roadOne, false);
+		String two = ConvertMaster.convertEdge(roadTwo, false);
+		String textTwo = "{\"Strassenbaukarte ausspielen\":{\"Strasse 1\":" + one + ",\"Strasse 2\":" + two + "}}";
+		sendText(textTwo);
+	}
+	
+	/**
+	 * Sends Road Building card played
+	 * @param road edge on which player wants to build the road on
+	 */
+	public void sendRoadBuilding(Edge road){
+		String oneRoad = ConvertMaster.convertEdge(road, false);
+		String textOne = "{\"Strassenbaukarte ausspielen\":{\"Strasse 1\":" + oneRoad +"}}";
+		sendText(textOne);
+	}
+	
+	/**
+	 * add Bots
+	 */
+	public boolean isBotClient(){
+		return false;
+	}
+	
+	/**
+	 * Getter for ClientId
+	 * @return the clientID
+	 */
+	public int getClientId(){
+		return this.clientID;
+	}
+	
+
+}

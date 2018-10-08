@@ -1,0 +1,38 @@
+package jsonstructures;
+/**
+ * Data of Server data for Monopol dev card
+ * @author Felixi
+ *
+ */
+public class MonopolServerDaten {
+	String Rohstoff;
+	int Spieler;
+	
+	/**
+	 * Constructor
+	 * @param rohstoff
+	 * @param spieler
+	 */
+	public MonopolServerDaten(String rohstoff, int spieler) {
+		Rohstoff = rohstoff;
+		Spieler = spieler;
+	}
+
+	/**
+	 * Getter for Rohstoff
+	 * @return
+	 */
+	public String getRohstoff() {
+		return Rohstoff;
+	}
+
+	/**
+	 * Getter for Spieler
+	 * @return
+	 */
+	public int getSpieler() {
+		return Spieler;
+	}
+	
+	
+}

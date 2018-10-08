@@ -1,0 +1,67 @@
+package model;
+
+
+import view.EdgeSkin;
+
+/**
+ * Contains an edge defined by two vertices.
+ *
+ */
+public class Edge {
+	private Vertex from;
+	private Vertex to;
+	private Road road;
+	private Catan catan;
+	private EdgeSkin skin;
+
+	
+	public Edge(Vertex from, Vertex to,Catan catan) {
+		this.from = from;
+		this.to = to;
+		this.catan = catan;
+		skin = new EdgeSkin(this);
+	}
+	
+	public Vertex getVertexFrom() {
+		return this.from;
+	}
+
+	public Vertex getVertexTo() {
+		return this.to;
+	}
+
+	public EdgeSkin getSkin() {
+		return this.skin;
+	}
+	
+	public Road getRoad(){
+		return this.road;
+	}
+	
+	public void setRoad(Road road) {
+		this.road = road;
+	}
+	
+	/**
+	 * Sets rotation of the skin (view) of the edge
+	 * @param degrees 
+	 */
+	public void setRotation(double degrees) {
+		skin.getShape().setRotate(degrees);
+	}
+
+	/**
+	 * Gives out position of the edge when clicked on with the mouse
+	 */
+	public void pressed() {
+		System.out.format("Edge pressed [{%d}, {%d}] to [{%d}, {%d}].%n", from.getRow(), from.getPos(), to.getRow(),
+				to.getPos());
+		if (catan.getCurrentTurnTaker().CanBuildRoad() == true){
+			catan.getCurrentTurnTaker().buildRoad(this);
+			catan.getGameControl().updateHand();
+		}
+	
+	}
+
+
+}

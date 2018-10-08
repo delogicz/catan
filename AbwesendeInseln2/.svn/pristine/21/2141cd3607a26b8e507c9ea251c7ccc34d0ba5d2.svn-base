@@ -1,0 +1,23 @@
+package jsonstructures;
+
+import java.util.ArrayList;
+
+import model.ResourceType;
+/**
+ * Wrapper for the ErfindungDaten
+ * @author Felixi
+ *
+ */
+public class ErfindungNachricht {
+	private ErfindungDaten Erfindung;
+
+	public ErfindungNachricht(ArrayList<ResourceType> erfindung) {
+		Erfindung = new ErfindungDaten(erfindung);
+	}
+
+	public ErfindungDaten getErfindung() {
+		return Erfindung;
+	}
+	
+	
+}

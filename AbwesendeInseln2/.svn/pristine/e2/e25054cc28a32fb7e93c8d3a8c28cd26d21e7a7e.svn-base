@@ -1,0 +1,149 @@
+package bot;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import model.Edge;
+import model.Player;
+import model.PlayerColor;
+import model.Settlement;
+import model.Tile;
+import model.Vertex;
+
+
+public class Bot extends Player {
+	private int rounds;
+	private ArrayList<Vertex> availableVertices;
+	private ArrayList<Edge> availableEdges;
+	public Bot(PlayerColor playerColor, int playerId, String name) {
+		super(playerColor, playerId, name);
+		availableVertices = new ArrayList<Vertex>();
+		availableEdges = new ArrayList<Edge>();
+		canBuildSettlement = false;
+	}
+
+
+	public void activateBot() {
+		rounds = catan.getRounds();
+		active = false;
+		if (currentTurnTaker == this){
+			active = true;
+		}
+		while (active){
+			System.out.println("Bot "+ name +" taking turn" );
+			doStuff();
+		}
+		
+	}
+
+
+	private void doStuff() {
+		if (rounds == 1 || rounds == 2 ){
+			buildSettlement();
+			buildRoad();
+			endTurn();
+		}
+		else {
+			rollDice();
+			if (relocateRobber == true){
+				System.out.println("Bot "+ name +" set Robber" );
+				setRobber();
+				endTurn();
+			}
+			else{
+			endTurn();
+			}
+		}
+	}
+
+
+	private void rollDice() {
+		catan.getGameControl().dice();
+		
+	}
+
+
+	private void setRobber() {
+		int index = new Random().nextInt(catan.getIsland().getHexes().size());
+		Tile newRobberPos = catan.getIsland().getHexes().get(index);
+		catan.getIsland().getIslandControl().setRobber(newRobberPos);
+	}
+
+
+	private void endTurn() {
+		active = false;
+		catan.getCurrentTurnTaker().endingTurn();
+		catan.changeTurn();
+		catan.getGameControl().updateHand();
+	}
+
+
+	private void buildRoad() {
+		checkAvailableEdges();
+		while(!canBuildRoad){
+			Collections.shuffle(availableEdges);
+			Edge space = availableEdges.get(0);
+			super.buildRoad(space);
+		}
+		availableEdges.clear();
+		canBuildRoad = false;
+	}
+
+
+	private void buildSettlement() {
+		System.out.println("Bot "+ name + " try to build Settlement" );
+		checkAvailableVertex();
+		while(!canBuildSettlement){
+		System.out.println("Bot "+ name + " try to build Settlement at random vertex" );
+		Collections.shuffle(availableVertices);
+		Vertex space = availableVertices.get(0);
+		buildSettlement(space);
+		}
+		canBuildSettlement = false;
+		
+	}
+
+
+	private void checkAvailableVertex() {
+		for (Vertex vertex:catan.getIsland().getVertices()){
+			if (!vertex.isOccupied()){
+				availableVertices.add(vertex);
+			}
+		}
+		
+	}
+	
+	private void checkAvailableEdges() {
+		if (rounds == 1){
+			Settlement firstSettlement = settlements.get(0);
+			for (Edge edge: firstSettlement.getVertex().getEdges() ){
+				if (!edge.isOccupied()){
+					availableEdges.add(edge);
+				}
+			}
+		}
+		else if (rounds==2){
+			Settlement secondSettlement = settlements.get(1);
+			for (Edge edge: secondSettlement.getVertex().getEdges() ){
+				if (!edge.isOccupied()){
+					availableEdges.add(edge);
+				}
+			}
+		}
+	}
+	
+	public boolean isBot(){
+		return true;
+	}
+	private void sleep(int sec){
+		try {
+		    Thread.sleep(1000 * sec);                
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
+		}
+		
+	}
+
+}

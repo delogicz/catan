@@ -1,0 +1,9 @@
+package model;
+
+@SuppressWarnings("serial")
+public class PortAlreadyInUseException extends Exception {
+
+	public PortAlreadyInUseException(){
+		super("Port is already in use!");
+	}
+}

@@ -1,0 +1,46 @@
+package jsonstructures;
+
+import java.util.ArrayList;
+
+import model.DevelopmentCardType;
+import model.ResourceType;
+
+/**
+ * This class is the wrapper for the StatusZustandsDaten class send to update the state of a player
+ * @author Felixi
+ *
+ */
+public class StatusUpdateNachricht {
+	private SpielerZustandsDatenDaten Statusupdate;
+
+	/**
+	 * Creates a SpielerZustandsDatenDaten object
+	 * @param statusupdate		SpielerZustandsDaten
+	 */
+	public StatusUpdateNachricht(SpielerZustandsDaten statusupdate) {
+		Statusupdate = new SpielerZustandsDatenDaten(statusupdate);
+	}
+
+	public StatusUpdateNachricht(int id, String farbe, String name, String status, int siegPunkte,
+			ArrayList<ResourceType> resourcen, int knightsPlayed, ArrayList<DevelopmentCardType> devCards) {
+		Statusupdate = new SpielerZustandsDatenDaten(new SpielerZustandsDaten(id,farbe,name,status,siegPunkte,resourcen,knightsPlayed, devCards));
+	}
+
+	/**
+	 * Getter for SpielerZustandsDatenDaten
+	 * @return
+	 */
+	public SpielerZustandsDatenDaten getStatusupdate() {
+		return Statusupdate;
+	}
+	
+	/**
+	 * Setter for SpielerZustandsDatenDaten
+	 * @param statusupdate
+	 */
+	public void setStatusupdate(SpielerZustandsDatenDaten statusupdate) {
+		Statusupdate = statusupdate;
+	}
+
+	
+}

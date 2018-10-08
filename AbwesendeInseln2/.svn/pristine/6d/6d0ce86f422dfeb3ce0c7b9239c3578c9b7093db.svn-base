@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class SpielerZustandsDatenDaten {
+	private SpielerZustandsDaten Spieler;
+
+	public SpielerZustandsDatenDaten(SpielerZustandsDaten spieler) {
+		Spieler = spieler;
+	}
+}

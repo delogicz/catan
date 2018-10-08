@@ -1,0 +1,24 @@
+package model;
+
+import javafx.scene.paint.Color;
+
+/**
+ * Determines available colors for players 
+ *
+ */
+public enum PlayerColor {
+	RED (Color.CRIMSON), 
+	YELLOW (Color.GOLD), 
+	WHITE (Color.ANTIQUEWHITE), 
+	BLUE (Color.MEDIUMBLUE);
+	
+	private Color color;
+	
+	private PlayerColor(Color color){
+		this.color = color;
+	}
+	
+	public Color getColor(){
+		return this.color;
+	}
+}

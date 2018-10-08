@@ -1,0 +1,20 @@
+package model;
+
+public enum TerrainType {
+	HILLS (ResourceType.BRICK),
+	FIELDS (ResourceType.GRAIN),
+	PASTURE (ResourceType.WOOL),
+	FOREST (ResourceType.LUMBER),
+	MOUNTAINS (ResourceType.ORE),
+	DESERT (null);
+	
+	private final ResourceType produce;
+	
+	TerrainType(ResourceType produce){
+		this.produce = produce;
+	}
+	
+	ResourceType getProduce(){
+		return produce;
+	}
+}

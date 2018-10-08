@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class FehlerDaten {
+	private String Meldung;
+
+	public FehlerDaten(String meldung) {
+		Meldung = meldung;
+	}
+}

@@ -1,0 +1,9 @@
+package model;
+
+/**
+ * Abstract parent class for Vertex and Edge
+ * @author Felixi
+ */
+public abstract class Buildable {
+
+}

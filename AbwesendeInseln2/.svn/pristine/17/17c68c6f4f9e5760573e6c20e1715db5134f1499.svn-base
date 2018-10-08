@@ -1,0 +1,35 @@
+package model;
+
+import java.util.ArrayList;
+
+public class TradeOffer {
+	private int tradeId;
+	private int playerId;
+	private ArrayList<ResourceType> offer;
+	private ArrayList<ResourceType> demand;
+	
+	public TradeOffer(int idTrade,int idPlayer, ArrayList<ResourceType> off, ArrayList<ResourceType> dem){
+		tradeId = idTrade;
+		playerId = idPlayer;
+		offer = off;
+		demand = dem;
+	}
+
+	public int getTradeId() {
+		return tradeId;
+	}
+
+	public int getPlayerId() {
+		return playerId;
+	}
+
+	public ArrayList<ResourceType> getOffer() {
+		return offer;
+	}
+
+	public ArrayList<ResourceType> getDemand() {
+		return demand;
+	}
+	
+	
+}

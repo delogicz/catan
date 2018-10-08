@@ -1,0 +1,70 @@
+package jsonstructures;
+
+/**
+ * This class is used for the resources if someone wants to trade or someone gets resources
+ * @author Felixi
+ *
+ */
+public class RohstoffDaten {
+	public int getHolz() {
+		return Holz;
+	}
+
+	public void setHolz(int holz) {
+		Holz = holz;
+	}
+
+	public int getLehm() {
+		return Lehm;
+	}
+
+	public void setLehm(int lehm) {
+		Lehm = lehm;
+	}
+
+	public int getWolle() {
+		return Wolle;
+	}
+
+	public void setWolle(int wolle) {
+		Wolle = wolle;
+	}
+
+	public int getGetreide() {
+		return Getreide;
+	}
+
+	public void setGetreide(int getreide) {
+		Getreide = getreide;
+	}
+
+	public int getErz() {
+		return Erz;
+	}
+
+	public void setErz(int erz) {
+		Erz = erz;
+	}
+
+	private int Holz;
+	private int Lehm;
+	private int Wolle;
+	private int Getreide;
+	private int Erz;
+	
+	/**
+	 * Creates a RohstoffDaten object 
+	 * @param holz			amount of lumber
+	 * @param lehm			amount of bricks
+	 * @param wolle			amount of whool
+	 * @param getreide		amount of grain
+	 */
+	
+	public RohstoffDaten(int holz, int lehm, int wolle, int getreide) {
+		Holz = holz;
+		Lehm = lehm;
+		Wolle = wolle;
+		Getreide = getreide;
+	}
+	
+}

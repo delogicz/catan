@@ -1,0 +1,619 @@
+package network;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Random;
+
+import com.google.gson.Gson;
+
+import controller.ServerControl;
+import jsonstructures.BauNachricht;
+import jsonstructures.BauvorgangNachricht;
+import jsonstructures.ClientChatDaten;
+import jsonstructures.ClientHandelAngebot;
+import jsonstructures.ClientRaeuberDaten;
+import jsonstructures.ErtragNachricht;
+import jsonstructures.FehlerNachricht;
+import jsonstructures.HalloNachricht;
+import jsonstructures.HalloServerNachricht;
+import jsonstructures.HandelBestätigungDaten;
+import jsonstructures.HandelsangebotNachricht;
+import jsonstructures.KartenDaten;
+import jsonstructures.KartenNachricht;
+import jsonstructures.KostenDaten;
+import jsonstructures.KostenNachricht;
+import jsonstructures.RaeuberDaten;
+import jsonstructures.RohstoffDaten;
+import jsonstructures.SeehandelNachricht;
+import jsonstructures.ServerChatNachricht;
+import jsonstructures.ServerantwortNachricht;
+import jsonstructures.SpielBeendetDaten;
+import jsonstructures.SpielerDaten;
+import jsonstructures.SpielerInitNachricht;
+import jsonstructures.StatusUpdateNachricht;
+import jsonstructures.StatusUpdateUnbekanntNachricht;
+import jsonstructures.WillkommenNachricht;
+import jsonstructures.WuerfelNachricht;
+import model.Building;
+import model.Island;
+import model.Player;
+import model.PlayerColor;
+import model.ResourceType;
+public class Server extends Thread{
+	private static final String VERSION = "AbwesendeInselServer 0.1";
+	private static final String PROTOCOL = "0.1";
+	private static final String SERVER_OK = "OK";
+	private Gson gson;
+	private ServerSocket server;
+	private ArrayList<Handler> clientHandlers;
+	private ServerControl control;
+	private ArrayList<Integer> idList;
+	
+	
+/**
+ * Creates Server with Port number
+ * @param port
+ */
+	public Server(ServerControl c, int port) {
+		System.out.println("Created Server on Port " + port);
+		gson = new Gson();
+		control = c;
+		try {
+			server = new ServerSocket(port);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		clientHandlers = new ArrayList<Handler>();
+		idList = new ArrayList<Integer>();
+	}
+	
+
+	/**
+	 * Run method of the Server Thread
+	 * checks for clients
+	 */
+	@Override
+	public void run() {
+		while(true){
+			Socket client = null;
+			try
+			{
+				client = server.accept();
+				Handler clientHandler = new Handler(client, this);
+				clientHandlers.add(clientHandler);
+				clientHandler.start();
+			}
+			catch ( IOException e ) {
+				e.printStackTrace();
+			}
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Handles all the messages the server gets from the clients
+	 * @param text			message	
+	 * @param source		which client
+	 */
+	public void handleInput(String text, Handler source) {
+		System.out.println("Server received: " + text);
+		String head = text.substring(0,10);
+		String head2 = "";
+		if(text.length() >= 19){
+			 head2 = text.substring(0,19);
+		}
+		System.out.println(head);
+		switch(head){
+		case "{\"Hallo\":{": handleHello(source,text);break;
+		case "{\"Bauen\":{": handleBuild(text,source);break;
+		case "{\"Zug been": handleEndTurn(source);break;
+		case "{\"Wuerfeln": handleRollDice(source);break;
+		case "{\"Spiel st": handleStartGame(source);break;
+		case "{\"Spieler\"": handlePlayerInit(text, source);break;
+		case "{\"Chatnach": handleChatMessage(text,source);break;
+		case "{\"Raeuber ": handleRelocateRobber(text, source); break;
+		case "{\"Seehande": handleMaritimeTrade(text, source); break;
+		case "{\"Karten a": handleGiveCards(text,source);break;
+		case "{\"Handel a":	switch(head2){
+							case "{\"Handel anbieten\":": handleTrade(text, source);break;
+							case "{\"Handel annehmen\":": handleAcceptTrade(text, source);break;
+							case "{\"Handel abschliess": handleDoTrade(text, source);break;
+							case "{\"Handel abbrechen\"": handleCanceledTrade(text,source);break;
+							}break;
+		default: sendUnknownMessageError(source, text);
+		}
+	}
+
+	/**
+	 * Handles client's information about which cards he wants to get rid of (due to a diced 7)
+	 * @param text
+	 * @param source
+	 */
+	private void handleGiveCards(String text, Handler source) {
+		int start = text.indexOf(":")+1;
+		int end = text.length()-1;
+		String sub = text.substring(start, end);
+		RohstoffDaten rd = gson.fromJson(sub, RohstoffDaten.class);
+		control.handleGiveCards(source.getClientId(), rd.getResources());
+	}
+
+	/**
+	 * Handles message of a client to cancel a trade
+	 * @param text
+	 * @param source
+	 */
+	private void handleCanceledTrade(String text, Handler source) {
+		int start = text.indexOf(" id") +5;
+		String sub = text.substring(start, text.length()-2);
+		int tradeId = Integer.parseInt(sub);
+		control.handleCancelTrade(tradeId,source.getClientId());
+	}
+	
+	/**
+	 * Handles client's request to execute a trade
+	 * @param text
+	 * @param source
+	 */
+	private void handleDoTrade(String text, Handler source) {
+		int start = text.indexOf(" id") + 5;
+		int mid = text.indexOf(",");
+		int end = text.indexOf("spieler") + 9;
+		String trade = text.substring(start, mid);
+		String player = text.substring(end, text.length()-2);
+		int tradeId = Integer.parseInt(trade);
+		int playerId = Integer.parseInt(player);
+		control.executeTrade(tradeId, playerId, source.getClientId());
+	}
+
+	/**
+	 * Handles client's request to accept a trade
+	 * @param text
+	 * @param source
+	 */
+	private void handleAcceptTrade(String text, Handler source) {
+		int start = text.indexOf("id\":") +4;
+		String sub = text.substring(start,text.length()-2);
+		int tradeId = Integer.parseInt(sub);
+		control.handleAcceptTrade(tradeId,source.getClientId());
+	}
+
+	/**
+	 * Handles an incoming TradeOffer
+	 * @param text
+	 * @param source
+	 */
+	private void handleTrade(String text, Handler source) {
+		int start = text.indexOf(":") + 1;
+		int end = text.length() - 1;
+		String sub = text.substring(start, end);
+		ClientHandelAngebot cha = gson.fromJson(sub, ClientHandelAngebot.class);
+		ArrayList<ResourceType> offer = cha.getAngebot().getResources();
+		RohstoffDaten demand = cha.getNachfrage();
+		control.handleTradeOffer(offer,demand,source.getClientId());
+	}
+
+	/**
+	 * Handles the request of a player to do a maritime trade
+	 * @param text
+	 * @param source
+	 */
+	private void handleMaritimeTrade(String text, Handler source) {
+			SeehandelNachricht sn = gson.fromJson(text, SeehandelNachricht.class);
+			int[] offerArray = sn.getSeehandel().getAngebot().getAll();
+			ArrayList<ResourceType> offer = sn.getSeehandel().getAngebot().getResources();
+			ArrayList<ResourceType> demand = sn.getSeehandel().getNachfrage().getResources();
+			control.handleMaritimeTrade(source.getClientId(),offerArray,offer,demand);
+	}
+
+/**
+ * Handles the message that a client wants to relocate the robber to a certain tile and
+ * steal a card from a certain player. Both (tile and robber) are specified in that message
+ * @param text
+ * @param source
+ */
+	private void handleRelocateRobber(String text, Handler source) {
+		int start = text.indexOf(":") + 1;
+		int end = text.length() - 1;
+		String sub = text.substring(start, end);
+		ClientRaeuberDaten crd = gson.fromJson(sub, ClientRaeuberDaten.class);
+		String ort = crd.getOrt();
+		int aimedPlayerID = crd.getZiel();
+		RaeuberDaten rd = new RaeuberDaten(source.getClientId(), ort, aimedPlayerID);
+		String txt = "{\"Raeuber versetzt\":" + gson.toJson(rd) + "}";
+		sendToAll(txt);
+		control.handleRelocateRobber(source.getClientId(), aimedPlayerID);
+	}
+
+
+	/**
+	 * Handles the configuration of the player
+	 * @param text			message
+	 * @param source		client
+	 */
+	private void handlePlayerInit(String text, Handler source) {
+		SpielerInitNachricht sin = gson.fromJson(text, SpielerInitNachricht.class);
+		SpielerDaten sd = sin.getSpielerDaten();
+		String name = sd.getName();
+		PlayerColor color = sd.getFarbe();
+		int playerID = source.getClientId();
+		control.handlePlayerInit(name, color, playerID);
+	}
+	
+	
+	/**
+	 * Sends an error message when the Server receives a message that he doesn't know
+	 * @param source		client
+	 * @param text			message
+	 */
+	private void sendUnknownMessageError(Handler source,String text) {
+		FehlerNachricht fl = new FehlerNachricht("Unknown Message: \"" + text + "\" is not supported");
+		String txt = gson.toJson(fl);
+		sendToOne(source,txt);
+	}
+
+	
+	/**
+	 * Handles the chat messages, the client sends
+	 * @param text			messages
+	 * @param source		client
+	 */
+	private void handleChatMessage(String text, Handler source) {
+		int start = text.indexOf(":")+1;
+		int end = text.length()-1;
+		String sub = text.substring(start, end);
+		ClientChatDaten ccd = gson.fromJson(sub, ClientChatDaten.class);
+		String message = ccd.getNachricht();
+		int id = source.getClientId();
+		sendChatMessage(id,message);
+		if(message.equals("greedisgood")) control.greedCheatActivated(id);
+		
+	}
+
+	/**
+	 * Handles the message, when a client is ready to play
+	 * @param source
+	 */
+	private void handleStartGame(Handler source) {
+		control.handleStartGame(source.getClientId());
+	}
+
+	
+	/**
+	 * Handles the message, when a client wants to roll the dice
+	 * @param source
+	 */
+	private void handleRollDice(Handler source) {
+		control.handleDiceRoll(source.getClientId());
+	}
+	
+	/**
+	 * Handles the message that a client wants to end its turn
+	 * @param source
+	 */
+	private void handleEndTurn(Handler source) {
+		control.handleEndTurn(source.getClientId());
+	}
+
+	/**
+	 * Handles the event of a building from the client
+	 * @param text			message
+	 * @param source		client
+	 */
+	private void handleBuild(String text,Handler source) {
+		BauNachricht bn = gson.fromJson(text, BauNachricht.class);
+		String type = bn.getTyp();
+		switch(type){
+		case "Strasse": control.handleBuildRoad(bn.getKante(), source.getClientId());break;
+		case "Dorf": control.handleBuildSettlement(bn.getEcke(),source.getClientId());break;
+		case "Stadt": control.handleBuildCity(bn.getEcke(),source.getClientId());break;
+		}
+	}
+
+	/**
+	 * Handles the Hello Message from the client and sends welcome message
+	 * @param source		client
+	 * @param text			text
+	 */
+	private void handleHello(Handler source,String text) {
+		HalloNachricht hn = gson.fromJson(text, HalloNachricht.class);
+		String ver = hn.getDaten().getVersion();
+		//check for our version to enable cheats
+		sendWelcome(source);
+	}
+	
+	
+	/**
+	 * Sends Server ok after valid message
+	 * @param id
+	 */
+	public void sendOk(int id){
+		sendServerMessage(id,SERVER_OK);
+	}
+	
+	/**
+	 * Sends the hello message to client
+	 * @param target		client
+	 */
+	public void sendHello(Handler target){
+		HalloServerNachricht hn = new HalloServerNachricht(VERSION, PROTOCOL);
+		String text = gson.toJson(hn);
+		sendToOne(target,text);
+	}
+	
+	/**
+	 * Sends welcome message
+	 * @param source		client
+	 */
+	public void sendWelcome(Handler source){
+		Random rand = new Random();
+		int id = rand.nextInt(100);
+		while(idList.contains(id)){
+			id = rand.nextInt(100);
+		}
+		idList.add(id);
+		source.setId(id);
+		WillkommenNachricht wn = new WillkommenNachricht(id);
+		String text = gson.toJson(wn);
+		sendToOne(source,text);
+	}
+	
+	/**
+	 * Sends ServerMessage
+	 * @param id		client
+	 * @param text		message
+	 */
+	public void sendServerMessage(int id, String text){
+		ServerantwortNachricht san = new ServerantwortNachricht(text);
+		String message = gson.toJson(san);
+		sendToOne(id,message);
+	}
+	
+	/**
+	 * sends chat messages to clients
+	 * @param id		client
+	 * @param text		chat message
+	 */
+	public void sendChatMessage(int id, String text){
+		ServerChatNachricht scn = new ServerChatNachricht(id, text);
+		String chat = gson.toJson(scn);
+		sendToAll(chat);
+	}
+	
+	/**
+	 * Sends error message  to client
+	 * @param id			client
+	 * @param error			error message
+	 */
+	public void sendError(int id, String error){
+		FehlerNachricht fl = new FehlerNachricht(error);
+		String txt = gson.toJson(fl);
+		sendToOne(id,txt);
+	}
+	
+	/**
+	 * Sends start match message to clients
+	 * @param i			island for map
+	 */
+	public void sendStartMatch(Island i){
+		KartenNachricht kn = new KartenNachricht(i);
+		//KartenDaten kd = new KartenDaten(i);
+		String text = gson.toJson(kn);
+		sendToAll("{\"Spiel gestartet\":"+text+"}");
+	}
+	
+	/**
+	 * Sends a status update to clients, depending on who it is getting send to
+	 * @param id				client id who's status got updated
+	 * @param color				color of client
+	 * @param name				name of client
+	 * @param status			new status of client
+	 * @param victoryPoints		victory Points of client
+	 * @param resources			resources of player
+	 */
+	public void sendStatusUpdate(int id,String color, String name, String status, int victoryPoints, ArrayList<ResourceType> resources){
+		control.updatePlayerStatus(id,status);
+		StatusUpdateNachricht sun = new StatusUpdateNachricht(id,color,name,status,victoryPoints,resources);
+		StatusUpdateUnbekanntNachricht suun = new StatusUpdateUnbekanntNachricht(id,color,name,status,victoryPoints,resources);
+		String secret = gson.toJson(sun);
+		String notSecret = gson.toJson(suun);
+		sendToOne(id,secret);
+		sendToAllButOne(id,notSecret);
+	}
+	
+	/**
+	 * Sends dice roll
+	 * @param id
+	 * @param roll
+	 */
+	public void sendDice(int id, int roll){
+		WuerfelNachricht wn = new WuerfelNachricht(id,roll);
+		String text = gson.toJson(wn);
+		sendToAll(text);
+	}
+	
+	/**
+	 * Sends the resources to a client
+	 * @param id			client
+	 * @param resources		resources client got
+	 */
+	public void sendProduce(int id, ArrayList<ResourceType> resources){
+		ErtragNachricht en = new ErtragNachricht(id,resources);
+		String text = gson.toJson(en);
+		sendToAll(text);
+	}
+	
+	/**
+	 * Sends the resource to a client
+	 * @param id			client
+	 * @param resource		resource client got
+	 */
+	public void sendProduce(int id, ResourceType resource) {
+		ArrayList<ResourceType> resources = new ArrayList<ResourceType>();
+		resources.add(resource);
+		sendProduce(id, resources);
+	}
+	
+	/**
+	 * Sends the spent resources to a client
+	 * @param id			client
+	 * @param resources		resources client lost
+	 */
+	public void sendCosts(int id, ArrayList<ResourceType> resources){
+		RohstoffDaten rd = new RohstoffDaten(resources);
+		KostenDaten kd = new KostenDaten(id, rd);
+		KostenNachricht kn = new KostenNachricht(kd);
+		String text = gson.toJson(kn);
+		control.checkTrades();
+		sendToAll(text);
+	}
+	
+	/**
+	 * Sends the spent resource to a client
+	 * @param id			client
+	 * @param resource		resource client lost
+	 */
+	public void sendCosts(int id, ResourceType resource) {
+		ArrayList<ResourceType> resources = new ArrayList<ResourceType>();
+		resources.add(resource);
+		sendCosts(id, resources);
+		control.checkTrades();
+	}
+	
+	/**
+	 * Sends when a client build something 
+	 * @param b			building the client build
+	 */
+	public void sendConstruction(Building b){
+		BauvorgangNachricht bn = new BauvorgangNachricht(b);
+		String text = gson.toJson(bn);
+		sendToAll(text);
+	}
+	
+	/**
+	 * Sends message to signalise that someone won the game and it is over
+	 */
+	public void sendEndMatch(Player winner){
+		String winText = "Spieler " + winner.getName() + " hat das Spiel gewonnen.";
+		SpielBeendetDaten gd = new SpielBeendetDaten(winText,winner.getPlayerID());
+		String json = gson.toJson(gd);
+		String text = "{\"Spiel beendet\":" + json + "}";
+		sendToAll(text);
+	}
+	
+	/**
+	 * Sends message that there is a new TradeOffer with all needed information
+	 * @param idPlayer
+	 * @param offer
+	 * @param demand
+	 * @param tradeId
+	 */
+	public void sendTradeOffer(int idPlayer, ArrayList<ResourceType> offer, RohstoffDaten demand,int tradeId){
+		HandelsangebotNachricht hn = new HandelsangebotNachricht(idPlayer, tradeId, offer, demand);
+		String message = gson.toJson(hn);
+		int qPos = message.indexOf("Q");
+		String sub1 = message.substring(0, qPos);
+		String sub2 = message.substring(qPos+1, message.length());
+		String finl = sub1 + "Handel id" + sub2;
+		sendToAll(finl);
+		sendError(idPlayer, "Your offer is now online!");
+	}
+	
+	/**
+	 * Sends message that a trade was executed successfully 
+	 * @param player
+	 * @param tradePartner
+	 */
+	public void sendSuccessfulTrade(int player, int tradePartner){
+		HandelBestätigungDaten hbd = new HandelBestätigungDaten(player,tradePartner);
+		String message = "{\"Handel ausgefuehrt\":" + gson.toJson(hbd) +  "}";
+		control.checkTrades();
+		sendToAll(message);
+	}
+	
+	/**
+	 * Sends the message to one client
+	 * @param target			target client
+	 * @param message			message
+	 */
+	public void sendToOne(Handler target,String message){
+		target.sendMessage(message);
+	}
+	
+	/**
+	 * Sends the message to one client
+	 * @param id				target client
+	 * @param message
+	 */
+	public void sendToOne(int id,String message){
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for(Handler handler : clientHandlers){
+			handler.sendIf(id,message);
+			
+		}
+		
+	}
+	
+	/**
+	 * Sends the message to all clients but one
+	 * @param id			id of client not included
+	 * @param message		
+	 */
+	public void sendToAllButOne(int id, String message){
+		for(Handler handler : clientHandlers){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			handler.sendIfNot(id,message);
+		}
+	}
+	
+	/**
+	 * Sends message to all clients
+	 * @param message
+	 */
+	public void sendToAll(String message){
+		for(Handler handler : clientHandlers){
+			handler.sendMessage(message);
+		}
+	}
+
+	/**
+	 * Sends message that a client accepted a trade
+	 * @param tradeId
+	 * @param clientId
+	 */
+	public void sendTradeAccepted(int tradeId, int clientId) {
+		String text = "{\"Handelsangebot angenommen\":{\"Spieler\":"+
+				clientId+",\"Handel id\":"+tradeId+"}}";
+		sendToAll(text);
+	}
+
+	/**
+	 * Sends message that a trade got cancelled
+	 * @param tradeId
+	 * @param clientId
+	 */
+	public void sendCancelledTrade(int tradeId, int clientId) {
+		String text = "{\"Handelsangebot abgebrochen\":{\"Spieler\":"+
+				clientId+",\"Handel id\":"+tradeId+"}}";
+		sendToAll(text);
+	}
+	
+	
+}
+
+
+
+

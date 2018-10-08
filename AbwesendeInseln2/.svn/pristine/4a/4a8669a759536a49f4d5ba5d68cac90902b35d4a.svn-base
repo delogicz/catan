@@ -1,0 +1,65 @@
+package view;
+
+import game.Settings;
+import javafx.application.Platform;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import model.Harbour;
+import model.Vertex;
+
+public class HarbourSkin extends Circle{
+
+		private Harbour harbour;
+		private Color color;
+		private Vertex vertex;
+		/**
+		 * Constructor
+		 * @param building
+		 * @param islandSkin
+		 */
+		public HarbourSkin(Harbour har, Vertex ver,IslandSkin islandSkin) {
+			super(0.16);
+			
+			this.vertex = ver;
+			this.harbour = har;
+			switch(harbour){
+			case THREETOONE:  	 color = Color.BLACK; break;
+			case TWOTOONEBRICK:	 color = Color.BROWN; break;
+			case TWOTOONEGRAIN:	 color = Color.GOLD; break;
+			case TWOTOONELUMBER: color = Color.GREEN; break;
+			case TWOTOONEORE:	 color = Color.GREY; break;
+			case TWOTOONEWOOL:	 color = Color.LIGHTGREEN; break;
+			default: color = Color.WHITE; break;
+			}
+			
+			setFill(color);
+
+			setStroke(Color.ANTIQUEWHITE);
+			
+			setStrokeWidth(0.04);
+			setScaleX(Settings.SCALE);
+			setScaleY(Settings.SCALE);
+			setTranslateX(vertex.getSkin().getShape().getTranslateX());
+			setTranslateY(vertex.getSkin().getShape().getTranslateY());	
+			
+			this.setMouseTransparent(true);
+			
+			HarbourSkin skin = this;
+			
+			Platform.runLater(new Runnable() { 
+				@Override
+				public void run() {
+					System.out.println("harbour added to skin");
+					islandSkin.getChildren().add(skin);
+				}
+			});
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
+
+}
+

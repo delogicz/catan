@@ -1,0 +1,60 @@
+package model;
+
+import java.util.ArrayList;
+
+/**
+ * Contains all units needed for a game of "The Settlers of Catan" (players included)
+ * 
+ */
+public class Catan {
+	private Island island;
+	private ArrayList<Player> players;
+	private ArrayList<DevelopmentCard> devCards;
+	
+	private Player hasLongestRoad;
+	private Player hasLargestArmy;
+	
+	private Dice dice;
+	
+	public Catan(){
+		this.island = new Island();
+		this.players = new ArrayList<Player>();
+		this.devCards = new ArrayList<DevelopmentCard>();
+		
+		this.dice = new Dice();
+		
+		//TODO: fill devCards
+	}
+	
+	
+	public static void main(String[] args){
+		
+		Dice dice = new Dice();
+		for(int i = 0; i<100; i++) {	
+		dice.dice();
+//		System.out.println(dice.getdice1() + "" + dice.getdice2());
+		}
+	}
+	/**
+	 * Adds a new player to the game
+	 * @param playerColor The color of the new player
+	 */
+	public void addPlayer(PlayerColor playerColor){
+		if(players.size() < 4){
+			Player player = new Player(playerColor);
+			players.add(player);
+		}
+		else{
+			System.out.println("There are already four players");
+		}
+		
+	}
+	
+	public Island getIsland() {
+		return this.island;
+	}
+	
+	public Player getPlayer(int count){
+		return players.get(count);
+	}
+}

@@ -1,0 +1,7 @@
+package model;
+
+public class Vertix {
+	private Edge up;
+	private Edge left;
+	private Edge right;
+}

@@ -1,0 +1,21 @@
+package jsonstructures;
+
+/**
+ * This class containes the data of a player to initialize 
+ * @author Felixi
+ *
+ */
+public class SpielerDaten {
+	private String Name;
+	private String Farbe;
+	
+	/**
+	 * Creates a SpielerDaten object
+	 * @param name			name of the player
+	 * @param farbe			color of the player
+	 */
+	public SpielerDaten(String name, String farbe) {
+		Name = name;
+		Farbe = farbe;
+	}
+}

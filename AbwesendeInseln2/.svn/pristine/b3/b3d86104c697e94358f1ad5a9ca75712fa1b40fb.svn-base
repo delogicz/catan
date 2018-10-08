@@ -1,0 +1,9 @@
+package jsonstructures;
+
+public class WillkommenNachricht {
+	private idDaten Willkommen;
+	
+	public WillkommenNachricht(int id){
+		Willkommen = new idDaten(id);
+	}
+}
